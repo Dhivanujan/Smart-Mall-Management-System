@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useAuth } from "../../app/providers/AuthProvider";
 import { apiClient } from "../../services/api/client";
+	import { DashboardLayout } from "../../components/layout/DashboardLayout";
 
 interface AdminMetricsResponse {
 	user: {
@@ -35,43 +36,45 @@ export const AdminDashboardPage: React.FC = () => {
 
 	useEffect(() => {
 		let cancelled = false;
-		const fetchData = async () => {
-			setLoading(true);
-			try {
-				const [metricsRes, storesRes] = await Promise.all([
-					apiClient.get<AdminMetricsResponse>("/api/v1/admin/dashboard"),
-					apiClient.get<StoresResponse>("/api/v1/admin/stores"),
-				]);
-				if (!cancelled) {
-					setMetrics(metricsRes.data.metrics);
-					setStores(storesRes.data.stores);
-				}
-			} catch (err) {
-				console.error(err);
-				if (!cancelled) setError("Failed to load admin data.");
-			} finally {
-				if (!cancelled) setLoading(false);
-			}
-		};
-		void fetchData();
-		return () => {
-			cancelled = true;
-		};
-	}, []);
-
 	if (loading) {
-		return <div style={{ padding: "2rem" }}>Loading admin dashboard...</div>;
+		return (
+			<DashboardLayout
+				title="Admin Panel"
+				navItems={[
+					{ to: "/admin", label: "Dashboard" },
+					{ to: "/admin/stores", label: "Stores" },
+				]}
+			>
+				<div>Loading admin dashboard...</div>
+			</DashboardLayout>
+		);
 	}
-
+				const [metricsRes, storesRes] = await Promise.all([
 	if (error) {
-		return <div style={{ padding: "2rem", color: "red" }}>{error}</div>;
+		return (
+			<DashboardLayout
+				title="Admin Panel"
+				navItems={[
+					{ to: "/admin", label: "Dashboard" },
+					{ to: "/admin/stores", label: "Stores" },
+				]}
+			>
+				<div style={{ color: "red" }}>{error}</div>
+			</DashboardLayout>
+		);
 	}
-
+				if (!cancelled) {
 	return (
-		<div style={{ fontFamily: "system-ui, sans-serif", padding: "2rem" }}>
+		<DashboardLayout
+			title="Admin Panel"
+			navItems={[
+				{ to: "/admin", label: "Dashboard" },
+				{ to: "/admin/stores", label: "Stores" },
+			]}
+		>
 			<h1>Mall Admin Dashboard</h1>
 			<p>Welcome back, {user?.full_name ?? user?.username}.</p>
-
+				console.error(err);
 			{metrics && (
 				<section style={{ marginTop: "1.5rem" }}>
 					<h2>Key Metrics</h2>
@@ -83,6 +86,30 @@ export const AdminDashboardPage: React.FC = () => {
 					</ul>
 				</section>
 			)}
+	if (loading) {
+			<section style={{ marginTop: "1.5rem" }}>
+				<h2>Managed Stores</h2>
+				<table>
+					<thead>
+						<tr>
+							<th>ID</th>
+							<th>Name</th>
+							<th>Status</th>
+						</tr>
+					</thead>
+					<tbody>
+						{stores.map((store) => (
+							<tr key={store.id}>
+								<td>{store.id}</td>
+								<td>{store.name}</td>
+								<td>{store.status}</td>
+							</tr>
+						))}
+					</tbody>
+				</table>
+			</section>
+		</DashboardLayout>
+	);
 
 			<section style={{ marginTop: "1.5rem" }}>
 				<h2>Managed Stores</h2>
