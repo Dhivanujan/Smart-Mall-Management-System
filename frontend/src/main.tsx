@@ -1,5 +1,9 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
+import { BrowserRouter } from "react-router-dom";
+
+import { AppRoutes } from "./app/routing/AppRoutes";
+import { AuthProvider } from "./app/providers/AuthProvider";
 
 const rootElement = document.getElementById("root");
 
@@ -8,10 +12,11 @@ if (rootElement) {
 
 	root.render(
 		<React.StrictMode>
-			<div style={{ fontFamily: "system-ui, sans-serif", padding: "2rem" }}>
-				<h1>Smart Mall Management System</h1>
-				<p>Frontend shell is running. Start building features here.</p>
-			</div>
+			<BrowserRouter>
+				<AuthProvider>
+					<AppRoutes />
+				</AuthProvider>
+			</BrowserRouter>
 		</React.StrictMode>
 	);
 }
