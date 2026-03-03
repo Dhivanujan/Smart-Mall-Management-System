@@ -7,32 +7,79 @@ export const HomePage: React.FC = () => {
 	const { user, logout } = useAuth();
 
 	return (
-		<div style={{ fontFamily: "system-ui, sans-serif", padding: "2rem" }}>
-			<h1>Smart Mall Management System</h1>
-			<p>Welcome to the platform.</p>
-
-			{user ? (
-				<div style={{ marginTop: "1rem" }}>
-					<p>
-						Signed in as <strong>{user.full_name ?? user.username}</strong> ({user.role})
-					</p>
-					<div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem" }}>
-						{["admin", "super_admin"].includes(user.role) && (
-							<Link to="/admin">Go to Admin Panel</Link>
-						)}
-						{user.role === "super_admin" && <Link to="/super-admin">Go to Super Admin Panel</Link>}
-						<button type="button" onClick={logout}>
-							Logout
-						</button>
+		<div className="app-page">
+			<div className="app-page-inner">
+				<section>
+					<div className="app-badge" aria-label="Smart mall platform badge">
+						<span className="app-badge-pill">●</span>
+						Top-rated smart mall operations platform
 					</div>
-				</div>
-			) : (
-				<div style={{ marginTop: "1rem" }}>
-					<p>
-						Please <Link to="/login">log in</Link> as an admin or super admin.
+					<h1 className="app-hero-heading">Orchestrate your malls with confidence.</h1>
+					<p className="app-hero-subtitle">
+						Smart Mall gives super admins and mall operators a live command center for stores, revenue,
+						footfall, and support — all in one modern dashboard.
 					</p>
-				</div>
-			)}
+					<div className="app-actions">
+						{user ? (
+							<>
+								{["admin", "super_admin"].includes(user.role) && (
+									<Link to="/admin" className="btn btn-primary">
+										Open admin console
+									</Link>
+								)}
+								{user.role === "super_admin" && (
+									<Link to="/super-admin" className="btn btn-ghost">
+										Super admin overview
+									</Link>
+								)}
+								<button type="button" className="btn btn-muted" onClick={logout}>
+									Sign out
+								</button>
+							</>
+						) : (
+							<>
+								<Link to="/login" className="btn btn-primary">
+									Sign in to dashboard
+								</Link>
+								<Link to="/login" className="btn btn-ghost">
+									Preview demo accounts
+								</Link>
+							</>
+						)}
+					</div>
+					<p className="app-note">
+						Use demo credentials for instant access — no setup required.
+					</p>
+				</section>
+				<aside>
+					<div className="app-feature-grid" aria-label="Role based entry cards">
+						<div className="app-feature-card">
+							<div className="app-feature-label">Mall admins</div>
+							<div className="app-feature-title">Store performance at a glance</div>
+							<div className="app-feature-meta">
+								<span className="app-feature-tag">Live metrics</span>
+								<span className="app-feature-tag">Tickets</span>
+							</div>
+						</div>
+						<div className="app-feature-card">
+							<div className="app-feature-label">Super admins</div>
+							<div className="app-feature-title">Multi-mall command center</div>
+							<div className="app-feature-meta">
+								<span className="app-feature-tag">Malls</span>
+								<span className="app-feature-tag">Occupancy</span>
+							</div>
+						</div>
+						<div className="app-feature-card">
+							<div className="app-feature-label">Operators</div>
+							<div className="app-feature-title">Operational health in real time</div>
+							<div className="app-feature-meta">
+								<span className="app-feature-tag">Alerts</span>
+								<span className="app-feature-tag">SLAs</span>
+							</div>
+						</div>
+					</div>
+				</aside>
+			</div>
 		</div>
 	);
 };

@@ -1,5 +1,5 @@
 import React, { FormEvent, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 import { useAuth } from "../../app/providers/AuthProvider";
 
@@ -30,43 +30,65 @@ export const LoginPage: React.FC = () => {
 	};
 
 	return (
-		<div style={{ fontFamily: "system-ui, sans-serif", padding: "2rem", maxWidth: 400 }}>
-			<h1>Sign in</h1>
-			<p>Use one of the demo accounts:</p>
-			<ul>
-				<li>Admin: admin@example.com / admin123</li>
-				<li>Super Admin: superadmin@example.com / super123</li>
-			</ul>
-			<form onSubmit={handleSubmit} style={{ marginTop: "1rem", display: "grid", gap: "0.75rem" }}>
-				<label>
-					Email
-					<input
-						type="email"
-						value={username}
-						onChange={(e) => setUsername(e.target.value)}
-						style={{ width: "100%" }}
-						required
-					/>
-				</label>
-				<label>
-					Password
-					<input
-						type="password"
-						value={password}
-						onChange={(e) => setPassword(e.target.value)}
-						style={{ width: "100%" }}
-						required
-					/>
-				</label>
-				{error && (
-					<div style={{ color: "red" }}>
-						{error}
+		<div className="app-page" style={{ alignItems: "stretch" }}>
+			<div className="app-page-inner" style={{ maxWidth: 960 }}>
+				<section style={{ display: "flex", alignItems: "center" }}>
+					<div>
+						<div className="app-badge" aria-label="Smart mall badge">
+							<span className="app-badge-pill">●</span>
+							Secure admin access
+						</div>
+						<h1 className="app-hero-heading" style={{ marginBottom: "0.8rem", marginTop: "0.9rem" }}>
+							Sign in to your control center.
+						</h1>
+						<p className="app-hero-subtitle">
+							Use one of the demo accounts below to explore the admin and super admin experiences in
+							Smart Mall.
+						</p>
+						<ul style={{ paddingLeft: "1.05rem", margin: "0 0 0.5rem", fontSize: "0.9rem" }}>
+							<li>Admin: admin@example.com / admin123</li>
+							<li>Super admin: superadmin@example.com / super123</li>
+						</ul>
+						<p className="app-note">
+							Want to start over? You can always <Link to="/">return to the overview</Link>.
+						</p>
 					</div>
-				)}
-				<button type="submit" disabled={isSubmitting}>
-					{isSubmitting ? "Signing in..." : "Sign in"}
-				</button>
-			</form>
+				</section>
+				<aside>
+					<div className="app-card" aria-label="Sign in form">
+						<div className="app-card-header">
+							<h2 className="app-card-title">Sign in</h2>
+							<p className="app-card-subtitle">Authenticate to access your mall dashboards.</p>
+						</div>
+						<form onSubmit={handleSubmit} className="app-form">
+							<label className="app-field-label">
+								<span>Email</span>
+								<input
+									type="email"
+									value={username}
+									onChange={(e) => setUsername(e.target.value)}
+									className="app-input"
+									required
+								/>
+							</label>
+							<label className="app-field-label">
+								<span>Password</span>
+								<input
+									type="password"
+									value={password}
+									onChange={(e) => setPassword(e.target.value)}
+									className="app-input"
+									required
+								/>
+							</label>
+							{error && <div className="app-error">{error}</div>}
+							<button type="submit" className="btn btn-primary" disabled={isSubmitting}>
+								{isSubmitting ? "Signing you in…" : "Sign in"}
+							</button>
+						</form>
+					</div>
+				</aside>
+			</div>
 		</div>
 	);
 };

@@ -18,72 +18,40 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ title, navItem
 	const { user, logout } = useAuth();
 
 	return (
-		<div
-			style={{
-				display: "grid",
-				gridTemplateColumns: "240px 1fr",
-				gridTemplateRows: "56px 1fr",
-				gridTemplateAreas: '"topbar topbar" "sidebar main"',
-				height: "100vh",
-				fontFamily: "system-ui, sans-serif",
-			}}
-		>
-			<header
-				style={{
-					gridArea: "topbar",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-between",
-					padding: "0 1.5rem",
-					borderBottom: "1px solid #e5e7eb",
-					backgroundColor: "#ffffff",
-					position: "sticky",
-					top: 0,
-					zIndex: 10,
-				}}
-			>
-				<div>
+		<div className="dashboard-root">
+			<header className="dashboard-topbar">
+				<div className="dashboard-brand">
 					<Link to="/" style={{ textDecoration: "none", color: "inherit" }}>
-						<strong>Smart Mall</strong>
+						<span className="dashboard-logo">Smart&nbsp;Mall</span>
 					</Link>
-					<span style={{ marginLeft: "0.75rem", color: "#6b7280", fontSize: 14 }}>{title}</span>
+					<span className="dashboard-section-title">{title}</span>
 				</div>
-				<div style={{ display: "flex", alignItems: "center", gap: "0.75rem", fontSize: 14 }}>
-					{user && (
-						<>
-							<span>
-								{user.full_name ?? user.username} ({user.role})
-							</span>
-							<button type="button" onClick={logout} style={{ fontSize: 14 }}>
-								Logout
-							</button>
-						</>
-					)}
-				</div>
+				{user && (
+					<div className="dashboard-user">
+						<div className="dashboard-avatar">
+							{(user.full_name ?? user.username)?.[0]?.toUpperCase()}
+						</div>
+						<span>
+							{user.full_name ?? user.username} ({user.role})
+						</span>
+						<button type="button" className="btn btn-muted" onClick={logout}>
+							Logout
+						</button>
+					</div>
+				)}
 			</header>
-			<aside
-				style={{
-					gridArea: "sidebar",
-					borderRight: "1px solid #e5e7eb",
-					padding: "1rem 0.75rem",
-					backgroundColor: "#f9fafb",
-				}}
-			>
+			<aside className="dashboard-sidebar">
 				<nav>
-					<ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: 4 }}>
+					<ul className="dashboard-nav">
 						{navItems.map((item) => (
 							<li key={item.to}>
 								<NavLink
 									to={item.to}
-									style={({ isActive }) => ({
-											display: "block",
-											padding: "0.4rem 0.75rem",
-											borderRadius: 6,
-											textDecoration: "none",
-											fontSize: 14,
-											color: isActive ? "#111827" : "#374151",
-											backgroundColor: isActive ? "#e5e7eb" : "transparent",
-										})}
+									className={({ isActive }) =>
+											isActive
+												? "dashboard-nav-link dashboard-nav-link--active"
+												: "dashboard-nav-link"
+									}
 								>
 									{item.label}
 								</NavLink>
@@ -92,16 +60,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ title, navItem
 					</ul>
 				</nav>
 			</aside>
-			<main
-				style={{
-					gridArea: "main",
-					padding: "1.5rem 2rem",
-					overflowY: "auto",
-					backgroundColor: "#ffffff",
-				}}
-			>
-				{children}
-			</main>
+			<main className="dashboard-main">{children}</main>
 		</div>
 	);
 };
