@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 
 import { useAuth } from "../../app/providers/AuthProvider";
 import { apiClient } from "../../services/api/client";
-	import { DashboardLayout } from "../../components/layout/DashboardLayout";
+import { DashboardLayout } from "../../components/layout/DashboardLayout";
 
 interface AdminMetricsResponse {
 	user: {
@@ -36,34 +36,37 @@ export const AdminDashboardPage: React.FC = () => {
 
 	useEffect(() => {
 		let cancelled = false;
-	if (loading) {
-		return (
-			<DashboardLayout
-				title="Admin Panel"
-				navItems={[
-					{ to: "/admin", label: "Dashboard" },
-					{ to: "/admin/stores", label: "Stores" },
-				]}
-			>
-				<div>Loading admin dashboard...</div>
-			</DashboardLayout>
-		);
-	}
+
+		const load = async () => {
+			try {
 				const [metricsRes, storesRes] = await Promise.all([
-	if (error) {
-		return (
-			<DashboardLayout
-				title="Admin Panel"
-				navItems={[
-					{ to: "/admin", label: "Dashboard" },
-					{ to: "/admin/stores", label: "Stores" },
-				]}
-			>
-				<div style={{ color: "red" }}>{error}</div>
-			</DashboardLayout>
-		);
-	}
+					apiClient.get<AdminMetricsResponse>("/api/v1/admin/dashboard"),
+					apiClient.get<StoresResponse>("/api/v1/admin/stores"),
+				]);
+
+				if (cancelled) return;
+
+				setMetrics(metricsRes.data.metrics);
+				setStores(storesRes.data.stores);
+				setError(null);
+			} catch (err) {
+				if (cancelled) return;
+				console.error(err);
+				setError("Failed to load admin dashboard.");
+			} finally {
 				if (!cancelled) {
+					setLoading(false);
+				}
+			}
+		};
+
+		load();
+
+		return () => {
+			cancelled = true;
+		};
+	}, []);
+
 	return (
 		<DashboardLayout
 			title="Admin Panel"
@@ -74,8 +77,12 @@ export const AdminDashboardPage: React.FC = () => {
 		>
 			<h1>Mall Admin Dashboard</h1>
 			<p>Welcome back, {user?.full_name ?? user?.username}.</p>
-				console.error(err);
-			{metrics && (
+
+			{loading && <div>Loading admin dashboard...</div>}
+
+			{!loading && error && <div style={{ color: "#fca5a5", marginTop: "1rem" }}>{error}</div>}
+
+			{!loading && !error && metrics && (
 				<section style={{ marginTop: "1.5rem" }}>
 					<h2>Key Metrics</h2>
 					<ul>
@@ -86,52 +93,30 @@ export const AdminDashboardPage: React.FC = () => {
 					</ul>
 				</section>
 			)}
-	if (loading) {
-			<section style={{ marginTop: "1.5rem" }}>
-				<h2>Managed Stores</h2>
-				<table>
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Name</th>
-							<th>Status</th>
-						</tr>
-					</thead>
-					<tbody>
-						{stores.map((store) => (
-							<tr key={store.id}>
-								<td>{store.id}</td>
-								<td>{store.name}</td>
-								<td>{store.status}</td>
-							</tr>
-						))}
-					</tbody>
-				</table>
-			</section>
-		</DashboardLayout>
-	);
 
-			<section style={{ marginTop: "1.5rem" }}>
-				<h2>Managed Stores</h2>
-				<table>
-					<thead>
-						<tr>
-							<th>ID</th>
-							<th>Name</th>
-							<th>Status</th>
-						</tr>
-					</thead>
-					<tbody>
-						{stores.map((store) => (
-							<tr key={store.id}>
-								<td>{store.id}</td>
-								<td>{store.name}</td>
-								<td>{store.status}</td>
+			{!loading && !error && (
+				<section style={{ marginTop: "1.5rem" }}>
+					<h2>Managed Stores</h2>
+					<table>
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+								<th>Status</th>
 							</tr>
-						))}
-					</tbody>
-				</table>
-			</section>
-		</div>
+						</thead>
+						<tbody>
+							{stores.map((store) => (
+								<tr key={store.id}>
+									<td>{store.id}</td>
+									<td>{store.name}</td>
+									<td>{store.status}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</section>
+			)}
+		</DashboardLayout>
 	);
 };

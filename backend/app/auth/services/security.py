@@ -29,7 +29,7 @@ def create_access_token(data: dict, expires_delta: timedelta | None = None) -> s
 
 
 async def get_current_user(token: Annotated[str, Depends(oauth2_scheme)]) -> User:
-\tcredentials_exception = HTTPException(
+	credentials_exception = HTTPException(
 		status_code=status.HTTP_401_UNAUTHORIZED,
 		detail="Could not validate credentials",
 		headers={"WWW-Authenticate": "Bearer"},
