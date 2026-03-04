@@ -17,6 +17,31 @@ interface AdminMetricsResponse {
 	};
 }
 
+interface StoreMetric {
+	store_id: number;
+	name: string;
+	daily_revenue: number;
+	footfall: number;
+	open_tickets: number;
+}
+
+interface StoreMetricsResponse {
+	stores: StoreMetric[];
+}
+
+interface MonitoringSnapshot {
+	timestamp: string;
+	footfall: {
+		mall_total: number;
+		by_zone: Record<string, number>;
+	};
+	alerts: { id: string; severity: string; message: string }[];
+}
+
+interface MonitoringResponse {
+	snapshot: MonitoringSnapshot;
+}
+
 interface StoreSummary {
 	id: number;
 	name: string;
@@ -31,6 +56,8 @@ export const AdminDashboardPage: React.FC = () => {
 	const { user } = useAuth();
 	const [metrics, setMetrics] = useState<AdminMetricsResponse["metrics"] | null>(null);
 	const [stores, setStores] = useState<StoreSummary[]>([]);
+	const [storeMetrics, setStoreMetrics] = useState<StoreMetric[]>([]);
+	const [snapshot, setSnapshot] = useState<MonitoringSnapshot | null>(null);
 	const [loading, setLoading] = useState(true);
 	const [error, setError] = useState<string | null>(null);
 
@@ -39,15 +66,19 @@ export const AdminDashboardPage: React.FC = () => {
 
 		const load = async () => {
 			try {
-				const [metricsRes, storesRes] = await Promise.all([
+				const [metricsRes, storesRes, storeMetricsRes, monitoringRes] = await Promise.all([
 					apiClient.get<AdminMetricsResponse>("/api/v1/admin/dashboard"),
 					apiClient.get<StoresResponse>("/api/v1/admin/stores"),
+					apiClient.get<StoreMetricsResponse>("/api/v1/admin/store-metrics"),
+					apiClient.get<MonitoringResponse>("/api/v1/admin/monitoring"),
 				]);
 
 				if (cancelled) return;
 
 				setMetrics(metricsRes.data.metrics);
 				setStores(storesRes.data.stores);
+				setStoreMetrics(storeMetricsRes.data.stores);
+				setSnapshot(monitoringRes.data.snapshot);
 				setError(null);
 			} catch (err) {
 				if (cancelled) return;
@@ -62,8 +93,11 @@ export const AdminDashboardPage: React.FC = () => {
 
 		load();
 
+		const interval = window.setInterval(load, 10000);
+
 		return () => {
 			cancelled = true;
+			window.clearInterval(interval);
 		};
 	}, []);
 
@@ -94,6 +128,32 @@ export const AdminDashboardPage: React.FC = () => {
 				</section>
 			)}
 
+			{!loading && !error && snapshot && (
+				<section style={{ marginTop: "1.5rem" }}>
+					<h2>Live operations snapshot</h2>
+					<p style={{ fontSize: "0.9rem", color: "#9ca3af" }}>
+						Auto-refreshes every 10 seconds for the demo.
+					</p>
+					<p>Mall footfall right now: {snapshot.footfall.mall_total} visitors</p>
+					<ul>
+						{Object.entries(snapshot.footfall.by_zone).map(([zone, value]) => (
+							<li key={zone}>
+								{zone}: {value} visitors
+							</li>
+						))}
+					</ul>
+					{snapshot.alerts.length > 0 && (
+						<ul style={{ marginTop: "0.5rem" }}>
+							{snapshot.alerts.map((alert) => (
+								<li key={alert.id} style={{ color: "#f97316" }}>
+									[{alert.severity}] {alert.message}
+								</li>
+							))}
+						</ul>
+					)}
+				</section>
+			)}
+
 			{!loading && !error && (
 				<section style={{ marginTop: "1.5rem" }}>
 					<h2>Managed Stores</h2>
@@ -111,6 +171,32 @@ export const AdminDashboardPage: React.FC = () => {
 									<td>{store.id}</td>
 									<td>{store.name}</td>
 									<td>{store.status}</td>
+								</tr>
+							))}
+						</tbody>
+					</table>
+				</section>
+			)}
+
+			{!loading && !error && storeMetrics.length > 0 && (
+				<section style={{ marginTop: "1.5rem" }}>
+					<h2>Top performing stores</h2>
+					<table>
+						<thead>
+							<tr>
+								<th>ID</th>
+								<th>Name</th>
+								<th style={{ textAlign: "right" }}>Daily revenue</th>
+								<th style={{ textAlign: "right" }}>Footfall</th>
+							</tr>
+						</thead>
+						<tbody>
+							{storeMetrics.map((store) => (
+								<tr key={store.store_id}>
+									<td>{store.store_id}</td>
+									<td>{store.name}</td>
+									<td style={{ textAlign: "right" }}>${store.daily_revenue.toFixed(2)}</td>
+									<td style={{ textAlign: "right" }}>{store.footfall}</td>
 								</tr>
 							))}
 						</tbody>

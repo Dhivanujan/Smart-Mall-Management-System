@@ -16,7 +16,7 @@ from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from starlette import status
 
-from .api.v1 import admin, auth
+from .api.v1 import admin, auth, stores
 from .core.config import get_settings
 from .core.logging import setup_logging
 
@@ -85,6 +85,7 @@ def create_app() -> FastAPI:
 	# API v1 routers
 	app.include_router(auth.router, prefix=f"{settings.api_prefix}/auth", tags=["auth"])
 	app.include_router(admin.router, prefix=f"{settings.api_prefix}/admin", tags=["admin"])
+	app.include_router(stores.router, prefix=f"{settings.api_prefix}/stores", tags=["stores"])
 
 	# Global error handlers
 	@app.exception_handler(RequestValidationError)

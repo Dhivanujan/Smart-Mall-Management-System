@@ -47,6 +47,11 @@ export const HomePage: React.FC = () => {
 							</>
 						)}
 					</div>
+					<div className="app-actions" style={{ marginTop: "0.75rem" }}>
+						<Link to="/mall" className="btn btn-ghost">
+							Browse mall directory
+						</Link>
+					</div>
 					<p className="app-note">
 						Use demo credentials for instant access — no setup required.
 					</p>
