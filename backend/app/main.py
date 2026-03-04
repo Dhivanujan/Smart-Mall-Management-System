@@ -16,9 +16,10 @@ from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from starlette import status
 
-from .api.v1 import admin, auth, stores
+from .api.v1 import admin, auth, stores, queues
 from .core.config import get_settings
 from .core.logging import setup_logging
+from .websocket.routes import queues_router
 
 
 logger = logging.getLogger("smart_mall.app")
@@ -86,6 +87,10 @@ def create_app() -> FastAPI:
 	app.include_router(auth.router, prefix=f"{settings.api_prefix}/auth", tags=["auth"])
 	app.include_router(admin.router, prefix=f"{settings.api_prefix}/admin", tags=["admin"])
 	app.include_router(stores.router, prefix=f"{settings.api_prefix}/stores", tags=["stores"])
+	app.include_router(queues.router, prefix=f"{settings.api_prefix}", tags=["queues"])
+
+	# WebSocket routes
+	app.include_router(queues_router)
 
 	# Global error handlers
 	@app.exception_handler(RequestValidationError)

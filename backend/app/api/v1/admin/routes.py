@@ -4,6 +4,11 @@ from fastapi import APIRouter, Depends
 
 from ....auth.schemas.users import User
 from ....auth.services.security import require_admin, require_super_admin
+from ..queues.routes import (
+	admin_advance_queue,
+	admin_queue_summaries,
+	admin_set_queue_paused,
+)
 
 
 router = APIRouter()
@@ -158,3 +163,56 @@ async def super_admin_tenants(
 		},
 	]
 	return {"user": current_user, "tenants": tenants}
+
+
+@router.get("/queues")
+async def admin_queues(
+	current_user: Annotated[User, Depends(require_admin)],
+) -> dict:
+	"""Return summaries for all store queues for admin monitoring."""
+
+	return {"user": current_user, "queues": admin_queue_summaries()}
+
+
+@router.post("/queues/{store_id}/next")
+async def admin_queue_next(
+	store_id: int,
+	current_user: Annotated[User, Depends(require_admin)],
+) -> dict:
+	"""Advance the given store queue to the next token."""
+
+	state = await admin_advance_queue(store_id, skip_current=False)
+	return {"user": current_user, "queue": state}
+
+
+@router.post("/queues/{store_id}/skip")
+async def admin_queue_skip(
+	store_id: int,
+	current_user: Annotated[User, Depends(require_admin)],
+) -> dict:
+	"""Skip the current token and move to the next waiting one."""
+
+	state = await admin_advance_queue(store_id, skip_current=True)
+	return {"user": current_user, "queue": state}
+
+
+@router.post("/queues/{store_id}/pause")
+async def admin_queue_pause(
+	store_id: int,
+	current_user: Annotated[User, Depends(require_admin)],
+) -> dict:
+	"""Pause the queue so new customers cannot join."""
+
+	state = await admin_set_queue_paused(store_id, paused=True)
+	return {"user": current_user, "queue": state}
+
+
+@router.post("/queues/{store_id}/resume")
+async def admin_queue_resume(
+	store_id: int,
+	current_user: Annotated[User, Depends(require_admin)],
+) -> dict:
+	"""Resume a previously paused queue."""
+
+	state = await admin_set_queue_paused(store_id, paused=False)
+	return {"user": current_user, "queue": state}
