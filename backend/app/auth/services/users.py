@@ -1,11 +1,12 @@
 from typing import Dict
 
-from passlib.context import CryptContext
+import bcrypt
 
 from ..schemas.users import User, UserInDB
 
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+def _hash_password(password: str) -> str:
+	return bcrypt.hashpw(password.encode(), bcrypt.gensalt()).decode()
 
 
 # In-memory mock user store for initial development.
@@ -15,20 +16,20 @@ _fake_users_db: Dict[str, UserInDB] = {
 		full_name="Mall Administrator",
 		email="admin@example.com",
 		role="admin",
-		hashed_password=pwd_context.hash("admin123"),
+		hashed_password=_hash_password("admin123"),
 	),
 	"superadmin@example.com": UserInDB(
 		username="superadmin@example.com",
 		full_name="Platform Super Admin",
 		email="superadmin@example.com",
 		role="super_admin",
-		hashed_password=pwd_context.hash("super123"),
+		hashed_password=_hash_password("super123"),
 	),
 }
 
 
 def verify_password(plain_password: str, hashed_password: str) -> bool:
-	return pwd_context.verify(plain_password, hashed_password)
+	return bcrypt.checkpw(plain_password.encode(), hashed_password.encode())
 
 
 def get_user(username: str) -> UserInDB | None:
