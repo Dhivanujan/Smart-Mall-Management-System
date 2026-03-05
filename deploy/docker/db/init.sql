@@ -1,1 +1,0 @@
--- PostgreSQL init script placeholder
