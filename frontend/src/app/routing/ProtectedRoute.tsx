@@ -11,7 +11,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ requireRole }) =
 	const { user, isLoading } = useAuth();
 
 	if (isLoading) {
-		return <div style={{ padding: "2rem" }}>Loading...</div>;
+		return (
+			<div style={{ display: "flex", alignItems: "center", justifyContent: "center", minHeight: "60vh" }}>
+				<div className="loading-spinner" />
+			</div>
+		);
 	}
 
 	if (!user) {

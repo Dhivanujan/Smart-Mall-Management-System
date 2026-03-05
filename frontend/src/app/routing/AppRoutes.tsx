@@ -11,6 +11,7 @@ import { SuperAdminTenantsPage } from "../../features/super-admin/SuperAdminTena
 import { MallOverviewPage } from "../../features/customer/MallOverviewPage";
 import { StoreDetailsPage } from "../../features/customer/StoreDetailsPage";
 import { HomePage } from "../../pages/HomePage";
+import { NotFoundPage } from "../../pages/NotFoundPage";
 
 export const AppRoutes: React.FC = () => {
 	return (
@@ -31,7 +32,7 @@ export const AppRoutes: React.FC = () => {
 				<Route path="/super-admin/tenants" element={<SuperAdminTenantsPage />} />
 			</Route>
 
-			<Route path="*" element={<HomePage />} />
+			<Route path="*" element={<NotFoundPage />} />
 		</Routes>
 	);
 };
