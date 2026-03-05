@@ -1,28 +1,26 @@
-version: "3.9"
-
 services:
-	backend:
-		build:
-			context: .
-			dockerfile: backend/Dockerfile
-		container_name: smartmall-backend
-		environment:
-			- PYTHONUNBUFFERED=1
-		ports:
-			- "8000:8000"
-		volumes:
-			- ./backend/app:/app/app:ro
-			- ./backend/pyproject.toml:/app/pyproject.toml:ro
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: smartmall-backend
+    environment:
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/app:/app/app:ro
+      - ./backend/pyproject.toml:/app/pyproject.toml:ro
 
-	frontend:
-		image: node:22-alpine
-		working_dir: /app
-		container_name: smartmall-frontend
-		volumes:
-			- ./frontend:/app
-		command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
-		ports:
-			- "5173:5173"
-		depends_on:
-			- backend
+  frontend:
+    image: node:22-alpine
+    working_dir: /app
+    container_name: smartmall-frontend
+    volumes:
+      - ./frontend:/app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0"
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
 
