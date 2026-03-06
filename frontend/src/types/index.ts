@@ -119,3 +119,130 @@ export interface NavItem {
 	icon?: string;
 	badge?: number;
 }
+
+// ─── Parking ────────────────────────────────────────────────
+export interface ParkingSlot {
+	slot_id: string;
+	zone: string;
+	floor: number;
+	status: string;
+	vehicle_number: string | null;
+	reserved_by: string | null;
+	duration_minutes: number;
+}
+
+export interface ParkingZoneStats {
+	total: number;
+	available: number;
+	occupied: number;
+	reserved: number;
+	utilization_percent: number;
+}
+
+export interface ParkingSummary {
+	total_slots: number;
+	available: number;
+	occupied: number;
+	reserved: number;
+	utilization_percent: number;
+	is_peak: boolean;
+	zone_stats: Record<string, ParkingZoneStats>;
+}
+
+// ─── Loyalty ────────────────────────────────────────────────
+export interface LoyaltyTransaction {
+	id: number;
+	username: string;
+	transaction_type: "earn" | "redeem";
+	points: number;
+	description: string;
+	timestamp: number;
+	store_id: number | null;
+}
+
+export interface LoyaltyAccount {
+	username: string;
+	total_points: number;
+	lifetime_earned: number;
+	lifetime_redeemed: number;
+	tier: string;
+	recent_transactions: LoyaltyTransaction[];
+}
+
+// ─── Complaints ─────────────────────────────────────────────
+export interface ComplaintLog {
+	message: string;
+	author: string;
+	timestamp: number;
+}
+
+export interface Complaint {
+	id: number;
+	username: string;
+	category: string;
+	subject: string;
+	description: string;
+	status: string;
+	store_id: number | null;
+	assigned_to: string | null;
+	created_at: number;
+	updated_at: number;
+	logs: ComplaintLog[];
+}
+
+// ─── Notifications ──────────────────────────────────────────
+export interface Notification {
+	id: number;
+	username: string;
+	notification_type: string;
+	title: string;
+	message: string;
+	is_read: boolean;
+	created_at: number;
+}
+
+// ─── Offers ─────────────────────────────────────────────────
+export interface Offer {
+	id: number;
+	store_id: number;
+	title: string;
+	description: string;
+	discount_percent: number;
+	status: string;
+	start_time: number;
+	end_time: number | null;
+	redemption_count: number;
+	max_redemptions: number | null;
+	is_active: boolean;
+	created_at: number;
+}
+
+// ─── Analytics ──────────────────────────────────────────────
+export interface HeatmapZone {
+	id: string;
+	name: string;
+	x: number;
+	y: number;
+	density: number;
+	visitor_count: number;
+	congestion_level: string;
+}
+
+export interface QueueEfficiencyData {
+	store_id: number;
+	name: string;
+	type: string;
+	queue_length: number;
+	avg_service_time_min: number;
+	predicted_wait_min: number;
+	abandonment_rate_percent: number;
+	efficiency_score: number;
+}
+
+export interface UserAccount {
+	username: string;
+	full_name: string | null;
+	email: string | null;
+	role: string;
+	is_active: boolean;
+}

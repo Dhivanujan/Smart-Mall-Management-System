@@ -15,6 +15,13 @@ from fastapi.routing import APIRoute
 from starlette import status
 
 from .api.v1 import admin, auth, stores, queues
+from .api.v1.parking import router as parking_router
+from .api.v1.loyalty import router as loyalty_router
+from .api.v1.complaints import router as complaints_router
+from .api.v1.notifications import router as notifications_router
+from .api.v1.offers import router as offers_router
+from .api.v1.analytics import router as analytics_router
+from .api.v1.users import router as users_router
 from .core.config import get_settings
 from .core.logging import setup_logging
 from .websocket.routes import queues_router
@@ -49,14 +56,14 @@ def create_app() -> FastAPI:
 	)
 
 	# CORS
-	if settings.backend_cors_origins:
-		app.add_middleware(
-			CORSMiddleware,
-			allow_origins=[str(origin) for origin in settings.backend_cors_origins],
-			allow_credentials=True,
-			allow_methods=["*"],
-			allow_headers=["*"],
-		)
+	allowed_origins = [str(origin) for origin in settings.backend_cors_origins] if settings.backend_cors_origins else ["*"]
+	app.add_middleware(
+		CORSMiddleware,
+		allow_origins=allowed_origins,
+		allow_credentials=True,
+		allow_methods=["*"],
+		allow_headers=["*"],
+	)
 
 	# Health endpoints
 	@app.get("/health", tags=["health"])
@@ -76,6 +83,13 @@ def create_app() -> FastAPI:
 	app.include_router(admin.router, prefix=f"{settings.api_prefix}/admin", tags=["admin"])
 	app.include_router(stores.router, prefix=f"{settings.api_prefix}/stores", tags=["stores"])
 	app.include_router(queues.router, prefix=f"{settings.api_prefix}", tags=["queues"])
+	app.include_router(parking_router, prefix=f"{settings.api_prefix}", tags=["parking"])
+	app.include_router(loyalty_router, prefix=f"{settings.api_prefix}", tags=["loyalty"])
+	app.include_router(complaints_router, prefix=f"{settings.api_prefix}", tags=["complaints"])
+	app.include_router(notifications_router, prefix=f"{settings.api_prefix}", tags=["notifications"])
+	app.include_router(offers_router, prefix=f"{settings.api_prefix}", tags=["offers"])
+	app.include_router(analytics_router, prefix=f"{settings.api_prefix}", tags=["analytics"])
+	app.include_router(users_router, prefix=f"{settings.api_prefix}", tags=["users"])
 
 	# WebSocket routes
 	app.include_router(queues_router)

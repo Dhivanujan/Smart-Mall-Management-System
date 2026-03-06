@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, EmailStr
 
 
 class UserBase(BaseModel):
@@ -13,4 +13,11 @@ class User(UserBase):
 
 
 class UserInDB(UserBase):
+	is_active: bool = True
 	hashed_password: str
+
+
+class UserRegister(BaseModel):
+	email: EmailStr
+	full_name: str
+	password: str

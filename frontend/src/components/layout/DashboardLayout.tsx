@@ -140,7 +140,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ title, navItem
 								<li key={item.to}>
 									<NavLink
 										to={item.to}
-										end={item.to === "/admin" || item.to === "/super-admin"}
+										end={item.to === "/admin" || item.to === "/super-admin" || item.to === "/dashboard"}
 										className={({ isActive }) =>
 												isActive
 													? "dashboard-nav-link dashboard-nav-link--active"

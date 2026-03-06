@@ -4,7 +4,7 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "@/app/providers/AuthProvider";
 
 interface ProtectedRouteProps {
-	requireRole?: "admin" | "super_admin";
+	requireRole?: "admin" | "super_admin" | "customer";
 }
 
 export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ requireRole }) => {
@@ -19,6 +19,10 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ requireRole }) =
 	}
 
 	if (!user) {
+		return <Navigate to="/login" replace />;
+	}
+
+	if (requireRole === "customer" && !["customer", "admin", "super_admin"].includes(user.role)) {
 		return <Navigate to="/login" replace />;
 	}
 

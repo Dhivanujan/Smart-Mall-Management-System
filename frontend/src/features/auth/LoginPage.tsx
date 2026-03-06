@@ -4,6 +4,7 @@ import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/app/providers/AuthProvider";
 
 const DEMO_ACCOUNTS = [
+	{ label: "Customer", email: "customer@example.com", password: "customer123", icon: "🛍️", desc: "Browse stores, join queues, parking & loyalty" },
 	{ label: "Mall Admin", email: "admin@example.com", password: "admin123", icon: "📊", desc: "Manage stores, view metrics, handle tickets" },
 	{ label: "Super Admin", email: "superadmin@example.com", password: "super123", icon: "🏗️", desc: "Full platform access, manage admins & tenants" },
 ];
@@ -146,7 +147,7 @@ export const LoginPage: React.FC = () => {
 						</form>
 						<div style={{ marginTop: "1rem", textAlign: "center", fontSize: "0.78rem", color: "var(--color-text-muted)" }}>
 							Don&apos;t have an account?{" "}
-							<Link to="/mall" style={{ color: "var(--color-accent-strong)" }}>Browse as visitor</Link>
+							<Link to="/register" style={{ color: "var(--color-accent-strong)" }}>Create one</Link>
 						</div>
 					</div>
 				</aside>

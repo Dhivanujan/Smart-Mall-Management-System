@@ -85,6 +85,11 @@ export const HomePage: React.FC = () => {
 					<div className="app-actions">
 						{user ? (
 							<>
+								{user.role === "customer" && (
+									<Link to="/dashboard" className="btn btn-primary">
+										🛍️ My Dashboard
+									</Link>
+								)}
 								{["admin", "super_admin"].includes(user.role) && (
 									<Link to="/admin" className="btn btn-primary">
 										📊 Open admin console
@@ -104,7 +109,10 @@ export const HomePage: React.FC = () => {
 								<Link to="/login" className="btn btn-primary">
 									Sign in to dashboard
 								</Link>
-								<Link to="/mall" className="btn btn-ghost">
+								<Link to="/register" className="btn btn-ghost">
+									Create account
+								</Link>
+								<Link to="/mall" className="btn btn-muted">
 									🛍️ Browse mall directory
 								</Link>
 							</>

@@ -2,7 +2,7 @@ from typing import Dict
 
 import bcrypt
 
-from ..schemas.users import User, UserInDB
+from ..schemas.users import User, UserInDB, UserRegister
 
 
 def _hash_password(password: str) -> str:
@@ -25,6 +25,13 @@ _fake_users_db: Dict[str, UserInDB] = {
 		role="super_admin",
 		hashed_password=_hash_password("super123"),
 	),
+	"customer@example.com": UserInDB(
+		username="customer@example.com",
+		full_name="Demo Customer",
+		email="customer@example.com",
+		role="customer",
+		hashed_password=_hash_password("customer123"),
+	),
 }
 
 
@@ -43,3 +50,18 @@ def authenticate_user(username: str, password: str) -> User | None:
 	if not verify_password(password, user.hashed_password):
 		return None
 	return User(**user.model_dump())
+
+
+def register_user(data: UserRegister) -> User:
+	"""Register a new customer user. Returns the created User."""
+	if data.email in _fake_users_db:
+		raise ValueError("Email already registered")
+	user_in_db = UserInDB(
+		username=data.email,
+		full_name=data.full_name,
+		email=data.email,
+		role="customer",
+		hashed_password=_hash_password(data.password),
+	)
+	_fake_users_db[data.email] = user_in_db
+	return User(**user_in_db.model_dump())
