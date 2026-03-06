@@ -25,68 +25,59 @@ export const OffersPage: React.FC = () => {
 		}
 	};
 
-	if (loading) return <div className="loading-spinner" />;
-
-	const discountColor = (percent: number) => {
-		if (percent >= 50) return "#e74c3c";
-		if (percent >= 30) return "#e67e22";
-		if (percent >= 15) return "#8e44ad";
-		return "#27ae60";
-	};
+	if (loading) return <div className="loading-center"><div className="spinner" /><span className="spinner-text">Loading offers…</span></div>;
 
 	return (
-		<div className="app-page">
+		<div className="customer-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Offers & Deals</h1>
 				<p className="hero-subtitle">Browse active promotions and exclusive deals from mall stores</p>
 			</div>
 
 			{message && (
-				<div className="alert-item alert-info" style={{ marginBottom: "1rem" }}>
-					{message}
+				<div className="message-banner success">
+					<span>✅</span>
+					<span>{message}</span>
 				</div>
 			)}
 
 			{offers.length === 0 ? (
-				<div className="section-card" style={{ textAlign: "center", padding: "3rem" }}>
-					<p style={{ fontSize: "1.2rem", color: "var(--color-text-muted)" }}>No active offers right now. Check back soon!</p>
+				<div className="empty-panel">
+					<span className="empty-panel-icon">🏷️</span>
+					<p>No active offers right now. Check back soon!</p>
 				</div>
 			) : (
-				<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))" }}>
+				<div className="offer-grid">
 					{offers.map((offer) => (
-						<div key={offer.id} className="section-card" style={{ display: "flex", flexDirection: "column", gap: "0.75rem" }}>
-							<div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
-								<h3 style={{ margin: 0, fontSize: "1.1rem" }}>{offer.title}</h3>
-								<span style={{
-									background: discountColor(offer.discount_percent),
-									color: "#fff",
-									padding: "0.2rem 0.5rem",
-									borderRadius: "4px",
-									fontSize: "0.75rem",
-									fontWeight: 600,
-									textTransform: "uppercase",
-								}}>
+						<div key={offer.id} className="offer-card animate-fade-in-up">
+							<div className="offer-card-header">
+								<h3 className="offer-card-title">{offer.title}</h3>
+								<span className={`discount-badge ${offer.discount_percent >= 50 ? "hot" : offer.discount_percent >= 30 ? "great" : ""}`}>
 									{offer.discount_percent}% OFF
 								</span>
 							</div>
-							<p style={{ margin: 0, color: "var(--color-text-muted)", fontSize: "0.9rem" }}>{offer.description}</p>
-							<div style={{ display: "flex", gap: "1rem", fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
+							<p className="offer-card-desc">{offer.description}</p>
+							<div className="offer-meta">
 								<span>🏪 Store #{offer.store_id}</span>
-								{offer.end_time && <span>⏰ Ends: {new Date(offer.end_time * 1000).toLocaleDateString()}</span>}
-							</div>
-							<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginTop: "auto" }}>
-							<span style={{ fontSize: "1.5rem", fontWeight: 700, color: discountColor(offer.discount_percent) }}>
-								{offer.discount_percent}% OFF
-								</span>
-								<button className="btn btn-primary" onClick={() => handleRedeem(offer.id)}>
-									Redeem
-								</button>
+								{offer.end_time && <span>⏰ {new Date(offer.end_time * 1000).toLocaleDateString()}</span>}
 							</div>
 							{offer.max_redemptions && (
-								<div style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>
-									{offer.redemption_count}/{offer.max_redemptions} redeemed
+								<div className="redemption-bar">
+									<div className="redemption-bar-track">
+										<div
+											className="redemption-bar-fill"
+											style={{ width: `${(offer.redemption_count / offer.max_redemptions) * 100}%` }}
+										/>
+									</div>
+									<span className="redemption-bar-label">{offer.redemption_count}/{offer.max_redemptions} claimed</span>
 								</div>
 							)}
+							<div className="offer-footer">
+								<span className="discount-value">{offer.discount_percent}%</span>
+								<button className="btn btn-primary" onClick={() => handleRedeem(offer.id)}>
+									Redeem Offer →
+								</button>
+							</div>
 						</div>
 					))}
 				</div>

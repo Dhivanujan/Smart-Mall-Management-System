@@ -4,6 +4,20 @@ import { apiClient } from "@/services/api/client";
 import { useAuth } from "@/app/providers/AuthProvider";
 import type { StoreSummary } from "@/types";
 
+const ACTIONS = [
+	{ to: "/mall", icon: "🏪", label: "Browse Stores", color: "purple" },
+	{ to: "/queue", icon: "🎫", label: "Join Queue", color: "blue" },
+	{ to: "/parking", icon: "🅿️", label: "Parking", color: "green" },
+	{ to: "/loyalty", icon: "⭐", label: "Loyalty", color: "amber" },
+] as const;
+
+const QUICK_LINKS = [
+	{ to: "/offers", icon: "🏷️", label: "Active Offers", color: "pink" },
+	{ to: "/mall/map", icon: "🗺️", label: "Mall Map", color: "cyan" },
+	{ to: "/notifications", icon: "🔔", label: "Notifications", color: "indigo" },
+	{ to: "/complaints", icon: "📋", label: "Complaints", color: "red" },
+] as const;
+
 export const CustomerDashboardPage: React.FC = () => {
 	const { user } = useAuth();
 	const [stores, setStores] = useState<StoreSummary[]>([]);
@@ -17,74 +31,66 @@ export const CustomerDashboardPage: React.FC = () => {
 	}, []);
 
 	const openStores = stores.filter((s) => s.status === "open");
-	const totalFootfall = stores.reduce((sum, s) => sum + s.current_footfall, 0);
 
 	return (
-		<div className="app-page">
-			<div className="page-header">
-				<h1 className="hero-heading">Welcome, {user?.full_name ?? "Customer"}</h1>
-				<p className="hero-subtitle">Your smart mall companion</p>
+		<div className="customer-page">
+			<div className="welcome-section">
+				<h1 className="welcome-greeting">
+					Welcome back, <span className="name">{user?.full_name ?? "Customer"}</span>
+				</h1>
+				<p className="welcome-subtitle">Your smart mall companion — explore stores, manage queues, and earn rewards.</p>
 			</div>
 
-			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
-				<Link to="/mall" className="metric-card" style={{ textDecoration: "none" }}>
-					<span className="metric-icon">🏪</span>
-					<span className="metric-label">Browse Stores</span>
-					<span className="metric-value">{openStores.length} Open</span>
-				</Link>
-				<Link to="/queue" className="metric-card" style={{ textDecoration: "none" }}>
-					<span className="metric-icon">🎫</span>
-					<span className="metric-label">Queue</span>
-					<span className="metric-value">Join Now</span>
-				</Link>
-				<Link to="/parking" className="metric-card" style={{ textDecoration: "none" }}>
-					<span className="metric-icon">🅿️</span>
-					<span className="metric-label">Parking</span>
-					<span className="metric-value">View Slots</span>
-				</Link>
-				<Link to="/loyalty" className="metric-card" style={{ textDecoration: "none" }}>
-					<span className="metric-icon">⭐</span>
-					<span className="metric-label">Loyalty</span>
-					<span className="metric-value">View Points</span>
-				</Link>
+			<div className="action-grid">
+				{ACTIONS.map((a, i) => (
+					<Link key={a.to} to={a.to} className={`action-card ${a.color} animate-fade-in-up stagger-${i + 1}`}>
+						<span className={`action-card-icon`}>{a.icon}</span>
+						<span className="action-card-text">
+							<span className="action-card-label">{a.label}</span>
+							<span className="action-card-value">
+								{a.to === "/mall" ? `${openStores.length} Open` : "Open →"}
+							</span>
+						</span>
+					</Link>
+				))}
 			</div>
 
-			<div className="section-card" style={{ marginTop: "2rem" }}>
-				<h2 className="section-title">Quick Links</h2>
-				<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
-					<Link to="/offers" className="metric-card" style={{ textDecoration: "none" }}>
-						<span className="metric-icon">🏷️</span>
-						<span className="metric-label">Active Offers</span>
-					</Link>
-					<Link to="/mall/map" className="metric-card" style={{ textDecoration: "none" }}>
-						<span className="metric-icon">🗺️</span>
-						<span className="metric-label">Mall Map</span>
-					</Link>
-					<Link to="/notifications" className="metric-card" style={{ textDecoration: "none" }}>
-						<span className="metric-icon">🔔</span>
-						<span className="metric-label">Notifications</span>
-					</Link>
-					<Link to="/complaints" className="metric-card" style={{ textDecoration: "none" }}>
-						<span className="metric-icon">📋</span>
-						<span className="metric-label">Complaints</span>
-					</Link>
+			<div className="panel animate-fade-in-up stagger-5">
+				<h2 className="panel-title">⚡ Quick Access</h2>
+				<div className="action-grid" style={{ marginBottom: 0 }}>
+					{QUICK_LINKS.map((l) => (
+						<Link key={l.to} to={l.to} className={`action-card ${l.color}`}>
+							<span className="action-card-icon">{l.icon}</span>
+							<span className="action-card-text">
+								<span className="action-card-value" style={{ fontSize: "0.95rem" }}>{l.label}</span>
+							</span>
+						</Link>
+					))}
 				</div>
 			</div>
 
-			{!loading && (
-				<div className="section-card" style={{ marginTop: "2rem" }}>
-					<h2 className="section-title">Popular Stores</h2>
+			{!loading && openStores.length > 0 && (
+				<div className="panel animate-fade-in-up stagger-6" style={{ marginTop: "0.25rem" }}>
+					<div className="panel-header">
+						<h2 className="panel-title">🔥 Popular Stores</h2>
+						<Link to="/mall" className="btn btn-ghost btn-sm">View all</Link>
+					</div>
 					<div className="store-grid">
 						{openStores.slice(0, 4).map((store) => (
 							<Link key={store.id} to={`/mall/stores/${store.id}`} className="store-card" style={{ textDecoration: "none" }}>
 								<div className="store-card-header">
-									<h3>{store.name}</h3>
-									<span className={`status-badge status-${store.status}`}>{store.status}</span>
+									<h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>{store.name}</h3>
+									<span className={`status-badge ${store.status}`}>
+										<span className="dot" />
+										{store.status}
+									</span>
 								</div>
-								<span style={{ color: "var(--color-text-muted)", fontSize: "0.85rem" }}>{store.category}</span>
-								<div style={{ display: "flex", justifyContent: "space-between", marginTop: "0.5rem", fontSize: "0.85rem" }}>
-									<span>⭐ {store.average_rating}</span>
-									<span>👥 {store.current_footfall}</span>
+								<span style={{ color: "var(--color-text-dim)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+									{store.category}
+								</span>
+								<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.75rem", fontSize: "0.85rem" }}>
+									<span style={{ color: "#fbbf24" }}>★ {store.average_rating.toFixed(1)}</span>
+									<span style={{ color: "var(--color-text-muted)" }}>👥 {store.current_footfall}</span>
 								</div>
 							</Link>
 						))}

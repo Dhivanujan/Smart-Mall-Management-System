@@ -58,60 +58,73 @@ export const ParkingPage: React.FC = () => {
 		}
 	};
 
-	if (loading) return <div className="loading-spinner" />;
+	if (loading) return <div className="loading-center"><div className="spinner" /><span className="spinner-text">Loading parking data…</span></div>;
 
 	return (
-		<div className="app-page">
+		<div className="customer-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Parking Management</h1>
 				<p className="hero-subtitle">View availability, reserve slots, and track your parking</p>
 			</div>
 
 			{message && (
-				<div className="alert-item alert-info" style={{ marginBottom: "1rem" }}>
-					{message}
+				<div className="message-banner info">
+					<span>ℹ️</span>
+					<span>{message}</span>
 				</div>
 			)}
 
 			{summary && (
 				<>
-					<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))" }}>
-						<div className="metric-card">
-							<span className="metric-icon">🅿️</span>
-							<span className="metric-label">Total Slots</span>
-							<span className="metric-value">{summary.total_slots}</span>
+					<div className="stat-grid">
+						<div className="stat-card animate-fade-in-up stagger-1">
+							<span className="stat-card-icon purple">🅿️</span>
+							<span className="stat-card-text">
+								<span className="stat-card-label">Total Slots</span>
+								<span className="stat-card-value">{summary.total_slots}</span>
+							</span>
 						</div>
-						<div className="metric-card">
-							<span className="metric-icon">✅</span>
-							<span className="metric-label">Available</span>
-							<span className="metric-value" style={{ color: "var(--color-success)" }}>{summary.available}</span>
+						<div className="stat-card animate-fade-in-up stagger-2">
+							<span className="stat-card-icon green">✅</span>
+							<span className="stat-card-text">
+								<span className="stat-card-label">Available</span>
+								<span className="stat-card-value" style={{ color: "var(--color-success)" }}>{summary.available}</span>
+							</span>
 						</div>
-						<div className="metric-card">
-							<span className="metric-icon">🚗</span>
-							<span className="metric-label">Occupied</span>
-							<span className="metric-value">{summary.occupied}</span>
+						<div className="stat-card animate-fade-in-up stagger-3">
+							<span className="stat-card-icon blue">🚗</span>
+							<span className="stat-card-text">
+								<span className="stat-card-label">Occupied</span>
+								<span className="stat-card-value">{summary.occupied}</span>
+							</span>
 						</div>
-						<div className="metric-card">
-							<span className="metric-icon">📌</span>
-							<span className="metric-label">Reserved</span>
-							<span className="metric-value">{summary.reserved}</span>
+						<div className="stat-card animate-fade-in-up stagger-4">
+							<span className="stat-card-icon amber">📌</span>
+							<span className="stat-card-text">
+								<span className="stat-card-label">Reserved</span>
+								<span className="stat-card-value">{summary.reserved}</span>
+							</span>
 						</div>
-						<div className="metric-card">
-							<span className="metric-icon">📊</span>
-							<span className="metric-label">Utilization</span>
-							<span className="metric-value">{summary.utilization_percent}%</span>
+						<div className="stat-card animate-fade-in-up stagger-5">
+							<span className="stat-card-icon cyan">📊</span>
+							<span className="stat-card-text">
+								<span className="stat-card-label">Utilization</span>
+								<span className="stat-card-value">{summary.utilization_percent}%</span>
+							</span>
 						</div>
 						{summary.is_peak && (
-							<div className="metric-card" style={{ borderColor: "var(--color-warning)" }}>
-								<span className="metric-icon">⚠️</span>
-								<span className="metric-label">Peak Hour</span>
-								<span className="metric-value" style={{ color: "var(--color-warning)" }}>Active</span>
+							<div className="stat-card animate-fade-in-up stagger-6" style={{ borderColor: "rgba(245, 158, 11, 0.3)" }}>
+								<span className="stat-card-icon amber">⚠️</span>
+								<span className="stat-card-text">
+									<span className="stat-card-label">Peak Hour</span>
+									<span className="stat-card-value" style={{ color: "var(--color-warning)" }}>Active</span>
+								</span>
 							</div>
 						)}
 					</div>
 
-					<div className="section-card" style={{ marginTop: "2rem" }}>
-						<h2 className="section-title">Zone Availability</h2>
+					<div className="panel">
+						<h2 className="panel-title">📍 Zone Availability</h2>
 						<div className="data-table-wrapper">
 							<table className="data-table">
 								<thead>
@@ -129,20 +142,26 @@ export const ParkingPage: React.FC = () => {
 										<tr key={zone}>
 											<td><strong>Zone {zone}</strong></td>
 											<td>{stats.total}</td>
-											<td style={{ color: "var(--color-success)" }}>{stats.available}</td>
+											<td style={{ color: "var(--color-success)", fontWeight: 600 }}>{stats.available}</td>
 											<td>{stats.occupied}</td>
 											<td>{stats.reserved}</td>
 											<td>
-												<div className="zone-bar">
-													<div
-														className="zone-bar-fill"
-														style={{
-															width: `${stats.utilization_percent}%`,
-															backgroundColor: stats.utilization_percent > 80 ? "var(--color-danger)" : stats.utilization_percent > 50 ? "var(--color-warning)" : "var(--color-success)",
-														}}
-													/>
+												<div className="zone-util-bar">
+													<div className="zone-util-track">
+														<div
+															className="zone-util-fill"
+															style={{
+																width: `${stats.utilization_percent}%`,
+																background: stats.utilization_percent > 80
+																	? "linear-gradient(90deg, #ef4444, #f87171)"
+																	: stats.utilization_percent > 50
+																		? "linear-gradient(90deg, #f59e0b, #fbbf24)"
+																		: "linear-gradient(90deg, #22c55e, #4ade80)",
+															}}
+														/>
+													</div>
+													<span className="zone-util-label">{stats.utilization_percent}%</span>
 												</div>
-												<span style={{ fontSize: "0.8rem", color: "var(--color-text-muted)" }}>{stats.utilization_percent}%</span>
 											</td>
 										</tr>
 									))}
@@ -152,14 +171,12 @@ export const ParkingPage: React.FC = () => {
 					</div>
 
 					{user && (
-						<div className="section-card" style={{ marginTop: "2rem" }}>
-							<h2 className="section-title">Reserve a Parking Slot</h2>
-							<div style={{ display: "flex", gap: "1rem", alignItems: "flex-end", flexWrap: "wrap" }}>
-								<div>
-									<label style={{ display: "block", marginBottom: "0.5rem", color: "var(--color-text-muted)", fontSize: "0.85rem" }}>
-										Preferred Zone
-									</label>
-									<select className="filter-select" value={selectedZone} onChange={(e) => setSelectedZone(e.target.value)}>
+						<div className="panel">
+							<h2 className="panel-title">🎫 Reserve a Parking Slot</h2>
+							<div className="reserve-form">
+								<div className="form-group">
+									<label className="form-label">Preferred Zone</label>
+									<select className="form-control" value={selectedZone} onChange={(e) => setSelectedZone(e.target.value)}>
 										<option value="">Any Zone</option>
 										{Object.keys(summary.zone_stats).map((z) => (
 											<option key={z} value={z}>Zone {z} ({summary.zone_stats[z].available} available)</option>
@@ -167,15 +184,15 @@ export const ParkingPage: React.FC = () => {
 									</select>
 								</div>
 								<button className="btn btn-primary" onClick={handleReserve} disabled={actionLoading}>
-									{actionLoading ? "Reserving..." : "Reserve Slot"}
+									{actionLoading ? "Reserving..." : "Reserve Slot →"}
 								</button>
 							</div>
 						</div>
 					)}
 
 					{mySlots.length > 0 && (
-						<div className="section-card" style={{ marginTop: "2rem" }}>
-							<h2 className="section-title">My Parking</h2>
+						<div className="panel">
+							<h2 className="panel-title">🚗 My Parking</h2>
 							<div className="data-table-wrapper">
 								<table className="data-table">
 									<thead>
@@ -194,14 +211,18 @@ export const ParkingPage: React.FC = () => {
 												<td><strong>{slot.slot_id}</strong></td>
 												<td>Zone {slot.zone}</td>
 												<td>Floor {slot.floor}</td>
-												<td><span className={`status-badge status-${slot.status === "reserved" ? "open" : "closed"}`}>{slot.status}</span></td>
+												<td>
+													<span className={`status-badge ${slot.status === "reserved" ? "active" : "inactive"}`}>
+														<span className="dot" />
+														{slot.status}
+													</span>
+												</td>
 												<td>{slot.duration_minutes > 0 ? `${slot.duration_minutes} min` : "—"}</td>
 												<td>
 													<button
-														className="btn btn-ghost"
+														className="btn btn-ghost btn-sm"
 														onClick={() => handleRelease(slot.slot_id)}
 														disabled={actionLoading}
-														style={{ fontSize: "0.8rem" }}
 													>
 														Release
 													</button>

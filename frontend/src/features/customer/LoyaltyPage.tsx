@@ -46,7 +46,7 @@ export const LoyaltyPage: React.FC = () => {
 		}
 	};
 
-	if (loading) return <div className="loading-spinner" />;
+	if (loading) return <div className="loading-center"><div className="spinner" /><span className="spinner-text">Loading loyalty data…</span></div>;
 
 	const tierColors: Record<string, string> = {
 		Bronze: "#cd7f32",
@@ -55,71 +55,97 @@ export const LoyaltyPage: React.FC = () => {
 		Platinum: "#e5e4e2",
 	};
 
+	const tierThresholds = [
+		{ name: "Bronze", pts: 0 },
+		{ name: "Silver", pts: 1000 },
+		{ name: "Gold", pts: 5000 },
+		{ name: "Platinum", pts: 10000 },
+	];
+
 	return (
-		<div className="app-page">
+		<div className="customer-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Loyalty & Rewards</h1>
 				<p className="hero-subtitle">Earn points, unlock rewards, and track your loyalty journey</p>
 			</div>
 
 			{message && (
-				<div className="alert-item alert-info" style={{ marginBottom: "1rem" }}>
-					{message}
+				<div className="message-banner info">
+					<span>ℹ️</span>
+					<span>{message}</span>
 				</div>
 			)}
 
 			{account && (
 				<>
-					<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
-						<div className="metric-card" style={{ borderColor: tierColors[account.tier] }}>
-							<span className="metric-icon">🏆</span>
-							<span className="metric-label">Current Tier</span>
-							<span className="metric-value" style={{ color: tierColors[account.tier] }}>{account.tier}</span>
+					<div className="stat-grid">
+						<div className="stat-card animate-fade-in-up stagger-1" style={{ borderColor: `${tierColors[account.tier]}44` }}>
+							<span className="stat-card-icon amber">🏆</span>
+							<span className="stat-card-text">
+								<span className="stat-card-label">Current Tier</span>
+								<span className="stat-card-value" style={{ color: tierColors[account.tier] }}>{account.tier}</span>
+							</span>
 						</div>
-						<div className="metric-card">
-							<span className="metric-icon">⭐</span>
-							<span className="metric-label">Available Points</span>
-							<span className="metric-value" style={{ color: "var(--color-accent-strong)" }}>{account.total_points.toLocaleString()}</span>
+						<div className="stat-card animate-fade-in-up stagger-2">
+							<span className="stat-card-icon purple">⭐</span>
+							<span className="stat-card-text">
+								<span className="stat-card-label">Available Points</span>
+								<span className="stat-card-value">{account.total_points.toLocaleString()}</span>
+							</span>
 						</div>
-						<div className="metric-card">
-							<span className="metric-icon">📈</span>
-							<span className="metric-label">Lifetime Earned</span>
-							<span className="metric-value">{account.lifetime_earned.toLocaleString()}</span>
+						<div className="stat-card animate-fade-in-up stagger-3">
+							<span className="stat-card-icon green">📈</span>
+							<span className="stat-card-text">
+								<span className="stat-card-label">Lifetime Earned</span>
+								<span className="stat-card-value">{account.lifetime_earned.toLocaleString()}</span>
+							</span>
 						</div>
-						<div className="metric-card">
-							<span className="metric-icon">🎁</span>
-							<span className="metric-label">Lifetime Redeemed</span>
-							<span className="metric-value">{account.lifetime_redeemed.toLocaleString()}</span>
-						</div>
-					</div>
-
-					<div className="section-card" style={{ marginTop: "2rem" }}>
-						<h2 className="section-title">Tier Progress</h2>
-						<div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem", fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
-							<span>Bronze (0)</span>
-							<span>Silver (1K)</span>
-							<span>Gold (5K)</span>
-							<span>Platinum (10K)</span>
-						</div>
-						<div className="zone-bar" style={{ height: "12px" }}>
-							<div
-								className="zone-bar-fill"
-								style={{
-									width: `${Math.min((account.lifetime_earned / 10000) * 100, 100)}%`,
-									background: `linear-gradient(90deg, #cd7f32, #c0c0c0, #ffd700, #e5e4e2)`,
-								}}
-							/>
+						<div className="stat-card animate-fade-in-up stagger-4">
+							<span className="stat-card-icon pink">🎁</span>
+							<span className="stat-card-text">
+								<span className="stat-card-label">Lifetime Redeemed</span>
+								<span className="stat-card-value">{account.lifetime_redeemed.toLocaleString()}</span>
+							</span>
 						</div>
 					</div>
 
-					<div className="section-card" style={{ marginTop: "2rem" }}>
-						<h2 className="section-title">Redeem Points</h2>
-						<div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", alignItems: "flex-end" }}>
-							<div>
-								<label style={{ display: "block", marginBottom: "0.5rem", color: "var(--color-text-muted)", fontSize: "0.85rem" }}>Points</label>
+					<div className="panel">
+						<h2 className="panel-title">📊 Tier Progress</h2>
+						<div className="tier-progress-container">
+							<div className="tier-progress-labels">
+								{tierThresholds.map((t) => (
+									<span
+										key={t.name}
+										className={`tier-label ${account.tier === t.name ? "active" : ""}`}
+										style={account.tier === t.name ? { color: tierColors[t.name] } : undefined}
+									>
+										{t.name}
+										<small>{t.pts > 0 ? `${(t.pts / 1000).toFixed(0)}K` : "0"}</small>
+									</span>
+								))}
+							</div>
+							<div className="zone-util-bar" style={{ marginTop: "0.5rem" }}>
+								<div className="zone-util-track" style={{ height: "10px" }}>
+									<div
+										className="zone-util-fill"
+										style={{
+											width: `${Math.min((account.lifetime_earned / 10000) * 100, 100)}%`,
+											background: `linear-gradient(90deg, #cd7f32, #c0c0c0, #ffd700, #e5e4e2)`,
+										}}
+									/>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div className="panel">
+						<h2 className="panel-title">🎁 Redeem Points</h2>
+						<div className="reserve-form">
+							<div className="form-group">
+								<label className="form-label">Points to Redeem</label>
 								<input
 									type="number"
-									className="form-input"
+									className="form-control"
 									placeholder="e.g. 100"
 									value={redeemAmount}
 									onChange={(e) => setRedeemAmount(e.target.value)}
@@ -127,58 +153,62 @@ export const LoyaltyPage: React.FC = () => {
 									max={account.total_points}
 								/>
 							</div>
-							<div style={{ flex: 1, minWidth: "200px" }}>
-								<label style={{ display: "block", marginBottom: "0.5rem", color: "var(--color-text-muted)", fontSize: "0.85rem" }}>Description</label>
+							<div className="form-group" style={{ flex: 1, minWidth: "200px" }}>
+								<label className="form-label">Description</label>
 								<input
 									type="text"
-									className="form-input"
+									className="form-control"
 									placeholder="e.g. Discount on next purchase"
 									value={redeemDesc}
 									onChange={(e) => setRedeemDesc(e.target.value)}
 								/>
 							</div>
 							<button className="btn btn-primary" onClick={handleRedeem}>
-								Redeem
+								Redeem Points →
 							</button>
 						</div>
 					</div>
 
-					<div className="section-card" style={{ marginTop: "2rem" }}>
-						<h2 className="section-title">Transaction History</h2>
-						<div className="data-table-wrapper">
-							<table className="data-table">
-								<thead>
-									<tr>
-										<th>Type</th>
-										<th>Points</th>
-										<th>Description</th>
-										<th>Date</th>
-									</tr>
-								</thead>
-								<tbody>
-									{transactions.map((tx) => (
-										<tr key={tx.id}>
-											<td>
-												<span style={{
+					<div className="panel">
+						<h2 className="panel-title">📋 Transaction History</h2>
+						{transactions.length === 0 ? (
+							<div className="empty-panel">
+								<span className="empty-panel-icon">📭</span>
+								<p>No transactions yet</p>
+							</div>
+						) : (
+							<div className="data-table-wrapper">
+								<table className="data-table">
+									<thead>
+										<tr>
+											<th>Type</th>
+											<th>Points</th>
+											<th>Description</th>
+											<th>Date</th>
+										</tr>
+									</thead>
+									<tbody>
+										{transactions.map((tx) => (
+											<tr key={tx.id}>
+												<td>
+													<span className={`complaint-status-badge ${tx.transaction_type === "earn" ? "resolved" : "pending"}`}>
+														{tx.transaction_type === "earn" ? "+" : "−"} {tx.transaction_type.toUpperCase()}
+													</span>
+												</td>
+												<td style={{
 													color: tx.transaction_type === "earn" ? "var(--color-success)" : "var(--color-danger)",
 													fontWeight: 600,
 												}}>
-													{tx.transaction_type === "earn" ? "+" : "−"} {tx.transaction_type.toUpperCase()}
-												</span>
-											</td>
-											<td style={{
-												color: tx.transaction_type === "earn" ? "var(--color-success)" : "var(--color-danger)",
-												fontWeight: 600,
-											}}>
-												{tx.transaction_type === "earn" ? "+" : "−"}{tx.points}
-											</td>
-											<td>{tx.description}</td>
-											<td style={{ color: "var(--color-text-muted)" }}>{new Date(tx.timestamp * 1000).toLocaleDateString()}</td>
-										</tr>
-									))}
-								</tbody>
-							</table>
-						</div>
+													{tx.transaction_type === "earn" ? "+" : "−"}{tx.points}
+												</td>
+												<td>{tx.description}</td>
+												<td style={{ color: "var(--color-text-muted)" }}>{new Date(tx.timestamp * 1000).toLocaleDateString()}</td>
+											</tr>
+										))}
+									</tbody>
+								</table>
+							</div>
+						)}
 					</div>
 				</>
 			)}
