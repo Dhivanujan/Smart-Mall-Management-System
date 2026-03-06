@@ -1,19 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-import { apiClient } from "../../services/api/client";
-import { DashboardLayout } from "../../components/layout/DashboardLayout";
-
-interface StoreMetric {
-	store_id: number;
-	name: string;
-	daily_revenue: number;
-	footfall: number;
-	open_tickets: number;
-}
-
-interface StoreMetricsResponse {
-	stores: StoreMetric[];
-}
+import { apiClient } from "@/services/api/client";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { ADMIN_NAV } from "@/constants/navigation";
+import type { StoreMetric, StoreMetricsResponse } from "@/types";
 
 export const AdminStoresPage: React.FC = () => {
 	const [stores, setStores] = useState<StoreMetric[]>([]);
@@ -79,10 +69,7 @@ export const AdminStoresPage: React.FC = () => {
 	return (
 		<DashboardLayout
 			title="Admin Panel"
-			navItems={[
-				{ to: "/admin", label: "Dashboard", icon: "📊" },
-				{ to: "/admin/stores", label: "Stores", icon: "🏪" },
-			]}
+			navItems={ADMIN_NAV}
 		>
 			{/* Header */}
 			<div className="flex-between" style={{ flexWrap: "wrap", gap: "0.75rem" }}>

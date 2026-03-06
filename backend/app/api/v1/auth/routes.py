@@ -7,10 +7,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from ....auth.schemas.tokens import Token
 from ....auth.schemas.users import User
 from ....auth.services.security import (
-	ACCESS_TOKEN_EXPIRE_MINUTES,
 	create_access_token,
 	get_current_active_user,
 )
+from ....core.config import get_settings
 
 
 router = APIRouter()
@@ -20,12 +20,7 @@ router = APIRouter()
 async def login_for_access_token(
 	form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
 ) -> Token:
-	"""Issue a JWT access token for the given credentials.
-
-	This is a mock implementation that validates against an in-memory
-	user store. It is sufficient for wiring up admin/super-admin panels
-	end-to-end and can later be replaced with real persistence.
-	"""
+	"""Issue a JWT access token for the given credentials."""
 
 	from ....auth.services.users import authenticate_user
 
@@ -37,7 +32,8 @@ async def login_for_access_token(
 			headers={"WWW-Authenticate": "Bearer"},
 		)
 
-	access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+	settings = get_settings()
+	access_token_expires = timedelta(minutes=settings.jwt_access_token_expire_minutes)
 	access_token = create_access_token(
 		data={"sub": user.username, "role": user.role}, expires_delta=access_token_expires
 	)

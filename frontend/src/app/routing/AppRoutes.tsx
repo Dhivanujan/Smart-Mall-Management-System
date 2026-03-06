@@ -2,16 +2,16 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 
 import { ProtectedRoute } from "./ProtectedRoute";
-import { LoginPage } from "../../features/auth/LoginPage";
-import { AdminDashboardPage } from "../../features/store-admin/AdminDashboardPage";
-import { SuperAdminDashboardPage } from "../../features/super-admin/SuperAdminDashboardPage";
-import { AdminStoresPage } from "../../features/store-admin/AdminStoresPage";
-import { SuperAdminAdminsPage } from "../../features/super-admin/SuperAdminAdminsPage";
-import { SuperAdminTenantsPage } from "../../features/super-admin/SuperAdminTenantsPage";
-import { MallOverviewPage } from "../../features/customer/MallOverviewPage";
-import { StoreDetailsPage } from "../../features/customer/StoreDetailsPage";
-import { HomePage } from "../../pages/HomePage";
-import { NotFoundPage } from "../../pages/NotFoundPage";
+import { LoginPage } from "@/features/auth/LoginPage";
+import { AdminDashboardPage } from "@/features/store-admin/AdminDashboardPage";
+import { SuperAdminDashboardPage } from "@/features/super-admin/SuperAdminDashboardPage";
+import { AdminStoresPage } from "@/features/store-admin/AdminStoresPage";
+import { SuperAdminAdminsPage } from "@/features/super-admin/SuperAdminAdminsPage";
+import { SuperAdminTenantsPage } from "@/features/super-admin/SuperAdminTenantsPage";
+import { MallOverviewPage } from "@/features/customer/MallOverviewPage";
+import { StoreDetailsPage } from "@/features/customer/StoreDetailsPage";
+import { HomePage } from "@/pages/HomePage";
+import { NotFoundPage } from "@/pages/NotFoundPage";
 
 export const AppRoutes: React.FC = () => {
 	return (

@@ -1,21 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 
-import { apiClient } from "../../services/api/client";
-
-interface StoreSummary {
-	id: number;
-	name: string;
-	category: string;
-	status: string;
-	average_rating: number;
-	current_footfall: number;
-	current_occupancy_percent: number;
-}
-
-interface StoresResponse {
-	stores: StoreSummary[];
-}
+import { apiClient } from "@/services/api/client";
+import type { StoreSummary, StoresResponse } from "@/types";
 
 const StarRating: React.FC<{ rating: number }> = ({ rating }) => {
 	const full = Math.floor(rating);

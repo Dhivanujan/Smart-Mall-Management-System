@@ -1,33 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-import { useAuth } from "../../app/providers/AuthProvider";
-import { apiClient } from "../../services/api/client";
-import { DashboardLayout } from "../../components/layout/DashboardLayout";
-
-interface SuperMetricsResponse {
-	metrics: {
-		total_malls: number;
-		total_stores: number;
-		active_admins: number;
-		system_uptime_days: number;
-	};
-}
-
-interface AdminSummary {
-	username: string;
-	full_name: string;
-	mall: string;
-}
-
-interface SuperAdminsResponse {
-	admins: AdminSummary[];
-}
-
-const SA_NAV = [
-	{ to: "/super-admin", label: "Dashboard", icon: "📊" },
-	{ to: "/super-admin/admins", label: "Admins", icon: "👥" },
-	{ to: "/super-admin/tenants", label: "Tenants & Billing", icon: "💰" },
-];
+import { useAuth } from "@/app/providers/AuthProvider";
+import { apiClient } from "@/services/api/client";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { SUPER_ADMIN_NAV } from "@/constants/navigation";
+import type { SuperMetricsResponse, AdminSummary, SuperAdminsResponse } from "@/types";
 
 export const SuperAdminDashboardPage: React.FC = () => {
 	const { user } = useAuth();
@@ -70,7 +47,7 @@ export const SuperAdminDashboardPage: React.FC = () => {
 	}, []);
 
 	return (
-		<DashboardLayout title="Super Admin Panel" navItems={SA_NAV}>
+		<DashboardLayout title="Super Admin Panel" navItems={SUPER_ADMIN_NAV}>
 			{/* Header */}
 			<div className="flex-between" style={{ flexWrap: "wrap", gap: "0.75rem" }}>
 				<div>

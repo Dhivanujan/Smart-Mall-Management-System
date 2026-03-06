@@ -8,18 +8,16 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# System dependencies (add build tools/db clients here later as needed)
+# System dependencies
 RUN apt-get update \
 	&& apt-get install -y --no-install-recommends build-essential \
 	&& rm -rf /var/lib/apt/lists/*
 
-RUN pip install --upgrade pip \
-	&& pip install \
-		fastapi==0.115.0 \
-		"uvicorn[standard]"==0.30.0 \
-		pydantic==2.8.0 \
-		python-dotenv==1.0.1
+# Install Python dependencies from pyproject.toml
+COPY backend/pyproject.toml ./pyproject.toml
+RUN pip install --upgrade pip && pip install .
 
+# Copy application source
 COPY backend/app ./app
 
 EXPOSE 8000

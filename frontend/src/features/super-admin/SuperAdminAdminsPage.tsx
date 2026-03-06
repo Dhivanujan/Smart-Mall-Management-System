@@ -1,23 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-import { apiClient } from "../../services/api/client";
-import { DashboardLayout } from "../../components/layout/DashboardLayout";
-
-interface AdminSummary {
-	username: string;
-	full_name: string;
-	mall: string;
-}
-
-interface AdminsResponse {
-	admins: AdminSummary[];
-}
-
-const SA_NAV = [
-	{ to: "/super-admin", label: "Dashboard", icon: "📊" },
-	{ to: "/super-admin/admins", label: "Admins", icon: "👥" },
-	{ to: "/super-admin/tenants", label: "Tenants & Billing", icon: "💰" },
-];
+import { apiClient } from "@/services/api/client";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { SUPER_ADMIN_NAV } from "@/constants/navigation";
+import type { AdminSummary, SuperAdminsResponse as AdminsResponse } from "@/types";
 
 export const SuperAdminAdminsPage: React.FC = () => {
 	const [admins, setAdmins] = useState<AdminSummary[]>([]);
@@ -66,7 +52,7 @@ export const SuperAdminAdminsPage: React.FC = () => {
 	const mallCount = useMemo(() => new Set(admins.map((a) => a.mall)).size, [admins]);
 
 	return (
-		<DashboardLayout title="Super Admin Panel" navItems={SA_NAV}>
+		<DashboardLayout title="Super Admin Panel" navItems={SUPER_ADMIN_NAV}>
 			{/* Header */}
 			<div className="flex-between" style={{ flexWrap: "wrap", gap: "0.75rem" }}>
 				<div>

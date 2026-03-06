@@ -1,14 +1,8 @@
 import React, { useCallback, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 
-import { useAuth } from "../../app/providers/AuthProvider";
-
-interface NavItem {
-	to: string;
-	label: string;
-	icon?: string;
-	badge?: number;
-}
+import { useAuth } from "@/app/providers/AuthProvider";
+import type { NavItem } from "@/types";
 
 interface DashboardLayoutProps {
 	title: string;

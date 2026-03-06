@@ -1,15 +1,10 @@
 import React, { createContext, useCallback, useContext, useEffect, useState } from "react";
 
-import { apiClient } from "../../services/api/client";
+import { apiClient } from "@/services/api/client";
 
-export type UserRole = "admin" | "super_admin" | "customer" | "guest";
+import type { AuthUser, UserRole } from "@/types";
 
-export interface AuthUser {
-	username: string;
-	full_name?: string | null;
-	email?: string | null;
-	role: UserRole;
-}
+export type { UserRole, AuthUser };
 
 interface AuthContextValue {
 	user: AuthUser | null;

@@ -19,6 +19,9 @@ app/auth/services/users.py
 app/core/__init__.py
 app/core/config/__init__.py
 app/core/logging/__init__.py
+app/models/__init__.py
+app/models/queue.py
+app/models/store.py
 app/websocket/__init__.py
 app/websocket/managers/queues.py
 app/websocket/routes/__init__.py

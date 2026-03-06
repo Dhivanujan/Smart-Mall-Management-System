@@ -2,25 +2,10 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
+from ....models.store import ProductSummary, StoreSummary
+
 
 router = APIRouter()
-
-
-class StoreSummary(dict):
-    id: int
-    name: str
-    category: str
-    status: str
-    average_rating: float
-    current_footfall: int
-    current_occupancy_percent: float
-
-
-class ProductSummary(dict):
-    id: int
-    name: str
-    price: float
-    category: str
 
 
 # In-memory mock data for the public storefront.
@@ -74,20 +59,14 @@ _PRODUCTS_BY_STORE: dict[int, list[ProductSummary]] = {
 
 @router.get("/", summary="List mall stores")
 async def list_stores() -> dict:
-    """Return a public list of stores in the mall.
-
-    This endpoint is intentionally unauthenticated so that the customer
-    storefront can be browsed without logging in.
-    """
-
-    return {"stores": _STORES}
+    """Return a public list of stores in the mall."""
+    return {"stores": [s.model_dump() for s in _STORES]}
 
 
 @router.get("/{store_id}", summary="Get store details")
 async def get_store(store_id: int) -> dict:
     """Return details for a single store, including high-level metrics."""
-
-    store = next((s for s in _STORES if s["id"] == store_id), None)
+    store = next((s for s in _STORES if s.id == store_id), None)
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
 
@@ -100,8 +79,8 @@ async def get_store(store_id: int) -> dict:
     }
 
     return {
-        "store": store,
-        "products_sample": products[:3],
+        "store": store.model_dump(),
+        "products_sample": [p.model_dump() for p in products[:3]],
         "today_metrics": today_metrics,
     }
 
@@ -109,10 +88,9 @@ async def get_store(store_id: int) -> dict:
 @router.get("/{store_id}/products", summary="List store products")
 async def list_store_products(store_id: int) -> dict:
     """Return a mock product catalogue for a store."""
-
-    store = next((s for s in _STORES if s["id"] == store_id), None)
+    store = next((s for s in _STORES if s.id == store_id), None)
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
 
     products = _PRODUCTS_BY_STORE.get(store_id, [])
-    return {"store": store, "products": products}
+    return {"store": store.model_dump(), "products": [p.model_dump() for p in products]}

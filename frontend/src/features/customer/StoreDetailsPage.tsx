@@ -1,39 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 
-import { apiClient } from "../../services/api/client";
-
-interface StoreSummary {
-	id: number;
-	name: string;
-	category: string;
-	status: string;
-	average_rating: number;
-	current_footfall: number;
-	current_occupancy_percent: number;
-}
-
-interface ProductSummary {
-	id: number;
-	name: string;
-	price: number;
-	category: string;
-}
-
-interface StoreDetailsResponse {
-	store: StoreSummary;
-	products_sample: ProductSummary[];
-	today_metrics: {
-		today_revenue: number;
-		today_transactions: number;
-		conversion_rate_percent: number;
-	};
-}
-
-interface StoreProductsResponse {
-	store: StoreSummary;
-	products: ProductSummary[];
-}
+import { apiClient } from "@/services/api/client";
+import type { ProductSummary, StoreDetailsResponse, StoreProductsResponse } from "@/types";
 
 export const StoreDetailsPage: React.FC = () => {
 	const { storeId } = useParams<{ storeId: string }>();

@@ -1,12 +1,10 @@
-"""FastAPI application entrypoint.
-
-This module exposes the FastAPI ``app`` instance used by ASGI servers
-like Uvicorn or Hypercorn.
-"""
+"""FastAPI application entrypoint."""
 
 from __future__ import annotations
 
 import logging
+from collections.abc import AsyncIterator
+from contextlib import asynccontextmanager
 from typing import Any, Dict
 
 from fastapi import FastAPI, Request
@@ -25,22 +23,20 @@ from .websocket.routes import queues_router
 logger = logging.getLogger("smart_mall.app")
 
 
-def custom_generate_unique_id(route: APIRoute) -> str:
-	"""Generate stable operation IDs for OpenAPI.
-
-	This makes the generated schema more predictable for clients.
-	"""
-
+def _custom_generate_unique_id(route: APIRoute) -> str:
 	return f"{route.tags[0]}-{route.name}" if route.tags else route.name or "unknown"
 
 
-def create_app() -> FastAPI:
-	"""Application factory.
+@asynccontextmanager
+async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
+	settings = get_settings()
+	logger.info("Starting Smart Mall backend", extra={"env": settings.environment})
+	yield
+	logger.info("Shutting down Smart Mall backend")
 
-	Registers core routers, health checks, middleware, and global error
-	handlers. As the layered architecture expands (domain, application,
-	etc.), their routers can be mounted here.
-	"""
+
+def create_app() -> FastAPI:
+	"""Application factory."""
 
 	settings = get_settings()
 	setup_logging("DEBUG" if settings.debug else "INFO")
@@ -48,7 +44,8 @@ def create_app() -> FastAPI:
 	app = FastAPI(
 		title=settings.project_name,
 		version=settings.version,
-		generate_unique_id_function=custom_generate_unique_id,
+		lifespan=_lifespan,
+		generate_unique_id_function=_custom_generate_unique_id,
 	)
 
 	# CORS
@@ -61,22 +58,13 @@ def create_app() -> FastAPI:
 			allow_headers=["*"],
 		)
 
-	@app.on_event("startup")
-	async def on_startup() -> None:  # pragma: no cover - simple side-effect
-		logger.info("Starting Smart Mall backend", extra={"env": settings.environment})
-
-	@app.on_event("shutdown")
-	async def on_shutdown() -> None:  # pragma: no cover - simple side-effect
-		logger.info("Shutting down Smart Mall backend")
-
-	# Health and root endpoints
+	# Health endpoints
 	@app.get("/health", tags=["health"])
 	async def health() -> Dict[str, str]:
 		return {"status": "ok"}
 
 	@app.get("/health/ready", tags=["health"])
 	async def readiness() -> Dict[str, str]:
-		# Placeholder for future checks (DB, cache, external services, etc.)
 		return {"status": "ready"}
 
 	@app.get("/", tags=["root"])

@@ -1,56 +1,18 @@
 import React, { useEffect, useState } from "react";
 
-import { useAuth } from "../../app/providers/AuthProvider";
-import { apiClient } from "../../services/api/client";
-import { DashboardLayout } from "../../components/layout/DashboardLayout";
-
-interface AdminMetricsResponse {
-	user: {
-		full_name?: string | null;
-		username: string;
-	};
-	metrics: {
-		total_stores: number;
-		active_customers: number;
-		daily_revenue: number;
-		open_tickets: number;
-	};
-}
-
-interface StoreMetric {
-	store_id: number;
-	name: string;
-	daily_revenue: number;
-	footfall: number;
-	open_tickets: number;
-}
-
-interface StoreMetricsResponse {
-	stores: StoreMetric[];
-}
-
-interface MonitoringSnapshot {
-	timestamp: string;
-	footfall: {
-		mall_total: number;
-		by_zone: Record<string, number>;
-	};
-	alerts: { id: string; severity: string; message: string }[];
-}
-
-interface MonitoringResponse {
-	snapshot: MonitoringSnapshot;
-}
-
-interface StoreSummary {
-	id: number;
-	name: string;
-	status: string;
-}
-
-interface StoresResponse {
-	stores: StoreSummary[];
-}
+import { useAuth } from "@/app/providers/AuthProvider";
+import { apiClient } from "@/services/api/client";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { ADMIN_NAV } from "@/constants/navigation";
+import type {
+	AdminMetricsResponse,
+	StoreMetric,
+	StoreMetricsResponse,
+	MonitoringSnapshot,
+	MonitoringResponse,
+	StoreSummary,
+	StoresResponse,
+} from "@/types";
 
 const severityColor = (s: string) => {
 	switch (s.toLowerCase()) {
@@ -121,10 +83,7 @@ export const AdminDashboardPage: React.FC = () => {
 	return (
 		<DashboardLayout
 			title="Admin Panel"
-			navItems={[
-				{ to: "/admin", label: "Dashboard", icon: "📊" },
-				{ to: "/admin/stores", label: "Stores", icon: "🏪" },
-			]}
+			navItems={ADMIN_NAV}
 		>
 			{/* Header */}
 			<div className="flex-between" style={{ flexWrap: "wrap", gap: "0.75rem" }}>

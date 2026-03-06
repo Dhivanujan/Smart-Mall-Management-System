@@ -1,24 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-import { apiClient } from "../../services/api/client";
-import { DashboardLayout } from "../../components/layout/DashboardLayout";
-
-interface TenantSummary {
-	mall_id: number;
-	mall_name: string;
-	monthly_recurring_revenue: number;
-	occupancy_percent: number;
-}
-
-interface TenantsResponse {
-	tenants: TenantSummary[];
-}
-
-const SA_NAV = [
-	{ to: "/super-admin", label: "Dashboard", icon: "📊" },
-	{ to: "/super-admin/admins", label: "Admins", icon: "👥" },
-	{ to: "/super-admin/tenants", label: "Tenants & Billing", icon: "💰" },
-];
+import { apiClient } from "@/services/api/client";
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { SUPER_ADMIN_NAV } from "@/constants/navigation";
+import type { TenantSummary, TenantsResponse } from "@/types";
 
 const occupancyColor = (pct: number) => {
 	if (pct >= 85) return "var(--color-success)";
@@ -64,7 +49,7 @@ export const SuperAdminTenantsPage: React.FC = () => {
 	}), [tenants]);
 
 	return (
-		<DashboardLayout title="Super Admin Panel" navItems={SA_NAV}>
+		<DashboardLayout title="Super Admin Panel" navItems={SUPER_ADMIN_NAV}>
 			{/* Header */}
 			<div className="flex-between" style={{ flexWrap: "wrap", gap: "0.75rem" }}>
 				<div>

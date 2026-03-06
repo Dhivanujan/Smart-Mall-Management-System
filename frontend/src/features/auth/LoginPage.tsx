@@ -1,7 +1,7 @@
 import React, { FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 
-import { useAuth } from "../../app/providers/AuthProvider";
+import { useAuth } from "@/app/providers/AuthProvider";
 
 const DEMO_ACCOUNTS = [
 	{ label: "Mall Admin", email: "admin@example.com", password: "admin123", icon: "📊", desc: "Manage stores, view metrics, handle tickets" },
