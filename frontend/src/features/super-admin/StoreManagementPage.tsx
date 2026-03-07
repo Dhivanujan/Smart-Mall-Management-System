@@ -5,9 +5,8 @@ interface Store {
 	id: number;
 	name: string;
 	category: string;
-	description: string;
-	rating: number;
-	is_active?: boolean;
+	average_rating: number;
+	status?: string;
 }
 
 export const StoreManagementPage: React.FC = () => {
@@ -56,7 +55,7 @@ export const StoreManagementPage: React.FC = () => {
 	if (loading) return <div className="loading-spinner" />;
 
 	return (
-		<div className="app-page">
+		<div className="panel-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Store Management</h1>
 				<p className="hero-subtitle">Manage all mall stores — create, update, and remove tenants</p>
@@ -107,8 +106,8 @@ export const StoreManagementPage: React.FC = () => {
 								<td style={{ fontWeight: 600 }}>{s.name}</td>
 								<td>{s.category}</td>
 								<td>
-									<span style={{ color: "#f39c12" }}>{"★".repeat(Math.round(s.rating))}</span>
-									<span style={{ color: "var(--color-text-muted)", marginLeft: "0.25rem", fontSize: "0.85rem" }}>{s.rating}</span>
+									<span style={{ color: "#f39c12" }}>{"★".repeat(Math.max(Math.round(s.average_rating), 1))}</span>
+									<span style={{ color: "var(--color-text-muted)", marginLeft: "0.25rem", fontSize: "0.85rem" }}>{s.average_rating.toFixed(1)}</span>
 								</td>
 								<td>
 									<button className="btn" style={{ fontSize: "0.8rem", color: "var(--color-danger)" }} onClick={() => handleDelete(s.id)}>

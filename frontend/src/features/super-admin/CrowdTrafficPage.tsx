@@ -5,7 +5,7 @@ import type { HeatmapZone } from "@/types";
 interface CrowdData {
 	heatmap: HeatmapZone[];
 	congestion_alerts: { zone: string; level: string; message: string }[];
-	total_current_visitors: number;
+	mall_total_visitors: number;
 }
 
 export const CrowdTrafficPage: React.FC = () => {
@@ -39,7 +39,7 @@ export const CrowdTrafficPage: React.FC = () => {
 	};
 
 	return (
-		<div className="app-page">
+		<div className="panel-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Crowd & Traffic</h1>
 				<p className="hero-subtitle">Real-time crowd density heatmap and congestion monitoring</p>
@@ -49,7 +49,7 @@ export const CrowdTrafficPage: React.FC = () => {
 				<div className="metric-card">
 					<span className="metric-icon">👥</span>
 					<span className="metric-label">Current Visitors</span>
-					<span className="metric-value" style={{ color: "var(--color-accent-strong)" }}>{data.total_current_visitors.toLocaleString()}</span>
+					<span className="metric-value" style={{ color: "var(--color-accent-strong)" }}>{data.mall_total_visitors.toLocaleString()}</span>
 				</div>
 				<div className="metric-card">
 					<span className="metric-icon">📍</span>

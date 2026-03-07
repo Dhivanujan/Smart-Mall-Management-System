@@ -27,7 +27,7 @@ export const QueueEfficiencyPage: React.FC = () => {
 	const avgAbandonment = data.length > 0 ? (data.reduce((a, s) => a + s.abandonment_rate_percent, 0) / data.length).toFixed(1) : "0";
 
 	return (
-		<div className="app-page">
+		<div className="panel-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Queue Efficiency</h1>
 				<p className="hero-subtitle">AI-powered queue performance analysis across all stores</p>

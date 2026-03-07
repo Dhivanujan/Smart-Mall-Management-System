@@ -60,7 +60,7 @@ export const ComplaintManagementPage: React.FC = () => {
 	}, {} as Record<string, number>);
 
 	return (
-		<div className="app-page">
+		<div className="panel-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Complaint Management</h1>
 				<p className="hero-subtitle">Review, assign, and resolve customer complaints across the mall</p>

@@ -4,9 +4,6 @@ import { useWebSocket } from "@/hooks/useWebSocket";
 
 interface QueueEntry {
 	token_number: number;
-	customer_name: string;
-	position: number;
-	estimated_wait: number;
 	status: string;
 }
 
@@ -23,8 +20,9 @@ export const QueueMonitoringPage: React.FC = () => {
 	const fetchQueue = useCallback(async () => {
 		try {
 			const res = await queuesApi.getQueue(storeId);
-			setQueue(res.data.entries ?? res.data.queue ?? []);
-			setCurrentServing(res.data.now_serving ?? null);
+			const state = res.data.queue;
+			setQueue(state?.tokens ?? []);
+			setCurrentServing(state?.current_token ?? null);
 		} catch {
 			setQueue([]);
 		} finally {
@@ -43,24 +41,38 @@ export const QueueMonitoringPage: React.FC = () => {
 		}
 	}, [lastMessage, fetchQueue]);
 
-	const handleAdvance = async () => {
+	const handleServeNext = async () => {
 		try {
-			const res = await queuesApi.getStatus(storeId);
-			setMessage("Queue refreshed");
-			setQueue(res.data.entries ?? res.data.queue ?? []);
-			setCurrentServing(res.data.now_serving ?? null);
+			const res = await queuesApi.adminNext(storeId);
+			const state = res.data.queue;
+			setQueue(state?.tokens ?? []);
+			setCurrentServing(state?.current_token ?? null);
+			setMessage("Moved to next customer");
 		} catch (err: any) {
-			setMessage(err.response?.data?.detail ?? "Failed to refresh queue");
+			setMessage(err.response?.data?.detail ?? "Failed to advance queue");
+		}
+	};
+
+	const handleSkip = async () => {
+		try {
+			const res = await queuesApi.adminSkip(storeId);
+			const state = res.data.queue;
+			setQueue(state?.tokens ?? []);
+			setCurrentServing(state?.current_token ?? null);
+			setMessage("Current token skipped");
+		} catch (err: any) {
+			setMessage(err.response?.data?.detail ?? "Failed to skip token");
 		}
 	};
 
 	if (loading) return <div className="loading-spinner" />;
 
-	const waitingCount = queue.filter((e) => e.status === "waiting").length;
-	const avgWait = waitingCount > 0 ? Math.round(queue.reduce((a, e) => a + e.estimated_wait, 0) / waitingCount) : 0;
+	const waiting = queue.filter((e) => e.status === "waiting");
+	const waitingCount = waiting.length;
+	const avgWait = waitingCount > 0 ? Math.round(waitingCount * 2.5) : 0;
 
 	return (
-		<div className="app-page">
+		<div className="panel-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Queue Monitoring</h1>
 				<p className="hero-subtitle">Monitor and control your store's queue in real-time</p>
@@ -110,9 +122,12 @@ export const QueueMonitoringPage: React.FC = () => {
 				</div>
 			</div>
 
-			<div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.5rem" }}>
-				<button className="btn btn-primary" onClick={handleAdvance}>
+			<div style={{ display: "flex", gap: "0.75rem", marginBottom: "1.5rem", flexWrap: "wrap" }}>
+				<button className="btn btn-primary" onClick={handleServeNext}>
 					Serve Next ➡️
+				</button>
+				<button className="btn btn-ghost" onClick={handleSkip}>
+					Skip Token
 				</button>
 				<button className="btn" onClick={fetchQueue}>
 					Refresh
@@ -138,9 +153,9 @@ export const QueueMonitoringPage: React.FC = () => {
 								<td style={{ fontWeight: 700, fontSize: "1.1rem", color: "var(--color-accent-strong)" }}>
 									#{entry.token_number}
 								</td>
-								<td>{entry.customer_name}</td>
-								<td>{entry.position}</td>
-								<td>{entry.estimated_wait}m</td>
+								<td>Customer #{entry.token_number}</td>
+								<td>{entry.status === "waiting" ? "Waiting" : entry.status === "serving" ? "Now" : "Done"}</td>
+								<td>{entry.status === "waiting" ? `~${Math.max((waiting.findIndex((w) => w.token_number === entry.token_number) + 1), 1) * 5}m` : "-"}</td>
 								<td>
 									<span style={{
 										color: entry.status === "serving" ? "var(--color-success)" :

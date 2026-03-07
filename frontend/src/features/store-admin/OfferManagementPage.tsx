@@ -85,7 +85,7 @@ export const OfferManagementPage: React.FC = () => {
 	if (loading) return <div className="loading-spinner" />;
 
 	return (
-		<div className="app-page">
+		<div className="panel-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Offer Management</h1>
 				<p className="hero-subtitle">Create and manage store promotions and deals</p>

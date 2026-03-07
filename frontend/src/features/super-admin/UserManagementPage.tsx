@@ -64,7 +64,7 @@ export const UserManagementPage: React.FC = () => {
 	if (loading) return <div className="loading-spinner" />;
 
 	return (
-		<div className="app-page">
+		<div className="panel-page">
 			<div className="page-header">
 				<h1 className="hero-heading">User Management</h1>
 				<p className="hero-subtitle">Manage user accounts, roles, and access control</p>

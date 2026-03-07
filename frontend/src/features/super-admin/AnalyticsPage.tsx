@@ -2,12 +2,13 @@ import React, { useEffect, useState } from "react";
 import { analyticsApi } from "@/services/api/analytics";
 
 interface MallOverview {
+	timestamp: string;
 	total_revenue: number;
-	total_visitors: number;
-	total_stores: number;
-	active_offers: number;
-	avg_occupancy_rate: number;
-	top_stores: { name: string; revenue: number }[];
+	daily_visitors: number;
+	active_stores: number;
+	active_queues: number;
+	parking_utilization: number;
+	category_revenue: { category: string; revenue: number; percentage: number }[];
 }
 
 export const AnalyticsPage: React.FC = () => {
@@ -24,10 +25,10 @@ export const AnalyticsPage: React.FC = () => {
 	if (loading) return <div className="loading-spinner" />;
 	if (!data) return <p>No analytics data available</p>;
 
-	const maxRev = Math.max(...data.top_stores.map((s) => s.revenue), 1);
+	const maxRev = Math.max(...data.category_revenue.map((s) => s.revenue), 1);
 
 	return (
-		<div className="app-page">
+		<div className="panel-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Mall Analytics</h1>
 				<p className="hero-subtitle">Comprehensive overview of mall performance and metrics</p>
@@ -42,31 +43,31 @@ export const AnalyticsPage: React.FC = () => {
 				<div className="metric-card">
 					<span className="metric-icon">👥</span>
 					<span className="metric-label">Total Visitors</span>
-					<span className="metric-value">{data.total_visitors.toLocaleString()}</span>
+					<span className="metric-value">{data.daily_visitors.toLocaleString()}</span>
 				</div>
 				<div className="metric-card">
 					<span className="metric-icon">🏪</span>
-					<span className="metric-label">Total Stores</span>
-					<span className="metric-value">{data.total_stores}</span>
+					<span className="metric-label">Active Stores</span>
+					<span className="metric-value">{data.active_stores}</span>
 				</div>
 				<div className="metric-card">
-					<span className="metric-icon">🏷️</span>
-					<span className="metric-label">Active Offers</span>
-					<span className="metric-value">{data.active_offers}</span>
+					<span className="metric-icon">🔢</span>
+					<span className="metric-label">Active Queues</span>
+					<span className="metric-value">{data.active_queues}</span>
 				</div>
 				<div className="metric-card">
 					<span className="metric-icon">📈</span>
-					<span className="metric-label">Occupancy Rate</span>
-					<span className="metric-value">{data.avg_occupancy_rate}%</span>
+					<span className="metric-label">Parking Utilization</span>
+					<span className="metric-value">{data.parking_utilization}%</span>
 				</div>
 			</div>
 
 			<div className="section-card" style={{ marginTop: "2rem" }}>
-				<h2 className="section-title">Top Performing Stores</h2>
-				{data.top_stores.map((store, i) => (
-					<div key={store.name} style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.75rem" }}>
+				<h2 className="section-title">Revenue By Category</h2>
+				{data.category_revenue.map((store, i) => (
+					<div key={store.category} style={{ display: "flex", alignItems: "center", gap: "1rem", marginBottom: "0.75rem" }}>
 						<span style={{ width: "24px", fontWeight: 700, color: i < 3 ? "var(--color-accent-strong)" : "var(--color-text-muted)" }}>#{i + 1}</span>
-						<span style={{ width: "150px", fontSize: "0.9rem" }}>{store.name}</span>
+						<span style={{ width: "150px", fontSize: "0.9rem" }}>{store.category}</span>
 						<div className="zone-bar" style={{ flex: 1, height: "10px" }}>
 							<div className="zone-bar-fill" style={{ width: `${(store.revenue / maxRev) * 100}%` }} />
 						</div>

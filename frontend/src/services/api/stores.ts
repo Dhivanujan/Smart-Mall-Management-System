@@ -44,4 +44,14 @@ export const queuesApi = {
 
 	getStatus: (storeId: number, token?: number) =>
 		apiClient.get(`/api/v1/queues/${storeId}/status`, { params: { token } }),
+
+	adminList: () => apiClient.get("/api/v1/admin/queues"),
+
+	adminNext: (storeId: number) => apiClient.post(`/api/v1/admin/queues/${storeId}/next`),
+
+	adminSkip: (storeId: number) => apiClient.post(`/api/v1/admin/queues/${storeId}/skip`),
+
+	adminPause: (storeId: number) => apiClient.post(`/api/v1/admin/queues/${storeId}/pause`),
+
+	adminResume: (storeId: number) => apiClient.post(`/api/v1/admin/queues/${storeId}/resume`),
 };

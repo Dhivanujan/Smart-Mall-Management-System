@@ -2,16 +2,11 @@ import React, { useEffect, useState } from "react";
 import { analyticsApi } from "@/services/api/analytics";
 
 interface ParkingData {
-	summary: {
-		total_slots: number;
-		available: number;
-		occupied: number;
-		reserved: number;
-		utilization: number;
-		is_peak_hour: boolean;
-	};
-	zone_stats: { zone: string; total: number; available: number; occupied: number; reserved: number; utilization: number }[];
-	demand_predictions: { hour: number; predicted_demand: number }[];
+	current_utilization: number;
+	avg_duration_minutes: number;
+	peak_time: { hour: number; predicted_occupancy: number };
+	hourly_predictions: { hour: number; predicted_occupancy: number }[];
+	zone_utilization: Record<string, number>;
 }
 
 export const ParkingManagementPage: React.FC = () => {
@@ -28,11 +23,14 @@ export const ParkingManagementPage: React.FC = () => {
 	if (loading) return <div className="loading-spinner" />;
 	if (!data) return <p>No parking data available</p>;
 
-	const { summary } = data;
-	const maxDemand = Math.max(...(data.demand_predictions ?? []).map((d) => d.predicted_demand), 1);
+	const maxDemand = Math.max(...(data.hourly_predictions ?? []).map((d) => d.predicted_occupancy), 1);
+	const zoneRows = Object.entries(data.zone_utilization).map(([zone, utilization]) => ({
+		zone,
+		utilization,
+	}));
 
 	return (
-		<div className="app-page">
+		<div className="panel-page">
 			<div className="page-header">
 				<h1 className="hero-heading">Parking Management</h1>
 				<p className="hero-subtitle">Monitor parking utilization with AI demand predictions</p>
@@ -40,38 +38,24 @@ export const ParkingManagementPage: React.FC = () => {
 
 			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" }}>
 				<div className="metric-card">
-					<span className="metric-icon">🅿️</span>
-					<span className="metric-label">Total Slots</span>
-					<span className="metric-value">{summary.total_slots}</span>
-				</div>
-				<div className="metric-card">
-					<span className="metric-icon">✅</span>
-					<span className="metric-label">Available</span>
-					<span className="metric-value" style={{ color: "var(--color-success)" }}>{summary.available}</span>
-				</div>
-				<div className="metric-card">
-					<span className="metric-icon">🚗</span>
-					<span className="metric-label">Occupied</span>
-					<span className="metric-value">{summary.occupied}</span>
-				</div>
-				<div className="metric-card">
-					<span className="metric-icon">📋</span>
-					<span className="metric-label">Reserved</span>
-					<span className="metric-value" style={{ color: "#f39c12" }}>{summary.reserved}</span>
-				</div>
-				<div className="metric-card">
 					<span className="metric-icon">📊</span>
-					<span className="metric-label">Utilization</span>
-					<span className="metric-value" style={{ color: summary.utilization > 85 ? "var(--color-danger)" : "var(--color-success)" }}>
-						{summary.utilization}%
-					</span>
+					<span className="metric-label">Current Utilization</span>
+					<span className="metric-value" style={{ color: data.current_utilization > 85 ? "var(--color-danger)" : "var(--color-success)" }}>{data.current_utilization}%</span>
 				</div>
 				<div className="metric-card">
-					<span className="metric-icon">{summary.is_peak_hour ? "🔴" : "🟢"}</span>
+					<span className="metric-icon">⏱️</span>
+					<span className="metric-label">Avg Parking Duration</span>
+					<span className="metric-value">{data.avg_duration_minutes}m</span>
+				</div>
+				<div className="metric-card">
+					<span className="metric-icon">🔺</span>
 					<span className="metric-label">Peak Hour</span>
-					<span className="metric-value" style={{ color: summary.is_peak_hour ? "var(--color-danger)" : "var(--color-success)" }}>
-						{summary.is_peak_hour ? "Yes" : "No"}
-					</span>
+					<span className="metric-value">{data.peak_time.hour}:00</span>
+				</div>
+				<div className="metric-card">
+					<span className="metric-icon">🔥</span>
+					<span className="metric-label">Peak Occupancy</span>
+					<span className="metric-value" style={{ color: data.peak_time.predicted_occupancy > 85 ? "var(--color-danger)" : "var(--color-warning)" }}>{data.peak_time.predicted_occupancy}%</span>
 				</div>
 			</div>
 
@@ -82,21 +66,14 @@ export const ParkingManagementPage: React.FC = () => {
 						<thead>
 							<tr>
 								<th>Zone</th>
-								<th>Total</th>
-								<th>Available</th>
-								<th>Occupied</th>
-								<th>Reserved</th>
 								<th>Utilization</th>
+								<th>Status</th>
 							</tr>
 						</thead>
 						<tbody>
-							{data.zone_stats.map((z) => (
+							{zoneRows.map((z) => (
 								<tr key={z.zone}>
 									<td style={{ fontWeight: 700, fontSize: "1.1rem" }}>{z.zone}</td>
-									<td>{z.total}</td>
-									<td style={{ color: "var(--color-success)" }}>{z.available}</td>
-									<td>{z.occupied}</td>
-									<td style={{ color: "#f39c12" }}>{z.reserved}</td>
 									<td>
 										<div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
 											<div className="zone-bar" style={{ flex: 1, height: "10px" }}>
@@ -108,6 +85,11 @@ export const ParkingManagementPage: React.FC = () => {
 											<span style={{ fontSize: "0.85rem", fontWeight: 600, width: "40px" }}>{z.utilization}%</span>
 										</div>
 									</td>
+									<td>
+										<span className={`status-badge ${z.utilization > 85 ? "pending" : z.utilization > 60 ? "active" : "closed"}`}>
+											{z.utilization > 85 ? "High" : z.utilization > 60 ? "Moderate" : "Normal"}
+										</span>
+									</td>
 								</tr>
 							))}
 						</tbody>
@@ -115,17 +97,17 @@ export const ParkingManagementPage: React.FC = () => {
 				</div>
 			</div>
 
-			{data.demand_predictions && data.demand_predictions.length > 0 && (
+			{data.hourly_predictions && data.hourly_predictions.length > 0 && (
 				<div className="section-card" style={{ marginTop: "1.5rem" }}>
 					<h2 className="section-title">AI Demand Predictions (Next 24 Hours)</h2>
 					<div style={{ display: "flex", alignItems: "flex-end", gap: "2px", height: "180px", paddingTop: "1rem" }}>
-						{data.demand_predictions.map((d) => (
+						{data.hourly_predictions.map((d) => (
 							<div key={d.hour} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: "2px" }}>
-								<span style={{ fontSize: "0.65rem", color: "var(--color-text-muted)" }}>{d.predicted_demand}%</span>
+								<span style={{ fontSize: "0.65rem", color: "var(--color-text-muted)" }}>{d.predicted_occupancy}%</span>
 								<div style={{
 									width: "100%",
-									height: `${(d.predicted_demand / maxDemand) * 140}px`,
-									background: d.predicted_demand > 80 ? "var(--color-danger)" : d.predicted_demand > 60 ? "#f39c12" : "var(--color-success)",
+									height: `${(d.predicted_occupancy / maxDemand) * 140}px`,
+									background: d.predicted_occupancy > 80 ? "var(--color-danger)" : d.predicted_occupancy > 60 ? "#f39c12" : "var(--color-success)",
 									borderRadius: "3px 3px 0 0",
 									minHeight: "2px",
 								}} />
