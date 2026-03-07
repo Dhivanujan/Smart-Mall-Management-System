@@ -45,6 +45,10 @@ class Settings(BaseSettings):
 	jwt_algorithm: str = "HS256"
 	jwt_access_token_expire_minutes: int = 60
 
+	# MongoDB
+	mongodb_url: str = "mongodb://localhost:27017"
+	mongodb_db_name: str = "smart_mall"
+
 	# CORS
 	backend_cors_origins: List[str] = []
 

@@ -24,6 +24,8 @@ from .api.v1.analytics import router as analytics_router
 from .api.v1.users import router as users_router
 from .core.config import get_settings
 from .core.logging import setup_logging
+from .db import init_db, close_db
+from .db.seed import seed_database
 from .websocket.routes import queues_router
 
 
@@ -38,7 +40,10 @@ def _custom_generate_unique_id(route: APIRoute) -> str:
 async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
 	settings = get_settings()
 	logger.info("Starting Smart Mall backend", extra={"env": settings.environment})
+	await init_db()
+	await seed_database()
 	yield
+	await close_db()
 	logger.info("Shutting down Smart Mall backend")
 
 

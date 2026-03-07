@@ -2,22 +2,33 @@
 
 from __future__ import annotations
 
+from time import time
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.auth.schemas.users import User
 from app.auth.services.security import get_current_active_user, require_admin
-from app.models.complaint import ComplaintCategory, ComplaintStatus, ComplaintStore
+from app.db.models.complaint import ComplaintDocument
+from app.models.complaint import ComplaintCategory, ComplaintStatus
 
 router = APIRouter(prefix="/complaints", tags=["complaints"])
 
-_store = ComplaintStore()
 
-# Seed demo complaints
-_store.create("customer@example.com", "queue", "Long wait at ElectroHub", "Waited 45 minutes in queue", store_id=1)
-_store.create("customer@example.com", "parking", "Parking slot not available", "Could not find parking in Zone A")
-_store.create("demo_user", "cleanliness", "Restroom needs cleaning", "Floor 2 restrooms are not clean")
-_store.complaints[2].update_status("in_progress", "admin@example.com")
+def _complaint_dict(doc: ComplaintDocument) -> dict:
+    return {
+        "id": doc.complaint_id,
+        "username": doc.username,
+        "category": doc.category,
+        "subject": doc.subject,
+        "description": doc.description,
+        "status": doc.status,
+        "store_id": doc.store_id,
+        "assigned_to": doc.assigned_to,
+        "created_at": doc.created_at,
+        "updated_at": doc.updated_at,
+        "logs": doc.logs,
+    }
 
 
 class CreateComplaintRequest(BaseModel):
@@ -45,9 +56,11 @@ class AddLogRequest(BaseModel):
 async def my_complaints(
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    complaints = _store.by_user(current_user.username)
+    complaints = await ComplaintDocument.find(
+        ComplaintDocument.username == current_user.username
+    ).to_list()
     return {
-        "complaints": [c.to_dict() for c in complaints],
+        "complaints": [_complaint_dict(c) for c in complaints],
         "total": len(complaints),
     }
 
@@ -57,14 +70,22 @@ async def create_complaint(
     body: CreateComplaintRequest,
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    complaint = _store.create(
+    last = await ComplaintDocument.find().sort("-complaint_id").first_or_none()
+    next_id = (last.complaint_id + 1) if last else 1
+
+    now = time()
+    doc = ComplaintDocument(
+        complaint_id=next_id,
         username=current_user.username,
         category=body.category,
         subject=body.subject,
         description=body.description,
         store_id=body.store_id,
+        created_at=now,
+        updated_at=now,
     )
-    return {"message": "Complaint submitted", "complaint": complaint.to_dict()}
+    await doc.insert()
+    return {"message": "Complaint submitted", "complaint": _complaint_dict(doc)}
 
 
 @router.get("/{complaint_id}")
@@ -72,12 +93,12 @@ async def get_complaint(
     complaint_id: int,
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    complaint = _store.get(complaint_id)
+    complaint = await ComplaintDocument.find_one(ComplaintDocument.complaint_id == complaint_id)
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
     if complaint.username != current_user.username and current_user.role not in ("admin", "super_admin"):
         raise HTTPException(status_code=403, detail="Access denied")
-    return {"complaint": complaint.to_dict()}
+    return {"complaint": _complaint_dict(complaint)}
 
 
 # ── Admin endpoints ─────────────────────────────────────────────────
@@ -87,14 +108,21 @@ async def admin_list_complaints(
     status: str | None = None,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    if status:
-        complaints = _store.by_status(status)  # type: ignore[arg-type]
-    else:
-        complaints = _store.complaints
+    query = {"status": status} if status else {}
+    complaints = await ComplaintDocument.find(query).to_list()
+    all_complaints = await ComplaintDocument.find().to_list()
+    summary = {
+        "total": len(all_complaints),
+        "open": len([c for c in all_complaints if c.status == "open"]),
+        "in_progress": len([c for c in all_complaints if c.status == "in_progress"]),
+        "resolved": len([c for c in all_complaints if c.status == "resolved"]),
+        "escalated": len([c for c in all_complaints if c.status == "escalated"]),
+        "closed": len([c for c in all_complaints if c.status == "closed"]),
+    }
     return {
-        "complaints": [c.to_dict() for c in complaints],
+        "complaints": [_complaint_dict(c) for c in complaints],
         "total": len(complaints),
-        "summary": _store.summary(),
+        "summary": summary,
     }
 
 
@@ -104,11 +132,15 @@ async def update_complaint_status(
     body: UpdateStatusRequest,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    complaint = _store.get(complaint_id)
+    complaint = await ComplaintDocument.find_one(ComplaintDocument.complaint_id == complaint_id)
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
-    complaint.update_status(body.status, current_user.username)
-    return {"message": "Status updated", "complaint": complaint.to_dict()}
+    old_status = complaint.status
+    complaint.status = body.status
+    complaint.updated_at = time()
+    complaint.logs.append({"message": f"Status changed from {old_status} to {body.status}", "author": current_user.username, "timestamp": time()})
+    await complaint.save()
+    return {"message": "Status updated", "complaint": _complaint_dict(complaint)}
 
 
 @router.put("/admin/{complaint_id}/assign")
@@ -117,11 +149,14 @@ async def assign_complaint(
     body: AssignRequest,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    complaint = _store.get(complaint_id)
+    complaint = await ComplaintDocument.find_one(ComplaintDocument.complaint_id == complaint_id)
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
-    complaint.assign(body.assignee, current_user.username)
-    return {"message": "Complaint assigned", "complaint": complaint.to_dict()}
+    complaint.assigned_to = body.assignee
+    complaint.updated_at = time()
+    complaint.logs.append({"message": f"Assigned to {body.assignee}", "author": current_user.username, "timestamp": time()})
+    await complaint.save()
+    return {"message": "Complaint assigned", "complaint": _complaint_dict(complaint)}
 
 
 @router.post("/admin/{complaint_id}/escalate")
@@ -129,11 +164,15 @@ async def escalate_complaint(
     complaint_id: int,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    complaint = _store.get(complaint_id)
+    complaint = await ComplaintDocument.find_one(ComplaintDocument.complaint_id == complaint_id)
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
-    complaint.escalate(current_user.username)
-    return {"message": "Complaint escalated", "complaint": complaint.to_dict()}
+    old_status = complaint.status
+    complaint.status = "escalated"
+    complaint.updated_at = time()
+    complaint.logs.append({"message": f"Status changed from {old_status} to escalated", "author": current_user.username, "timestamp": time()})
+    await complaint.save()
+    return {"message": "Complaint escalated", "complaint": _complaint_dict(complaint)}
 
 
 @router.post("/admin/{complaint_id}/log")
@@ -142,8 +181,10 @@ async def add_complaint_log(
     body: AddLogRequest,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    complaint = _store.get(complaint_id)
+    complaint = await ComplaintDocument.find_one(ComplaintDocument.complaint_id == complaint_id)
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
-    complaint.add_log(body.message, current_user.username)
-    return {"message": "Log added", "complaint": complaint.to_dict()}
+    complaint.updated_at = time()
+    complaint.logs.append({"message": body.message, "author": current_user.username, "timestamp": time()})
+    await complaint.save()
+    return {"message": "Log added", "complaint": _complaint_dict(complaint)}

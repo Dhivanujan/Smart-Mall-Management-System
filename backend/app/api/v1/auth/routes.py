@@ -33,7 +33,7 @@ async def login_for_access_token(
 
 	from ....auth.services.users import authenticate_user
 
-	user = authenticate_user(form_data.username, form_data.password)
+	user = await authenticate_user(form_data.username, form_data.password)
 	if not user:
 		raise HTTPException(
 			status_code=status.HTTP_401_UNAUTHORIZED,
@@ -89,6 +89,6 @@ async def register_customer(body: UserRegister) -> User:
 	from ....auth.services.users import register_user
 
 	try:
-		return register_user(body)
+		return await register_user(body)
 	except ValueError as exc:
 		raise HTTPException(status_code=status.HTTP_409_CONFLICT, detail=str(exc))

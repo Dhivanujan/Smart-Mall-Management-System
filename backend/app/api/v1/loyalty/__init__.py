@@ -2,27 +2,45 @@
 
 from __future__ import annotations
 
+from time import time
+
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.auth.schemas.users import User
 from app.auth.services.security import get_current_active_user
-from app.models.loyalty import LoyaltyAccount
+from app.db.models.loyalty import LoyaltyAccountDocument
 
 router = APIRouter(prefix="/loyalty", tags=["loyalty"])
 
-_accounts: dict[str, LoyaltyAccount] = {}
+_TIER_THRESHOLDS = [(5000, "Platinum"), (2000, "Gold"), (500, "Silver")]
 
 
-def _get_or_create_account(username: str) -> LoyaltyAccount:
-    if username not in _accounts:
-        account = LoyaltyAccount(username=username)
-        # Seed some demo transactions
-        account.earn(500, "Welcome bonus")
-        account.earn(150, "Purchase at ElectroHub", store_id=1)
-        account.earn(80, "Purchase at Fashion Lane", store_id=2)
-        _accounts[username] = account
-    return _accounts[username]
+def _compute_tier(lifetime_earned: int) -> str:
+    for threshold, tier in _TIER_THRESHOLDS:
+        if lifetime_earned >= threshold:
+            return tier
+    return "Bronze"
+
+
+async def _get_or_create_account(username: str) -> LoyaltyAccountDocument:
+    doc = await LoyaltyAccountDocument.find_one(
+        LoyaltyAccountDocument.username == username
+    )
+    if doc is None:
+        doc = LoyaltyAccountDocument(username=username)
+        await doc.insert()
+    return doc
+
+
+def _account_summary(doc: LoyaltyAccountDocument) -> dict:
+    return {
+        "username": doc.username,
+        "total_points": doc.total_points,
+        "lifetime_earned": doc.lifetime_earned,
+        "lifetime_redeemed": doc.lifetime_redeemed,
+        "tier": doc.tier,
+    }
 
 
 class EarnRequest(BaseModel):
@@ -40,8 +58,8 @@ class RedeemRequest(BaseModel):
 async def get_account(
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    account = _get_or_create_account(current_user.username)
-    return {"account": account.summary()}
+    account = await _get_or_create_account(current_user.username)
+    return {"account": _account_summary(account)}
 
 
 @router.get("/history")
@@ -49,10 +67,10 @@ async def get_history(
     current_user: User = Depends(get_current_active_user),
     limit: int = 20,
 ) -> dict:
-    account = _get_or_create_account(current_user.username)
+    account = await _get_or_create_account(current_user.username)
     transactions = account.transactions[-limit:]
     return {
-        "transactions": [tx.to_dict() for tx in reversed(transactions)],
+        "transactions": list(reversed(transactions)),
         "total_transactions": len(account.transactions),
     }
 
@@ -62,11 +80,24 @@ async def earn_points(
     body: EarnRequest,
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    account = _get_or_create_account(current_user.username)
-    tx = account.earn(body.points, body.description, body.store_id)
+    account = await _get_or_create_account(current_user.username)
+    tx = {
+        "tx_id": account.next_tx_id,
+        "transaction_type": "earn",
+        "points": body.points,
+        "description": body.description,
+        "store_id": body.store_id,
+        "timestamp": time(),
+    }
+    account.transactions.append(tx)
+    account.next_tx_id += 1
+    account.total_points += body.points
+    account.lifetime_earned += body.points
+    account.tier = _compute_tier(account.lifetime_earned)
+    await account.save()
     return {
         "message": f"Earned {body.points} points",
-        "transaction": tx.to_dict(),
+        "transaction": tx,
         "new_balance": account.total_points,
         "tier": account.tier,
     }
@@ -77,16 +108,29 @@ async def redeem_points(
     body: RedeemRequest,
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    account = _get_or_create_account(current_user.username)
-    tx = account.redeem(body.points, body.description)
-    if tx is None:
+    account = await _get_or_create_account(current_user.username)
+    if body.points > account.total_points:
         raise HTTPException(
             status_code=400,
             detail=f"Insufficient points. Available: {account.total_points}",
         )
+    tx = {
+        "tx_id": account.next_tx_id,
+        "transaction_type": "redeem",
+        "points": body.points,
+        "description": body.description,
+        "store_id": None,
+        "timestamp": time(),
+    }
+    account.transactions.append(tx)
+    account.next_tx_id += 1
+    account.total_points -= body.points
+    account.lifetime_redeemed += body.points
+    account.tier = _compute_tier(account.lifetime_earned)
+    await account.save()
     return {
         "message": f"Redeemed {body.points} points",
-        "transaction": tx.to_dict(),
+        "transaction": tx,
         "new_balance": account.total_points,
         "tier": account.tier,
     }

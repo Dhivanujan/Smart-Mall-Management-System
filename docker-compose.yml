@@ -1,4 +1,12 @@
 services:
+  mongodb:
+    image: mongo:7
+    container_name: smartmall-mongo
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
   backend:
     build:
       context: .
@@ -8,10 +16,14 @@ services:
       - backend/.env
     environment:
       - PYTHONUNBUFFERED=1
+      - MONGODB_URL=mongodb://mongodb:27017
+      - MONGODB_DB_NAME=smart_mall
     ports:
       - "8000:8000"
     volumes:
       - ./backend/app:/app/app:ro
+    depends_on:
+      - mongodb
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
@@ -30,4 +42,7 @@ services:
     depends_on:
       backend:
         condition: service_healthy
+
+volumes:
+  mongo_data:
 

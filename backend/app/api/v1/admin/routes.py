@@ -4,6 +4,7 @@ from fastapi import APIRouter, Depends
 
 from ....auth.schemas.users import User
 from ....auth.services.security import require_admin, require_super_admin
+from ....db.models.store import StoreDocument
 from ..queues.routes import (
 	admin_advance_queue,
 	admin_queue_summaries,
@@ -14,27 +15,15 @@ from ..queues.routes import (
 router = APIRouter()
 
 
-_ADMIN_STORES = [
-	{"id": 1, "name": "ElectroHub", "status": "open", "category": "Electronics"},
-	{"id": 2, "name": "Fashion Lane", "status": "open", "category": "Fashion"},
-	{"id": 3, "name": "Book Nook", "status": "closed", "category": "Books"},
-]
-
-
 @router.get("/dashboard")
 async def admin_dashboard(
 	current_user: Annotated[User, Depends(require_admin)],
 ) -> dict:
-	"""Return mock dashboard metrics for admin users.
-
-	This is intentionally simple and uses static data so that the
-	frontend admin panel can be developed end-to-end.
-	"""
-
+	total_stores = await StoreDocument.find().count()
 	return {
 		"user": current_user,
 		"metrics": {
-			"total_stores": len(_ADMIN_STORES),
+			"total_stores": total_stores,
 			"active_customers": 340,
 			"daily_revenue": 15890.75,
 			"open_tickets": 7,
@@ -46,39 +35,28 @@ async def admin_dashboard(
 async def admin_stores(
 	current_user: Annotated[User, Depends(require_admin)],
 ) -> dict:
-	"""Return a mock list of stores managed by the admin."""
-
-	return {"user": current_user, "stores": _ADMIN_STORES}
+	docs = await StoreDocument.find().to_list()
+	stores = [
+		{"id": d.store_id, "name": d.name, "status": d.status, "category": d.category}
+		for d in docs
+	]
+	return {"user": current_user, "stores": stores}
 
 
 @router.get("/store-metrics")
 async def admin_store_metrics(
 	current_user: Annotated[User, Depends(require_admin)],
 ) -> dict:
-	"""Return mock per-store metrics for admin analytics views."""
-
+	docs = await StoreDocument.find().to_list()
 	metrics = [
 		{
-			"store_id": 1,
-			"name": "ElectroHub",
-			"daily_revenue": 9800.0,
-			"footfall": 320,
-			"open_tickets": 3,
-		},
-		{
-			"store_id": 2,
-			"name": "Fashion Lane",
-			"daily_revenue": 4300.5,
-			"footfall": 210,
-			"open_tickets": 2,
-		},
-		{
-			"store_id": 3,
-			"name": "Book Nook",
-			"daily_revenue": 790.25,
-			"footfall": 65,
-			"open_tickets": 1,
-		},
+			"store_id": d.store_id,
+			"name": d.name,
+			"daily_revenue": 0.0,
+			"footfall": d.current_footfall,
+			"open_tickets": 0,
+		}
+		for d in docs
 	]
 	return {"user": current_user, "stores": metrics}
 
@@ -171,7 +149,7 @@ async def admin_queues(
 ) -> dict:
 	"""Return summaries for all store queues for admin monitoring."""
 
-	return {"user": current_user, "queues": admin_queue_summaries()}
+	return {"user": current_user, "queues": await admin_queue_summaries()}
 
 
 @router.post("/queues/{store_id}/next")
