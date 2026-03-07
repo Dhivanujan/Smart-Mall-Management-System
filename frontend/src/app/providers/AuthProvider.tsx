@@ -48,10 +48,18 @@ export const AuthProvider: React.FC<React.PropsWithChildren> = ({ children }) =>
 	const login = useCallback(async ({ username, password }: { username: string; password: string }) => {
 		setIsLoading(true);
 		try {
-			const tokenResponse = await apiClient.post("/api/v1/auth/login", new URLSearchParams({
-				username,
-				password,
-			}));
+			const tokenResponse = await apiClient.post(
+				"/api/v1/auth/login",
+				new URLSearchParams({
+					username,
+					password,
+				}),
+				{
+					headers: {
+						"Content-Type": "application/x-www-form-urlencoded",
+					},
+				},
+			);
 			const accessToken: string = tokenResponse.data.access_token;
 			setToken(accessToken);
 			apiClient.defaults.headers.common.Authorization = `Bearer ${accessToken}`;

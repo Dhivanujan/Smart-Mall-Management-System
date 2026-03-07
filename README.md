@@ -115,8 +115,11 @@ docker compose up --build
 
 ```bash
 cd backend
-pip install -e ".[dev]"
-uvicorn app.main:app --reload --port 8000
+python -m venv ../.venv
+# PowerShell: ..\.venv\Scripts\Activate.ps1
+# Bash: source ../.venv/Scripts/activate
+python -m pip install -e ".[dev]"
+python -m uvicorn app.main:app --reload --port 8000
 ```
 
 **Frontend:**

@@ -14,7 +14,7 @@ AVG_SERVICE_MINUTES = 5
 
 
 async def _get_or_create_queue(store_id: int) -> QueueDocument:
-	doc = await QueueDocument.find_one(QueueDocument.store_id == store_id)
+	doc = await QueueDocument.find_one({"store_id": store_id})
 	if doc is None:
 		doc = QueueDocument(store_id=store_id)
 		await doc.insert()

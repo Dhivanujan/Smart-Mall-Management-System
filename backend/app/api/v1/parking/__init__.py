@@ -125,7 +125,7 @@ async def release_slot(
     slot_id: str,
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    slot = await ParkingSlotDocument.find_one(ParkingSlotDocument.slot_id == slot_id)
+    slot = await ParkingSlotDocument.find_one({"slot_id": slot_id})
     if slot is None:
         raise HTTPException(status_code=404, detail="Slot not found")
     if slot.reserved_by != current_user.username and slot.vehicle_number is None:
@@ -178,7 +178,7 @@ async def admin_occupy_slot(
     body: OccupyRequest,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    slot = await ParkingSlotDocument.find_one(ParkingSlotDocument.slot_id == body.slot_id)
+    slot = await ParkingSlotDocument.find_one({"slot_id": body.slot_id})
     if slot is None:
         raise HTTPException(status_code=404, detail="Slot not found")
     if slot.status == "occupied":
@@ -195,7 +195,7 @@ async def admin_release_slot(
     slot_id: str,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    slot = await ParkingSlotDocument.find_one(ParkingSlotDocument.slot_id == slot_id)
+    slot = await ParkingSlotDocument.find_one({"slot_id": slot_id})
     if slot is None:
         raise HTTPException(status_code=404, detail="Slot not found")
     slot.status = "available"

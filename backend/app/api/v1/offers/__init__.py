@@ -64,9 +64,7 @@ async def list_active_offers(store_id: int | None = None) -> dict:
 
 @router.get("/store/{store_id}")
 async def store_offers(store_id: int) -> dict:
-    offers = await OfferDocument.find(
-        OfferDocument.store_id == store_id
-    ).to_list()
+    offers = await OfferDocument.find({"store_id": store_id}).to_list()
     active = [o for o in offers if o.status == "active"]
     total_redeemed = sum(o.redemption_count for o in offers)
     return {
@@ -81,7 +79,7 @@ async def store_offers(store_id: int) -> dict:
 
 @router.get("/{offer_id}")
 async def get_offer(offer_id: int) -> dict:
-    doc = await OfferDocument.find_one(OfferDocument.offer_id == offer_id)
+    doc = await OfferDocument.find_one({"offer_id": offer_id})
     if doc is None:
         raise HTTPException(status_code=404, detail="Offer not found")
     return {"offer": _offer_dict(doc)}
@@ -92,7 +90,7 @@ async def redeem_offer(
     offer_id: int,
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    doc = await OfferDocument.find_one(OfferDocument.offer_id == offer_id)
+    doc = await OfferDocument.find_one({"offer_id": offer_id})
     if doc is None:
         raise HTTPException(status_code=404, detail="Offer not found")
     if doc.status != "active":
@@ -133,7 +131,7 @@ async def admin_update_offer(
     updates = body.model_dump(exclude_none=True)
     if not updates:
         raise HTTPException(status_code=400, detail="No fields to update")
-    doc = await OfferDocument.find_one(OfferDocument.offer_id == offer_id)
+    doc = await OfferDocument.find_one({"offer_id": offer_id})
     if doc is None:
         raise HTTPException(status_code=404, detail="Offer not found")
     for k, v in updates.items():
@@ -147,7 +145,7 @@ async def admin_delete_offer(
     offer_id: int,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    doc = await OfferDocument.find_one(OfferDocument.offer_id == offer_id)
+    doc = await OfferDocument.find_one({"offer_id": offer_id})
     if doc is None:
         raise HTTPException(status_code=404, detail="Offer not found")
     await doc.delete()

@@ -108,13 +108,13 @@ export const LoginPage: React.FC = () => {
 						</div>
 						<form onSubmit={handleSubmit} className="app-form">
 							<label className="app-field-label">
-								<span>Email address</span>
+								<span>Username or email</span>
 								<input
-									type="email"
+									type="text"
 									value={username}
 									onChange={(e) => setUsername(e.target.value)}
 									className="app-input"
-									placeholder="you@example.com"
+									placeholder="your username or email"
 									required
 									autoFocus
 								/>

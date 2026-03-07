@@ -47,9 +47,7 @@ async def mark_read(
     notification_id: int,
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    doc = await NotificationDocument.find_one(
-        NotificationDocument.notification_id == notification_id
-    )
+    doc = await NotificationDocument.find_one({"notification_id": notification_id})
     success = False
     if doc:
         doc.is_read = True

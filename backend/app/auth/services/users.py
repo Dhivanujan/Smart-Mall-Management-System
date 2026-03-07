@@ -24,7 +24,7 @@ def _doc_to_user_in_db(doc: UserDocument) -> UserInDB:
 
 
 async def get_user(username: str) -> UserInDB | None:
-	doc = await UserDocument.find_one(UserDocument.username == username)
+	doc = await UserDocument.find_one({"username": username})
 	if doc is None:
 		return None
 	return _doc_to_user_in_db(doc)
@@ -47,7 +47,7 @@ async def authenticate_user(username: str, password: str) -> User | None:
 
 async def register_user(data: UserRegister) -> User:
 	"""Register a new customer user. Returns the created User."""
-	existing = await UserDocument.find_one(UserDocument.username == data.email)
+	existing = await UserDocument.find_one({"username": data.email})
 	if existing:
 		raise ValueError("Email already registered")
 	doc = UserDocument(
@@ -74,7 +74,7 @@ async def create_user(username: str, full_name: str, email: str | None, role: st
 
 
 async def update_user_fields(username: str, **fields: object) -> UserInDB | None:
-	doc = await UserDocument.find_one(UserDocument.username == username)
+	doc = await UserDocument.find_one({"username": username})
 	if doc is None:
 		return None
 	for key, val in fields.items():
@@ -85,7 +85,7 @@ async def update_user_fields(username: str, **fields: object) -> UserInDB | None
 
 
 async def set_user_password(username: str, new_password: str) -> bool:
-	doc = await UserDocument.find_one(UserDocument.username == username)
+	doc = await UserDocument.find_one({"username": username})
 	if doc is None:
 		return False
 	doc.hashed_password = _hash_password(new_password)
@@ -94,7 +94,7 @@ async def set_user_password(username: str, new_password: str) -> bool:
 
 
 async def disable_user(username: str) -> bool:
-	doc = await UserDocument.find_one(UserDocument.username == username)
+	doc = await UserDocument.find_one({"username": username})
 	if doc is None:
 		return False
 	doc.is_active = False

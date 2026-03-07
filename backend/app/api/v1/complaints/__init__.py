@@ -56,9 +56,7 @@ class AddLogRequest(BaseModel):
 async def my_complaints(
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    complaints = await ComplaintDocument.find(
-        ComplaintDocument.username == current_user.username
-    ).to_list()
+    complaints = await ComplaintDocument.find({"username": current_user.username}).to_list()
     return {
         "complaints": [_complaint_dict(c) for c in complaints],
         "total": len(complaints),
@@ -93,7 +91,7 @@ async def get_complaint(
     complaint_id: int,
     current_user: User = Depends(get_current_active_user),
 ) -> dict:
-    complaint = await ComplaintDocument.find_one(ComplaintDocument.complaint_id == complaint_id)
+    complaint = await ComplaintDocument.find_one({"complaint_id": complaint_id})
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
     if complaint.username != current_user.username and current_user.role not in ("admin", "super_admin"):
@@ -132,7 +130,7 @@ async def update_complaint_status(
     body: UpdateStatusRequest,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    complaint = await ComplaintDocument.find_one(ComplaintDocument.complaint_id == complaint_id)
+    complaint = await ComplaintDocument.find_one({"complaint_id": complaint_id})
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
     old_status = complaint.status
@@ -149,7 +147,7 @@ async def assign_complaint(
     body: AssignRequest,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    complaint = await ComplaintDocument.find_one(ComplaintDocument.complaint_id == complaint_id)
+    complaint = await ComplaintDocument.find_one({"complaint_id": complaint_id})
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
     complaint.assigned_to = body.assignee
@@ -164,7 +162,7 @@ async def escalate_complaint(
     complaint_id: int,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    complaint = await ComplaintDocument.find_one(ComplaintDocument.complaint_id == complaint_id)
+    complaint = await ComplaintDocument.find_one({"complaint_id": complaint_id})
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
     old_status = complaint.status
@@ -181,7 +179,7 @@ async def add_complaint_log(
     body: AddLogRequest,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    complaint = await ComplaintDocument.find_one(ComplaintDocument.complaint_id == complaint_id)
+    complaint = await ComplaintDocument.find_one({"complaint_id": complaint_id})
     if complaint is None:
         raise HTTPException(status_code=404, detail="Complaint not found")
     complaint.updated_at = time()

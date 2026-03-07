@@ -106,11 +106,11 @@ async def get_mall_map() -> dict:
 @router.get("/{store_id}", summary="Get store details")
 async def get_store(store_id: int) -> dict:
     """Return details for a single store, including working hours and offers."""
-    store = await StoreDocument.find_one(StoreDocument.store_id == store_id)
+    store = await StoreDocument.find_one({"store_id": store_id})
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
 
-    products = await ProductDocument.find(ProductDocument.store_id == store_id).to_list()
+    products = await ProductDocument.find({"store_id": store_id}).to_list()
 
     today_metrics = {
         "today_revenue": 12500.0 if store_id == 1 else 8300.0,
@@ -132,11 +132,11 @@ async def get_store(store_id: int) -> dict:
 @router.get("/{store_id}/products", summary="List store products")
 async def list_store_products(store_id: int, search: str | None = None) -> dict:
     """Return a product catalogue for a store."""
-    store = await StoreDocument.find_one(StoreDocument.store_id == store_id)
+    store = await StoreDocument.find_one({"store_id": store_id})
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
 
-    products = await ProductDocument.find(ProductDocument.store_id == store_id).to_list()
+    products = await ProductDocument.find({"store_id": store_id}).to_list()
     if search:
         search_lower = search.lower()
         products = [p for p in products if search_lower in p.name.lower() or search_lower in p.category.lower()]
@@ -151,7 +151,7 @@ async def add_product(
     body: CreateProductRequest,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    store = await StoreDocument.find_one(StoreDocument.store_id == store_id)
+    store = await StoreDocument.find_one({"store_id": store_id})
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
 
@@ -170,10 +170,7 @@ async def update_product(
     body: UpdateProductRequest,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    product = await ProductDocument.find_one(
-        ProductDocument.store_id == store_id,
-        ProductDocument.product_id == product_id,
-    )
+    product = await ProductDocument.find_one({"store_id": store_id, "product_id": product_id})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     if body.name is not None:
@@ -192,10 +189,7 @@ async def delete_product(
     product_id: int,
     current_user: User = Depends(require_admin),
 ) -> dict:
-    product = await ProductDocument.find_one(
-        ProductDocument.store_id == store_id,
-        ProductDocument.product_id == product_id,
-    )
+    product = await ProductDocument.find_one({"store_id": store_id, "product_id": product_id})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
     await product.delete()
@@ -234,7 +228,7 @@ async def admin_update_store(
     body: UpdateStoreRequest,
     current_user: User = Depends(require_super_admin),
 ) -> dict:
-    store = await StoreDocument.find_one(StoreDocument.store_id == store_id)
+    store = await StoreDocument.find_one({"store_id": store_id})
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
     if body.name is not None:
@@ -258,7 +252,7 @@ async def admin_remove_store(
     store_id: int,
     current_user: User = Depends(require_super_admin),
 ) -> dict:
-    store = await StoreDocument.find_one(StoreDocument.store_id == store_id)
+    store = await StoreDocument.find_one({"store_id": store_id})
     if not store:
         raise HTTPException(status_code=404, detail="Store not found")
     store.status = "suspended"

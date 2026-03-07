@@ -24,9 +24,7 @@ def _compute_tier(lifetime_earned: int) -> str:
 
 
 async def _get_or_create_account(username: str) -> LoyaltyAccountDocument:
-    doc = await LoyaltyAccountDocument.find_one(
-        LoyaltyAccountDocument.username == username
-    )
+    doc = await LoyaltyAccountDocument.find_one({"username": username})
     if doc is None:
         doc = LoyaltyAccountDocument(username=username)
         await doc.insert()
