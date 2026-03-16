@@ -20,6 +20,10 @@ def _store_dict(doc: StoreDocument) -> dict:
         "average_rating": doc.average_rating,
         "current_footfall": doc.current_footfall,
         "current_occupancy_percent": doc.current_occupancy_percent,
+        "address": doc.address,
+        "working_hours": doc.working_hours,
+        "description": doc.description,
+        "floor": doc.floor,
     }
 
 
@@ -38,12 +42,17 @@ class CreateStoreRequest(BaseModel):
     address: str = ""
     working_hours: str = "10:00 AM - 9:00 PM"
     description: str = ""
+    floor: int = 1
 
 
 class UpdateStoreRequest(BaseModel):
     name: str | None = None
     category: str | None = None
     status: str | None = None
+    address: str | None = None
+    working_hours: str | None = None
+    description: str | None = None
+    floor: int | None = None
     address: str | None = None
     working_hours: str | None = None
     description: str | None = None
@@ -217,6 +226,7 @@ async def admin_create_store(
         address=body.address,
         working_hours=body.working_hours,
         description=body.description,
+        floor=body.floor,
     )
     await store.insert()
     return {"message": "Store created", "store": _store_dict(store)}
@@ -243,6 +253,8 @@ async def admin_update_store(
         store.working_hours = body.working_hours
     if body.description is not None:
         store.description = body.description
+    if body.floor is not None:
+        store.floor = body.floor
     await store.save()
     return {"message": "Store updated", "store": _store_dict(store)}
 

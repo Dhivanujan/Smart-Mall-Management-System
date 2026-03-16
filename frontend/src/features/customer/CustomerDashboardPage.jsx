@@ -10,7 +10,8 @@ const ACTIONS = [
 ];
 const QUICK_LINKS = [
     { to: "/offers", icon: "🏷️", label: "Active Offers", color: "pink" },
-    { to: "/mall/map", icon: "🗺️", label: "Mall Map", color: "cyan" },
+    { to: "/map", icon: "🗺️", label: "Mall Map", color: "cyan" },
+    { to: "/services", icon: "ℹ️", label: "Services", color: "blue" },
     { to: "/notifications", icon: "🔔", label: "Notifications", color: "indigo" },
     { to: "/complaints", icon: "📋", label: "Complaints", color: "red" },
 ];

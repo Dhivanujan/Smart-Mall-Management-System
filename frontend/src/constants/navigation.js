@@ -6,6 +6,7 @@ export const CUSTOMER_NAV = [
     { to: "/loyalty", label: "Loyalty", icon: "⭐" },
     { to: "/offers", label: "Offers", icon: "🏷️" },
     { to: "/map", label: "Mall Map", icon: "🗺️" },
+    { to: "/services", label: "Services", icon: "ℹ️" },
     { to: "/notifications", label: "Notifications", icon: "🔔" },
     { to: "/complaints", label: "Complaints", icon: "📩" },
 ];

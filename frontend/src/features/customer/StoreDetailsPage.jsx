@@ -73,6 +73,33 @@ export const StoreDetailsPage = () => {
 								{details.store.category} · {details.store.status === "open" ? "Open now" : "Closed"}
 							</div>
 							<h1 className="app-hero-heading">{details.store.name}</h1>
+                            
+                            {details.store.description && (
+                                <p className="app-hero-subtitle" style={{ marginTop: "0.5rem", marginBottom: "1.25rem" }}>
+                                    {details.store.description}
+                                </p>
+                            )}
+
+                            <div className="store-meta-grid" style={{ marginBottom: "1.5rem", display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                                {details.store.floor && (
+                                    <div className="meta-item">
+                                        <span className="text-muted text-sm">📍 Location</span>
+                                        <div className="font-medium">Floor {details.store.floor}</div>
+                                    </div>
+                                )}
+                                {details.store.working_hours && (
+                                    <div className="meta-item">
+                                        <span className="text-muted text-sm">🕒 Hours</span>
+                                        <div className="font-medium">{details.store.working_hours}</div>
+                                    </div>
+                                )}
+                                {details.store.address && (
+                                    <div className="meta-item">
+                                        <span className="text-muted text-sm">🏢 Address</span>
+                                        <div className="font-medium">{details.store.address}</div>
+                                    </div>
+                                )}
+                            </div>
 
 							{/* Live stats row */}
 							<div className="stats-row">

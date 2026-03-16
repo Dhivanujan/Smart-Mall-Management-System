@@ -21,6 +21,7 @@ import { OffersPage } from "@/features/customer/OffersPage";
 import { NotificationsPage } from "@/features/customer/NotificationsPage";
 import { ComplaintsPage } from "@/features/customer/ComplaintsPage";
 import { MallMapPage } from "@/features/customer/MallMapPage";
+import { ServicesPage } from "@/features/customer/ServicesPage";
 // Store admin pages
 import { ProductManagementPage } from "@/features/store-admin/ProductManagementPage";
 import { OfferManagementPage } from "@/features/store-admin/OfferManagementPage";
@@ -45,7 +46,8 @@ export const AppRoutes = () => {
 			<Route path="/login" element={<LoginPage />}/>
 			<Route path="/register" element={<RegisterPage />}/>
 			<Route path="/mall" element={<MallOverviewPage />}/>
-			<Route path="/mall/stores/:storeId" element={<StoreDetailsPage />}/>
+			<Route path="/services" element={<ServicesPage />}/>
+            <Route path="/mall/stores/:storeId" element={<StoreDetailsPage />}/>
 			<Route path="/stores/:storeId" element={<StoreDetailsPage />}/>
 			<Route path="/offers" element={<OffersPage />}/>
 			<Route path="/map" element={<MallMapPage />}/>
