@@ -75,26 +75,26 @@ export const StoreDetailsPage = () => {
 							<h1 className="app-hero-heading">{details.store.name}</h1>
 
 							{/* Live stats row */}
-							<div style={{ display: "flex", flexWrap: "wrap", gap: "1.25rem", marginTop: "0.5rem" }}>
-								<div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-									<span style={{ fontSize: "1rem" }}>👥</span>
+							<div className="stats-row">
+								<div className="mini-stat">
+									<span className="mini-stat-icon">👥</span>
 									<div>
-										<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Footfall</div>
-										<div style={{ fontSize: "1.1rem", fontWeight: 700 }}>{details.store.current_footfall} <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 400 }}>visitors</span></div>
+										<div className="mini-stat-label">Footfall</div>
+										<div className="mini-stat-value">{details.store.current_footfall} <span className="mini-stat-sub">visitors</span></div>
 									</div>
 								</div>
-								<div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-									<span style={{ fontSize: "1rem" }}>📊</span>
+								<div className="mini-stat">
+									<span className="mini-stat-icon">📊</span>
 									<div>
-										<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Occupancy</div>
-										<div style={{ fontSize: "1.1rem", fontWeight: 700 }}>{details.store.current_occupancy_percent.toFixed(0)}%</div>
+										<div className="mini-stat-label">Occupancy</div>
+										<div className="mini-stat-value">{details.store.current_occupancy_percent.toFixed(0)}%</div>
 									</div>
 								</div>
-								<div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
-									<span style={{ fontSize: "1rem", color: "#fbbf24" }}>★</span>
+								<div className="mini-stat">
+									<span className="bg-transparent text-warning text-base">★</span>
 									<div>
-										<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Rating</div>
-										<div style={{ fontSize: "1.1rem", fontWeight: 700 }}>{details.store.average_rating.toFixed(1)} <span style={{ fontSize: "0.75rem", color: "var(--color-text-muted)", fontWeight: 400 }}>/ 5.0</span></div>
+										<div className="mini-stat-label">Rating</div>
+										<div className="mini-stat-value">{details.store.average_rating.toFixed(1)} <span className="mini-stat-sub">/ 5.0</span></div>
 									</div>
 								</div>
 							</div>

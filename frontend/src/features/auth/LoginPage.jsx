@@ -60,20 +60,13 @@ export const LoginPage = () => {
 								Quick demo access
 							</div>
 							<div style={{ display: "grid", gap: "0.6rem" }}>
-								{DEMO_ACCOUNTS.map((acct) => (<button key={acct.email} type="button" onClick={() => fillDemo(acct.email, acct.password)} style={{
-                display: "flex",
-                alignItems: "flex-start",
-                gap: "0.65rem",
-                padding: "0.7rem 0.85rem",
-                borderRadius: "var(--radius-lg)",
-                border: username === acct.email ? "1px solid rgba(99,102,241,0.5)" : "1px solid rgba(148,163,184,0.2)",
-                background: username === acct.email ? "rgba(99,102,241,0.08)" : "rgba(15,23,42,0.6)",
-                color: "var(--color-text-primary)",
-                cursor: "pointer",
-                textAlign: "left",
-                transition: "border-color 180ms, background 180ms",
-                fontSize: "0.85rem",
-            }}>
+								{DEMO_ACCOUNTS.map((acct) => (
+									<button
+										key={acct.email}
+										type="button"
+										onClick={() => fillDemo(acct.email, acct.password)}
+										className={`demo-account-btn ${username === acct.email ? "active" : ""}`}
+									>
 										<span style={{ fontSize: "1.2rem", flexShrink: 0 }}>{acct.icon}</span>
 										<div>
 											<div style={{ fontWeight: 550, marginBottom: "0.1rem" }}>{acct.label}</div>
@@ -82,7 +75,8 @@ export const LoginPage = () => {
 												{acct.email}
 											</div>
 										</div>
-									</button>))}
+									</button>
+								))}
 							</div>
 						</div>
 					</div>

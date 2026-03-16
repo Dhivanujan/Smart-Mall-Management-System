@@ -5,11 +5,11 @@ const StarRating = ({ rating }) => {
     const full = Math.floor(rating);
     const half = rating - full >= 0.5 ? 1 : 0;
     const empty = 5 - full - half;
-    return (<span style={{ display: "inline-flex", alignItems: "center", gap: "1px", fontSize: "0.72rem", color: "#fbbf24" }}>
+    return (<span className="star-rating">
 			{"★".repeat(full)}
 			{half ? "★" : ""}
-			<span style={{ color: "rgba(148,163,184,0.4)" }}>{"☆".repeat(empty)}</span>
-			<span style={{ marginLeft: "0.3rem", fontSize: "0.72rem", color: "var(--color-text-muted)" }}>
+			<span className="star-rating-empty">{"☆".repeat(empty)}</span>
+			<span className="star-rating-value">
 				{rating.toFixed(1)}
 			</span>
 		</span>);
@@ -17,8 +17,8 @@ const StarRating = ({ rating }) => {
 const OccupancyBar = ({ percent }) => {
     const color = percent > 80 ? "#f87171" : percent > 50 ? "#fbbf24" : "#4ade80";
     return (<div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "0.35rem" }}>
-			<div style={{ flex: 1, height: "4px", borderRadius: "999px", background: "rgba(148,163,184,0.12)", overflow: "hidden" }}>
-				<div style={{ width: `${Math.min(percent, 100)}%`, height: "100%", borderRadius: "999px", background: color, transition: "width 0.5s ease-out" }}/>
+			<div className="progress-bar-track">
+				<div className="progress-bar-fill" style={{ width: `${Math.min(percent, 100)}%`, background: color }}/>
 			</div>
 			<span style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", minWidth: "28px", textAlign: "right" }}>
 				{percent.toFixed(0)}%

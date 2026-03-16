@@ -56,19 +56,12 @@ export const HomePage = () => {
 					</p>
 
 					{/* Stats row */}
-					<div style={{
-            display: "flex",
-            flexWrap: "wrap",
-            gap: "1.5rem",
-            marginBottom: "1.75rem",
-            paddingBottom: "1.25rem",
-            borderBottom: "1px solid rgba(148,163,184,0.15)",
-        }}>
+					<div className="d-flex flex-wrap gap-6 mb-4 pb-2 border-b">
 						{STATS.map((stat) => (<div key={stat.label}>
-								<div style={{ fontSize: "1.3rem", fontWeight: 700, letterSpacing: "-0.02em", color: "#a5b4fc" }}>
+								<div className="text-xl font-bold" style={{ letterSpacing: "-0.02em", color: "#a5b4fc" }}>
 									{stat.value}
 								</div>
-								<div style={{ fontSize: "0.72rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+								<div className="text-xs text-muted" style={{ textTransform: "uppercase", letterSpacing: "0.06em" }}>
 									{stat.label}
 								</div>
 							</div>))}
@@ -120,5 +113,14 @@ export const HomePage = () => {
 					</div>
 				</aside>
 			</div>
+			
+			<footer style={{ width: "100%", maxWidth: "1120px", padding: "2rem 0", marginTop: "auto", borderTop: "1px solid rgba(148,163,184,0.1)", display: "flex", justifyContent: "space-between", fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
+				<div>&copy; {new Date().getFullYear()} Smart Mall Management System</div>
+				<div style={{ display: "flex", gap: "1.5rem" }}>
+					<Link to="#" style={{ color: "inherit", textDecoration: "none" }}>Privacy</Link>
+					<Link to="#" style={{ color: "inherit", textDecoration: "none" }}>Terms</Link>
+					<Link to="#" style={{ color: "inherit", textDecoration: "none" }}>Help</Link>
+				</div>
+			</footer>
 		</div>);
 };

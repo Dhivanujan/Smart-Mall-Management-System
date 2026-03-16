@@ -27,20 +27,7 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 						<kbd>⌘K</kbd>
 					</div>
 					{user && (<div style={{ position: "relative" }}>
-							<button type="button" onClick={() => setShowUserMenu((v) => !v)} style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.6rem",
-                background: "none",
-                border: "1px solid transparent",
-                borderRadius: "var(--radius-md)",
-                color: "var(--color-text-primary)",
-                cursor: "pointer",
-                padding: "0.3rem 0.6rem",
-                fontSize: "0.85rem",
-                transition: "border-color 180ms",
-            }} onMouseEnter={(e) => e.currentTarget.style.borderColor = "rgba(148,163,184,0.3)"} onMouseLeave={(e) => { if (!showUserMenu)
-            e.currentTarget.style.borderColor = "transparent"; }}>
+							<button type="button" onClick={() => setShowUserMenu((v) => !v)} className="user-menu-button">
 								<div className="dashboard-avatar">
 									{(user.full_name ?? user.username)?.[0]?.toUpperCase()}
 								</div>
@@ -52,38 +39,15 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 							</button>
 							{showUserMenu && (<>
 									<div style={{ position: "fixed", inset: 0, zIndex: 15 }} onClick={() => setShowUserMenu(false)}/>
-									<div className="animate-fade-in" style={{
-                    position: "absolute",
-                    right: 0,
-                    top: "calc(100% + 6px)",
-                    minWidth: "180px",
-                    background: "rgba(15, 23, 42, 0.98)",
-                    border: "1px solid rgba(148,163,184,0.3)",
-                    borderRadius: "var(--radius-lg)",
-                    boxShadow: "0 12px 40px rgba(0,0,0,0.4)",
-                    zIndex: 20,
-                    padding: "0.35rem",
-                    fontSize: "0.85rem",
-                }}>
+									<div className="animate-fade-in user-menu-dropdown">
 										<div style={{ padding: "0.5rem 0.6rem", borderBottom: "1px solid rgba(148,163,184,0.12)", marginBottom: "0.25rem" }}>
 											<div style={{ fontWeight: 550, fontSize: "0.82rem" }}>{user.full_name ?? user.username}</div>
 											<div style={{ fontSize: "0.72rem", color: "var(--color-text-muted)" }}>{user.email ?? user.username}</div>
 										</div>
-										<Link to="/" style={{ display: "block", padding: "0.4rem 0.6rem", borderRadius: "var(--radius-sm)", textDecoration: "none", color: "var(--color-text-primary)" }} onClick={() => setShowUserMenu(false)} onMouseEnter={(e) => e.currentTarget.style.background = "rgba(148,163,184,0.1)"} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+										<Link to="/" className="user-menu-item" onClick={() => setShowUserMenu(false)}>
 											🏠 Home
 										</Link>
-										<button type="button" onClick={handleLogout} style={{
-                    display: "block",
-                    width: "100%",
-                    padding: "0.4rem 0.6rem",
-                    borderRadius: "var(--radius-sm)",
-                    border: "none",
-                    background: "transparent",
-                    color: "#f87171",
-                    cursor: "pointer",
-                    fontSize: "0.85rem",
-                    textAlign: "left",
-                }} onMouseEnter={(e) => e.currentTarget.style.background = "rgba(239,68,68,0.1)"} onMouseLeave={(e) => e.currentTarget.style.background = "transparent"}>
+										<button type="button" onClick={handleLogout} className="user-menu-item danger">
 											🚪 Sign out
 										</button>
 									</div>
