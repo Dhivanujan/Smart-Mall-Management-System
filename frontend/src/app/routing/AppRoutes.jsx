@@ -22,6 +22,9 @@ import { NotificationsPage } from "@/features/customer/NotificationsPage";
 import { ComplaintsPage } from "@/features/customer/ComplaintsPage";
 import { MallMapPage } from "@/features/customer/MallMapPage";
 import { ServicesPage } from "@/features/customer/ServicesPage";
+import { EventsPage } from "@/features/customer/EventsPage";
+import { MoviesPage } from "@/features/customer/MoviesPage";
+import { LostFoundPage } from "@/features/customer/LostFoundPage";
 // Store admin pages
 import { ProductManagementPage } from "@/features/store-admin/ProductManagementPage";
 import { OfferManagementPage } from "@/features/store-admin/OfferManagementPage";
@@ -51,6 +54,9 @@ export const AppRoutes = () => {
 			<Route path="/stores/:storeId" element={<StoreDetailsPage />}/>
 			<Route path="/offers" element={<OffersPage />}/>
 			<Route path="/map" element={<MallMapPage />}/>
+			<Route path="/events" element={<EventsPage />}/>
+			<Route path="/movies" element={<MoviesPage />}/>
+			<Route path="/lost-found" element={<LostFoundPage />}/>
 
 			{/* Customer routes with layout */}
 			<Route element={<ProtectedRoute requireRole="customer"/>}>

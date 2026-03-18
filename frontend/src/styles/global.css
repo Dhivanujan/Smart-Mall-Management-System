@@ -1880,6 +1880,8 @@ a:hover {
 .action-card.cyan::before { background: linear-gradient(135deg, rgba(6, 182, 212, 0.12), transparent 60%); }
 .action-card.indigo::before { background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), transparent 60%); }
 .action-card.red::before { background: linear-gradient(135deg, rgba(239, 68, 68, 0.12), transparent 60%); }
+.action-card.emerald::before { background: linear-gradient(135deg, rgba(16, 185, 129, 0.12), transparent 60%); }
+.action-card.orange::before { background: linear-gradient(135deg, rgba(249, 115, 22, 0.12), transparent 60%); }
 
 .action-card-icon {
   width: 3rem;
@@ -1905,6 +1907,8 @@ a:hover {
 .action-card.cyan .action-card-icon { background: rgba(6, 182, 212, 0.15); border: 1px solid rgba(6, 182, 212, 0.2); }
 .action-card.indigo .action-card-icon { background: rgba(99, 102, 241, 0.15); border: 1px solid rgba(99, 102, 241, 0.2); }
 .action-card.red .action-card-icon { background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.2); }
+.action-card.emerald .action-card-icon { background: rgba(16, 185, 129, 0.15); border: 1px solid rgba(16, 185, 129, 0.2); }
+.action-card.orange .action-card-icon { background: rgba(249, 115, 22, 0.15); border: 1px solid rgba(249, 115, 22, 0.2); }
 
 .action-card-text {
   display: flex;

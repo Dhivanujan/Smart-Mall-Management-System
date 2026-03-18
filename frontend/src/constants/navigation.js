@@ -5,8 +5,11 @@ export const CUSTOMER_NAV = [
     { to: "/parking", label: "Parking", icon: "🅿️" },
     { to: "/loyalty", label: "Loyalty", icon: "⭐" },
     { to: "/offers", label: "Offers", icon: "🏷️" },
+    { to: "/events", label: "Events", icon: "📅" },
+    { to: "/movies", label: "Cinema", icon: "🍿" },
     { to: "/map", label: "Mall Map", icon: "🗺️" },
     { to: "/services", label: "Services", icon: "ℹ️" },
+    { to: "/lost-found", label: "Lost & Found", icon: "🔍" },
     { to: "/notifications", label: "Notifications", icon: "🔔" },
     { to: "/complaints", label: "Complaints", icon: "📩" },
 ];
