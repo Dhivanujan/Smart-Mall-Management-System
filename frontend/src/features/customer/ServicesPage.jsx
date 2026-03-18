@@ -45,47 +45,38 @@ const SERVICES = [
 
 export const ServicesPage = () => {
   return (
-    <div className="customer-page">
+    <div className="customer-page animate-fade-in">
       <div className="page-header">
         <h1 className="hero-heading">Mall Services</h1>
         <p className="hero-subtitle">Amenities designed for your comfort and convenience</p>
       </div>
 
-      <div className="services-grid" style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "1.5rem" }}>
-        {SERVICES.map((service) => (
-          <div key={service.title} className="service-card animate-fade-in-up" style={{
-            background: "var(--glass-bg)",
-            backdropFilter: "var(--glass-blur)",
-            border: "1px solid var(--color-border-glass)",
-            borderRadius: "var(--radius-lg)",
-            padding: "1.5rem",
-            display: "flex",
-            flexDirection: "column",
-            gap: "0.75rem",
-            boxShadow: "var(--shadow-card)",
-          }}>
-            <div style={{ fontSize: "2rem", marginBottom: "0.25rem" }}>{service.icon}</div>
-            <h3 style={{ margin: 0, fontSize: "1.1rem", fontWeight: 600 }}>{service.title}</h3>
-            <p style={{ margin: 0, fontSize: "0.9rem", color: "var(--color-text-muted)", lineHeight: 1.5 }}>
-              {service.description}
-            </p>
+      <div className="services-grid">
+        {SERVICES.map((service, index) => (
+          <div 
+            key={service.title} 
+            className={`service-card animate-fade-in-up stagger-${(index % 6) + 1}`}
+          >
+            <div className="service-icon">{service.icon}</div>
+            <h3 className="service-title">{service.title}</h3>
+            <p className="service-desc">{service.description}</p>
           </div>
         ))}
       </div>
 
-      <div className="emergency-contact" style={{ marginTop: "3rem", padding: "2rem", background: "rgba(239, 68, 68, 0.1)", borderRadius: "var(--radius-xl)", border: "1px solid rgba(239, 68, 68, 0.2)", display: "flex", alignItems: "center", gap: "1.5rem", flexWrap: "wrap" }}>
-        <div style={{ fontSize: "2.5rem" }}>🚨</div>
-        <div style={{ flex: 1 }}>
-          <h3 style={{ margin: "0 0 0.5rem", fontSize: "1.25rem", color: "#fca5a5" }}>Emergency Contacts</h3>
-          <p style={{ margin: 0, color: "var(--color-text-muted)", fontSize: "0.95rem" }}>
+      <div className="emergency-contact-box animate-fade-in-up stagger-6">
+        <div className="emergency-icon">🚨</div>
+        <div className="emergency-content">
+          <h3 className="emergency-title">Emergency Contacts</h3>
+          <p className="emergency-text">
             For immediate assistance, please contact our 24/7 security team.
           </p>
         </div>
-        <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap" }}>
-          <a href="tel:555-0123" className="btn" style={{ background: "#ef4444", color: "white", border: "none" }}>
+        <div className="emergency-actions">
+          <a href="tel:555-0123" className="btn-emergency btn-emergency-primary">
             📞 Security: 555-0123
           </a>
-          <a href="tel:555-0911" className="btn" style={{ background: "transparent", color: "#fca5a5", border: "1px solid rgba(239,68,68,0.4)" }}>
+          <a href="tel:555-0911" className="btn-emergency btn-emergency-secondary">
             🏥 Medical: 555-0911
           </a>
         </div>
