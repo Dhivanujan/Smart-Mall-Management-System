@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 const DEMO_EVENTS = [
   {
@@ -41,10 +41,48 @@ const DEMO_EVENTS = [
 
 export const EventsPage = () => {
   const [filter, setFilter] = useState("All");
+  const [query, setQuery] = useState("");
+  const [savedEventIds, setSavedEventIds] = useState([]);
 
-  const filteredEvents = filter === "All" 
-    ? DEMO_EVENTS 
-    : DEMO_EVENTS.filter(e => e.category === filter);
+  useEffect(() => {
+    const raw = localStorage.getItem("smartmall.events.saved");
+    if (!raw) {
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setSavedEventIds(parsed);
+      }
+    } catch {
+      setSavedEventIds([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("smartmall.events.saved", JSON.stringify(savedEventIds));
+  }, [savedEventIds]);
+
+  const filteredEvents = useMemo(() => {
+    return DEMO_EVENTS.filter((event) => {
+      const categoryMatch = filter === "All" || event.category === filter;
+      const q = query.trim().toLowerCase();
+      const queryMatch =
+        !q ||
+        event.title.toLowerCase().includes(q) ||
+        event.location.toLowerCase().includes(q) ||
+        event.description.toLowerCase().includes(q);
+
+      return categoryMatch && queryMatch;
+    });
+  }, [filter, query]);
+
+  const toggleReminder = (eventId) => {
+    setSavedEventIds((prev) =>
+      prev.includes(eventId) ? prev.filter((id) => id !== eventId) : [...prev, eventId]
+    );
+  };
 
   return (
     <div className="customer-page animate-fade-in">
@@ -53,106 +91,83 @@ export const EventsPage = () => {
         <p className="hero-subtitle">Discover what's happening at SmartMall this season.</p>
       </div>
 
-      <div className="events-filters" style={{ marginBottom: "2rem", display: "flex", gap: "1rem" }}>
+      <div className="feature-toolbar events-toolbar">
+        <input
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          className="feature-search"
+          placeholder="Search events by title, location, or description"
+          aria-label="Search events"
+        />
+        <div className="feature-kpi">
+          <span className="feature-kpi-value">{filteredEvents.length}</span>
+          <span>Showing</span>
+        </div>
+        <div className="feature-kpi">
+          <span className="feature-kpi-value">{savedEventIds.length}</span>
+          <span>Saved</span>
+        </div>
+      </div>
+
+      <div className="events-filters">
         {["All", "Entertainment", "Family", "Technology", "Dining"].map(cat => (
           <button 
             key={cat}
             onClick={() => setFilter(cat)}
-            className={`btn ${filter === cat ? "btn-primary" : "btn-secondary"}`}
-            style={{ 
-              borderRadius: "2rem",
-              padding: "0.5rem 1.25rem",
-              fontSize: "0.9rem",
-              transition: "all 0.2s ease"
-            }}
+            className={`event-filter-chip ${filter === cat ? "active" : ""}`}
           >
             {cat}
           </button>
         ))}
       </div>
 
-      <div className="events-grid" style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))",
-        gap: "2rem"
-      }}>
+      <div className="events-grid">
         {filteredEvents.map((event, index) => (
           <div 
             key={event.id} 
             className={`event-card animate-fade-in-up stagger-${(index % 4) + 1}`}
-            style={{
-              background: "var(--glass-bg)",
-              backdropFilter: "var(--glass-blur)",
-              border: "1px solid var(--color-border-glass)",
-              borderRadius: "var(--radius-xl)",
-              overflow: "hidden",
-              transition: "transform 0.3s ease, box-shadow 0.3s ease",
-            }}
           >
-            <div style={{
-              height: "160px",
-              background: "linear-gradient(135deg, rgba(79, 70, 229, 0.2), rgba(168, 85, 247, 0.1))",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "4rem",
-              position: "relative"
-            }}>
+            <div className="event-card-cover">
               {event.image}
-              <div style={{
-                position: "absolute",
-                bottom: "1rem",
-                left: "1rem",
-                background: "rgba(0,0,0,0.6)",
-                padding: "0.25rem 0.75rem",
-                borderRadius: "1rem",
-                fontSize: "0.8rem",
-                color: "white"
-              }}>
+              <div className="event-category-pill">
                 {event.category}
               </div>
             </div>
             
-            <div style={{ padding: "1.5rem" }}>
-              <div style={{ 
-                color: "var(--color-accent-strong)", 
-                fontWeight: 600, 
-                marginBottom: "0.5rem",
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem"
-              }}>
+            <div className="event-card-body">
+              <div className="event-date-row">
                 📅 {event.date}
               </div>
-              <h3 style={{ margin: "0 0 0.75rem", fontSize: "1.25rem" }}>{event.title}</h3>
-              <p style={{ color: "var(--color-text-muted)", fontSize: "0.95rem", lineHeight: 1.6, marginBottom: "1.5rem" }}>
+              <h3 className="event-title">{event.title}</h3>
+              <p className="event-desc">
                 {event.description}
               </p>
               
-              <div style={{ 
-                display: "flex", 
-                alignItems: "center", 
-                justifyContent: "space-between",
-                paddingTop: "1rem",
-                borderTop: "1px solid var(--color-border-glass)"
-              }}>
-                <span style={{ fontSize: "0.9rem", color: "var(--color-text-dim)" }}>
+              <div className="event-footer">
+                <span className="event-location">
                   📍 {event.location}
                 </span>
-                <button className="btn-link" style={{ 
-                  background: "transparent", 
-                  color: "var(--color-accent)", 
-                  border: "none", 
-                  fontWeight: 600, 
-                  cursor: "pointer" 
-                }}>
-                  Details →
+                <button
+                  type="button"
+                  className={`event-reminder-btn ${savedEventIds.includes(event.id) ? "saved" : ""}`}
+                  onClick={() => toggleReminder(event.id)}
+                >
+                  {savedEventIds.includes(event.id) ? "Saved" : "Set Reminder"}
                 </button>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {filteredEvents.length === 0 && (
+        <div className="empty-panel" style={{ marginTop: "1rem" }}>
+          <span className="empty-panel-icon">📭</span>
+          <h3>No events found</h3>
+          <p>Try a different category or update your search text.</p>
+        </div>
+      )}
     </div>
   );
 };

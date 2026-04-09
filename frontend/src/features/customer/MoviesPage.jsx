@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 
 const MOVIES = [
   {
@@ -40,6 +40,63 @@ const MOVIES = [
 ];
 
 export const MoviesPage = () => {
+  const [selectedByMovie, setSelectedByMovie] = useState({});
+  const [bookings, setBookings] = useState([]);
+
+  useEffect(() => {
+    const raw = localStorage.getItem("smartmall.movies.bookings");
+    if (!raw) {
+      return;
+    }
+
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setBookings(parsed);
+      }
+    } catch {
+      setBookings([]);
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem("smartmall.movies.bookings", JSON.stringify(bookings));
+  }, [bookings]);
+
+  const upcomingCount = useMemo(
+    () => bookings.filter((booking) => booking.status === "Booked").length,
+    [bookings]
+  );
+
+  const toggleShowtime = (movieId, time) => {
+    setSelectedByMovie((prev) => ({
+      ...prev,
+      [movieId]: prev[movieId] === time ? null : time,
+    }));
+  };
+
+  const bookTicket = (movie) => {
+    const selectedTime = selectedByMovie[movie.id];
+    if (!selectedTime) {
+      return;
+    }
+
+    const booking = {
+      id: `${movie.id}-${Date.now()}`,
+      movieId: movie.id,
+      title: movie.title,
+      time: selectedTime,
+      status: "Booked",
+      createdAt: new Date().toISOString(),
+    };
+
+    setBookings((prev) => [booking, ...prev].slice(0, 6));
+    setSelectedByMovie((prev) => ({
+      ...prev,
+      [movie.id]: null,
+    }));
+  };
+
   return (
     <div className="customer-page animate-fade-in">
       <div className="page-header">
@@ -47,104 +104,87 @@ export const MoviesPage = () => {
         <p className="hero-subtitle">Catch the latest blockbusters at SmartMall Cinema 4K.</p>
       </div>
 
-      <div className="cinema-info animate-fade-in-up" style={{
-        margin: "0 0 2rem",
-        padding: "1.5rem",
-        background: "linear-gradient(to right, rgba(168, 85, 247, 0.1), rgba(6, 182, 212, 0.05))",
-        borderRadius: "var(--radius-xl)",
-        border: "1px solid rgba(168, 85, 247, 0.2)",
-        display: "flex",
-        alignItems: "center",
-        gap: "1rem",
-        justifyContent: "space-between"
-      }}> 
+      <div className="cinema-info animate-fade-in-up">
         <div>
-          <div style={{ fontSize: "1.25rem", fontWeight: 700, color: "var(--color-text-primary)", marginBottom: "0.25rem" }}>
+          <div className="cinema-info-title">
             Now Showing
           </div>
-          <div style={{ fontSize: "0.9rem", color: "var(--color-text-muted)" }}>
+          <div className="cinema-info-subtitle">
             Today's Schedule • All halls equipped with Dolby Atmos
           </div>
         </div>
-        <button className="btn btn-primary" style={{ padding: "0.75rem 1.5rem" }}>
-          Buy Tickets Online
-        </button>
+        <div className="feature-kpi">
+          <span className="feature-kpi-value">{upcomingCount}</span>
+          <span>Upcoming bookings</span>
+        </div>
       </div>
 
-      <div className="movies-grid" style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))",
-        gap: "2rem"
-      }}>
+      <div className="movies-grid">
         {MOVIES.map((movie, index) => (
           <div 
             key={movie.id} 
             className={`movie-card animate-fade-in-up stagger-${(index % 4) + 1}`}
-            style={{
-              background: "var(--glass-bg)",
-              backdropFilter: "var(--glass-blur)",
-              borderRadius: "var(--radius-lg)",
-              overflow: "hidden",
-              border: "1px solid var(--color-border-glass)",
-              display: "flex",
-              flexDirection: "column",
-              height: "100%"
-            }}
           >
-            <div className="movie-poster" style={{
-              height: "200px",
-              background: "linear-gradient(to bottom, #1e1b4b, #312e81)",
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: "5rem",
-              position: "relative"
-            }}>
+            <div className="movie-poster">
               {movie.poster}
-              <div style={{
-                position: "absolute",
-                top: "1rem",
-                right: "1rem",
-                background: "rgba(0,0,0,0.7)",
-                color: "white",
-                padding: "0.25rem 0.5rem",
-                borderRadius: "0.5rem",
-                fontSize: "0.8rem",
-                fontWeight: 600
-              }}>
+              <div className="movie-rating-pill">
                 {movie.rating}
               </div>
             </div>
             
-            <div className="movie-details" style={{ padding: "1.5rem", flex: 1, display: "flex", flexDirection: "column" }}>
-              <h3 style={{ margin: "0 0 0.5rem", fontSize: "1.25rem" }}>{movie.title}</h3>
-              <div style={{ margin: "0 0 1rem", fontSize: "0.9rem", color: "var(--color-text-dim)", display: "flex", gap: "1rem" }}>
+            <div className="movie-details">
+              <h3 className="movie-title">{movie.title}</h3>
+              <div className="movie-meta-row">
                 <span>⏱️ {movie.duration}</span>
                 <span>🎬 {movie.genre}</span>
               </div>
               
-              <div style={{ marginTop: "auto" }}>
-                <div style={{ fontSize: "0.85rem", fontWeight: 600, marginBottom: "0.5rem", color: "var(--color-text-muted)" }}>Showtimes:</div>
-                <div style={{ display: "flex", flexWrap: "wrap", gap: "0.5rem" }}>
+              <div className="movie-showtimes-wrap">
+                <div className="movie-showtimes-title">Showtimes:</div>
+                <div className="movie-showtimes-list">
                   {movie.showtimes.map(time => (
-                    <button key={time} className="btn-time" style={{
-                      background: "rgba(255, 255, 255, 0.05)",
-                      border: "1px solid rgba(255,255,255,0.1)",
-                      borderRadius: "0.5rem",
-                      padding: "0.35rem 0.65rem",
-                      fontSize: "0.85rem",
-                      cursor: "pointer",
-                      color: "var(--color-text-primary)",
-                      transition: "all 0.2s"
-                    }}>
+                    <button
+                      key={time}
+                      type="button"
+                      className={`movie-time-btn ${selectedByMovie[movie.id] === time ? "active" : ""}`}
+                      onClick={() => toggleShowtime(movie.id, time)}
+                    >
                       {time}
                     </button>
                   ))}
                 </div>
               </div>
+
+              <button
+                type="button"
+                className="btn btn-primary movie-book-btn"
+                onClick={() => bookTicket(movie)}
+                disabled={!selectedByMovie[movie.id]}
+              >
+                {selectedByMovie[movie.id] ? `Book ${selectedByMovie[movie.id]}` : "Select a showtime"}
+              </button>
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="panel animate-fade-in-up" style={{ marginTop: "2rem" }}>
+        <h2 className="panel-title">Your Recent Bookings</h2>
+        {bookings.length === 0 ? (
+          <p className="hero-subtitle" style={{ marginBottom: 0 }}>No bookings yet. Pick a showtime above to reserve your ticket.</p>
+        ) : (
+          <div className="booking-list">
+            {bookings.map((booking) => (
+              <div key={booking.id} className="booking-item">
+                <div>
+                  <div className="booking-title">{booking.title}</div>
+                  <div className="booking-time">{booking.time}</div>
+                </div>
+                <span className="booking-status">{booking.status}</span>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

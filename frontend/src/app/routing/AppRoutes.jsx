@@ -49,14 +49,8 @@ export const AppRoutes = () => {
 			<Route path="/login" element={<LoginPage />}/>
 			<Route path="/register" element={<RegisterPage />}/>
 			<Route path="/mall" element={<MallOverviewPage />}/>
-			<Route path="/services" element={<ServicesPage />}/>
             <Route path="/mall/stores/:storeId" element={<StoreDetailsPage />}/>
 			<Route path="/stores/:storeId" element={<StoreDetailsPage />}/>
-			<Route path="/offers" element={<OffersPage />}/>
-			<Route path="/map" element={<MallMapPage />}/>
-			<Route path="/events" element={<EventsPage />}/>
-			<Route path="/movies" element={<MoviesPage />}/>
-			<Route path="/lost-found" element={<LostFoundPage />}/>
 
 			{/* Customer routes with layout */}
 			<Route element={<ProtectedRoute requireRole="customer"/>}>
@@ -65,6 +59,12 @@ export const AppRoutes = () => {
 					<Route path="/queue" element={<QueuePage />}/>
 					<Route path="/parking" element={<ParkingPage />}/>
 					<Route path="/loyalty" element={<LoyaltyPage />}/>
+					<Route path="/offers" element={<OffersPage />}/>
+					<Route path="/map" element={<MallMapPage />}/>
+					<Route path="/services" element={<ServicesPage />}/>
+					<Route path="/events" element={<EventsPage />}/>
+					<Route path="/movies" element={<MoviesPage />}/>
+					<Route path="/lost-found" element={<LostFoundPage />}/>
 					<Route path="/notifications" element={<NotificationsPage />}/>
 					<Route path="/complaints" element={<ComplaintsPage />}/>
 				</Route>
