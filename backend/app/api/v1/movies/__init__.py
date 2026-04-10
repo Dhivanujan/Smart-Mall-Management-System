@@ -6,7 +6,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
 from app.auth.schemas.users import User
-from app.auth.services.security import get_current_active_user
+from app.auth.services.security import get_current_active_user, require_admin
 from app.db.models.movie_booking import MovieBookingDocument
 
 router = APIRouter(prefix="/movies", tags=["movies"])
@@ -27,6 +27,10 @@ class CreateBookingRequest(BaseModel):
     movie_id: int
     movie_title: str = Field(min_length=2, max_length=200)
     showtime: str = Field(min_length=2, max_length=40)
+
+
+class UpdateBookingStatusRequest(BaseModel):
+    booking_status: str = Field(min_length=3, max_length=40)
 
 
 async def _next_booking_id() -> int:
@@ -87,3 +91,52 @@ async def cancel_booking(
     doc.booking_status = "cancelled"
     await doc.save()
     return {"message": "Booking cancelled", "booking": _booking_dict(doc)}
+
+
+@router.get("/admin/bookings")
+async def admin_list_bookings(
+    status: str | None = None,
+    username: str | None = None,
+    current_user: User = Depends(require_admin),
+) -> dict:
+    query: dict = {}
+    if status:
+        query["booking_status"] = status
+    if username:
+        query["username"] = username
+
+    bookings = await MovieBookingDocument.find(query).to_list()
+    bookings.sort(key=lambda item: item.created_at, reverse=True)
+
+    all_bookings = await MovieBookingDocument.find().to_list()
+    summary = {
+        "total": len(all_bookings),
+        "booked": len([b for b in all_bookings if b.booking_status == "booked"]),
+        "cancelled": len([b for b in all_bookings if b.booking_status == "cancelled"]),
+        "completed": len([b for b in all_bookings if b.booking_status == "completed"]),
+    }
+    return {
+        "bookings": [_booking_dict(item) for item in bookings],
+        "total": len(bookings),
+        "summary": summary,
+    }
+
+
+@router.put("/admin/bookings/{booking_id}/status")
+async def admin_update_booking_status(
+    booking_id: int,
+    body: UpdateBookingStatusRequest,
+    current_user: User = Depends(require_admin),
+) -> dict:
+    allowed = {"booked", "cancelled", "completed"}
+    next_status = body.booking_status.lower().strip()
+    if next_status not in allowed:
+        raise HTTPException(status_code=400, detail="Invalid booking status")
+
+    doc = await MovieBookingDocument.find_one({"booking_id": booking_id})
+    if doc is None:
+        raise HTTPException(status_code=404, detail="Booking not found")
+
+    doc.booking_status = next_status
+    await doc.save()
+    return {"message": "Booking status updated", "booking": _booking_dict(doc)}
