@@ -22,6 +22,9 @@ from .api.v1.notifications import router as notifications_router
 from .api.v1.offers import router as offers_router
 from .api.v1.analytics import router as analytics_router
 from .api.v1.users import router as users_router
+from .api.v1.events import router as events_router
+from .api.v1.movies import router as movies_router
+from .api.v1.lost_found import router as lost_found_router
 from .core.config import get_settings
 from .core.logging import setup_logging
 from .db import init_db, close_db
@@ -95,6 +98,9 @@ def create_app() -> FastAPI:
 	app.include_router(offers_router, prefix=f"{settings.api_prefix}", tags=["offers"])
 	app.include_router(analytics_router, prefix=f"{settings.api_prefix}", tags=["analytics"])
 	app.include_router(users_router, prefix=f"{settings.api_prefix}", tags=["users"])
+	app.include_router(events_router, prefix=f"{settings.api_prefix}", tags=["events"])
+	app.include_router(movies_router, prefix=f"{settings.api_prefix}", tags=["movies"])
+	app.include_router(lost_found_router, prefix=f"{settings.api_prefix}", tags=["lost-found"])
 
 	# WebSocket routes
 	app.include_router(queues_router)

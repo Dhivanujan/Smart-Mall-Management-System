@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { moviesApi } from "@/services/api/movies";
 
 const MOVIES = [
   {
@@ -42,29 +43,26 @@ const MOVIES = [
 export const MoviesPage = () => {
   const [selectedByMovie, setSelectedByMovie] = useState({});
   const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const raw = localStorage.getItem("smartmall.movies.bookings");
-    if (!raw) {
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        setBookings(parsed);
+    const loadBookings = async () => {
+      try {
+        const res = await moviesApi.listBookings();
+        setBookings(res.data.bookings ?? []);
+      } catch {
+        setMessage("Could not load bookings right now.");
+      } finally {
+        setLoading(false);
       }
-    } catch {
-      setBookings([]);
-    }
+    };
+
+    loadBookings();
   }, []);
 
-  useEffect(() => {
-    localStorage.setItem("smartmall.movies.bookings", JSON.stringify(bookings));
-  }, [bookings]);
-
   const upcomingCount = useMemo(
-    () => bookings.filter((booking) => booking.status === "Booked").length,
+    () => bookings.filter((booking) => booking.booking_status === "booked").length,
     [bookings]
   );
 
@@ -75,26 +73,42 @@ export const MoviesPage = () => {
     }));
   };
 
-  const bookTicket = (movie) => {
+  const bookTicket = async (movie) => {
     const selectedTime = selectedByMovie[movie.id];
     if (!selectedTime) {
       return;
     }
 
-    const booking = {
-      id: `${movie.id}-${Date.now()}`,
-      movieId: movie.id,
-      title: movie.title,
-      time: selectedTime,
-      status: "Booked",
-      createdAt: new Date().toISOString(),
-    };
+    try {
+      const res = await moviesApi.createBooking({
+        movie_id: movie.id,
+        movie_title: movie.title,
+        showtime: selectedTime,
+      });
+      const booking = res.data.booking;
+      setBookings((prev) => [booking, ...prev.filter((item) => item.id !== booking.id)].slice(0, 8));
+      setSelectedByMovie((prev) => ({
+        ...prev,
+        [movie.id]: null,
+      }));
+      setMessage("Ticket booked successfully.");
+    } catch (err) {
+      setMessage(err.response?.data?.detail ?? "Failed to create booking.");
+    }
+  };
 
-    setBookings((prev) => [booking, ...prev].slice(0, 6));
-    setSelectedByMovie((prev) => ({
-      ...prev,
-      [movie.id]: null,
-    }));
+  const cancelBooking = async (bookingId) => {
+    try {
+      await moviesApi.cancelBooking(bookingId);
+      setBookings((prev) =>
+        prev.map((booking) =>
+          booking.id === bookingId ? { ...booking, booking_status: "cancelled" } : booking
+        )
+      );
+      setMessage("Booking cancelled.");
+    } catch (err) {
+      setMessage(err.response?.data?.detail ?? "Failed to cancel booking.");
+    }
   };
 
   return (
@@ -103,6 +117,8 @@ export const MoviesPage = () => {
         <h1 className="hero-heading">Cinema Showtimes</h1>
         <p className="hero-subtitle">Catch the latest blockbusters at SmartMall Cinema 4K.</p>
       </div>
+
+      {message && <div className="message-banner" style={{ marginBottom: "1rem" }}>{message}</div>}
 
       <div className="cinema-info animate-fade-in-up">
         <div>
@@ -170,17 +186,32 @@ export const MoviesPage = () => {
 
       <div className="panel animate-fade-in-up" style={{ marginTop: "2rem" }}>
         <h2 className="panel-title">Your Recent Bookings</h2>
-        {bookings.length === 0 ? (
+        {loading ? (
+          <p className="hero-subtitle" style={{ marginBottom: 0 }}>Loading bookings...</p>
+        ) : bookings.length === 0 ? (
           <p className="hero-subtitle" style={{ marginBottom: 0 }}>No bookings yet. Pick a showtime above to reserve your ticket.</p>
         ) : (
           <div className="booking-list">
             {bookings.map((booking) => (
               <div key={booking.id} className="booking-item">
                 <div>
-                  <div className="booking-title">{booking.title}</div>
-                  <div className="booking-time">{booking.time}</div>
+                  <div className="booking-title">{booking.movie_title}</div>
+                  <div className="booking-time">{booking.showtime}</div>
                 </div>
-                <span className="booking-status">{booking.status}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                  <span className={`booking-status ${booking.booking_status === "cancelled" ? "cancelled" : ""}`}>
+                    {booking.booking_status}
+                  </span>
+                  {booking.booking_status === "booked" && (
+                    <button
+                      type="button"
+                      className="btn btn-ghost btn-sm"
+                      onClick={() => cancelBooking(booking.id)}
+                    >
+                      Cancel
+                    </button>
+                  )}
+                </div>
               </div>
             ))}
           </div>

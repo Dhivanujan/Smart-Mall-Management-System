@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { eventsApi } from "@/services/api/events";
 
 const DEMO_EVENTS = [
   {
@@ -43,26 +44,24 @@ export const EventsPage = () => {
   const [filter, setFilter] = useState("All");
   const [query, setQuery] = useState("");
   const [savedEventIds, setSavedEventIds] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const raw = localStorage.getItem("smartmall.events.saved");
-    if (!raw) {
-      return;
-    }
-
-    try {
-      const parsed = JSON.parse(raw);
-      if (Array.isArray(parsed)) {
-        setSavedEventIds(parsed);
+    const loadReminders = async () => {
+      try {
+        const res = await eventsApi.listReminders();
+        const ids = (res.data.reminders ?? []).map((item) => item.event_id);
+        setSavedEventIds(ids);
+      } catch {
+        setMessage("Could not load reminders right now.");
+      } finally {
+        setLoading(false);
       }
-    } catch {
-      setSavedEventIds([]);
-    }
-  }, []);
+    };
 
-  useEffect(() => {
-    localStorage.setItem("smartmall.events.saved", JSON.stringify(savedEventIds));
-  }, [savedEventIds]);
+    loadReminders();
+  }, []);
 
   const filteredEvents = useMemo(() => {
     return DEMO_EVENTS.filter((event) => {
@@ -78,10 +77,25 @@ export const EventsPage = () => {
     });
   }, [filter, query]);
 
-  const toggleReminder = (eventId) => {
-    setSavedEventIds((prev) =>
-      prev.includes(eventId) ? prev.filter((id) => id !== eventId) : [...prev, eventId]
-    );
+  const toggleReminder = async (event) => {
+    try {
+      if (savedEventIds.includes(event.id)) {
+        await eventsApi.removeReminder(event.id);
+        setSavedEventIds((prev) => prev.filter((id) => id !== event.id));
+        setMessage("Reminder removed.");
+      } else {
+        await eventsApi.createReminder({
+          event_id: event.id,
+          event_title: event.title,
+          event_date: event.date,
+          event_location: event.location,
+        });
+        setSavedEventIds((prev) => [...prev, event.id]);
+        setMessage("Reminder saved.");
+      }
+    } catch (err) {
+      setMessage(err.response?.data?.detail ?? "Failed to update reminder.");
+    }
   };
 
   return (
@@ -90,6 +104,8 @@ export const EventsPage = () => {
         <h1 className="hero-heading">Events & Happenings</h1>
         <p className="hero-subtitle">Discover what's happening at SmartMall this season.</p>
       </div>
+
+      {message && <div className="message-banner" style={{ marginBottom: "1rem" }}>{message}</div>}
 
       <div className="feature-toolbar events-toolbar">
         <input
@@ -151,7 +167,8 @@ export const EventsPage = () => {
                 <button
                   type="button"
                   className={`event-reminder-btn ${savedEventIds.includes(event.id) ? "saved" : ""}`}
-                  onClick={() => toggleReminder(event.id)}
+                  onClick={() => toggleReminder(event)}
+                  disabled={loading}
                 >
                   {savedEventIds.includes(event.id) ? "Saved" : "Set Reminder"}
                 </button>
@@ -159,6 +176,19 @@ export const EventsPage = () => {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="panel animate-fade-in-up" style={{ marginTop: "1.2rem" }}>
+        <h2 className="panel-title">My Saved Event Reminders</h2>
+        {loading ? (
+          <p className="hero-subtitle" style={{ marginBottom: 0 }}>Loading reminders...</p>
+        ) : savedEventIds.length === 0 ? (
+          <p className="hero-subtitle" style={{ marginBottom: 0 }}>No reminders yet. Save events to get started.</p>
+        ) : (
+          <p className="hero-subtitle" style={{ marginBottom: 0 }}>
+            You have {savedEventIds.length} saved reminder{savedEventIds.length > 1 ? "s" : ""}.
+          </p>
+        )}
       </div>
 
       {filteredEvents.length === 0 && (

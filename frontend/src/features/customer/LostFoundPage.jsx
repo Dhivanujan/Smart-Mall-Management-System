@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { lostFoundApi } from "@/services/api/lostFound";
 
 const INITIAL_FORM = {
     itemDescription: "",
@@ -16,19 +17,24 @@ const FOUND_ITEMS = [
 export const LostFoundPage = () => {
     const [reportStatus, setReportStatus] = useState("idle");
     const [form, setForm] = useState(INITIAL_FORM);
-    const [reports, setReports] = useState(() => {
-        const raw = localStorage.getItem("smartmall.lostfound.reports");
-        if (!raw) {
-            return [];
-        }
+    const [reports, setReports] = useState([]);
+    const [loadingReports, setLoadingReports] = useState(true);
+    const [message, setMessage] = useState("");
 
-        try {
-            const parsed = JSON.parse(raw);
-            return Array.isArray(parsed) ? parsed : [];
-        } catch {
-            return [];
-        }
-    });
+    useEffect(() => {
+        const loadReports = async () => {
+            try {
+                const res = await lostFoundApi.listMyReports();
+                setReports(res.data.reports ?? []);
+            } catch {
+                setMessage("Could not load your reports right now.");
+            } finally {
+                setLoadingReports(false);
+            }
+        };
+
+        loadReports();
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -40,23 +46,21 @@ export const LostFoundPage = () => {
 
         setReportStatus("submitting");
         
-        setTimeout(() => {
-            const createdReport = {
-                id: Date.now().toString(),
-                itemDescription: form.itemDescription.trim(),
-                location: form.location.trim(),
-                phone: form.phone.trim(),
-                details: form.details.trim(),
-                status: "Open",
-                createdAt: new Date().toISOString(),
-            };
-
-            const updatedReports = [createdReport, ...reports].slice(0, 8);
-            setReports(updatedReports);
-            localStorage.setItem("smartmall.lostfound.reports", JSON.stringify(updatedReports));
+        lostFoundApi.createReport({
+            item_description: form.itemDescription.trim(),
+            last_seen_location: form.location.trim(),
+            contact_phone: form.phone.trim(),
+            additional_details: form.details.trim() || null,
+        }).then((res) => {
+            const createdReport = res.data.report;
+            setReports((prev) => [createdReport, ...prev].slice(0, 8));
             setForm(INITIAL_FORM);
             setReportStatus("success");
-        }, 1500);
+            setMessage("Report submitted successfully.");
+        }).catch((err) => {
+            setReportStatus("error");
+            setMessage(err.response?.data?.detail ?? "Failed to submit report.");
+        });
     };
 
     const updateField = (field, value) => {
@@ -67,6 +71,9 @@ export const LostFoundPage = () => {
         if (reportStatus === "error") {
             setReportStatus("idle");
         }
+        if (message) {
+            setMessage("");
+        }
     };
 
     return (
@@ -75,6 +82,8 @@ export const LostFoundPage = () => {
                 <h1 className="hero-heading">Lost & Found</h1>
                 <p className="hero-subtitle">Report a lost item or check found items list.</p>
             </div>
+
+            {message && <div className="message-banner" style={{ marginBottom: "1rem" }}>{message}</div>}
 
             <div className="lostfound-grid">
                 <div className="lostfound-notice">
@@ -190,15 +199,17 @@ export const LostFoundPage = () => {
 
                 <div className="panel" style={{ gridColumn: "1 / -1" }}>
                     <h2 className="panel-title">Your Submitted Reports</h2>
-                    {reports.length === 0 ? (
+                    {loadingReports ? (
+                        <p className="hero-subtitle" style={{ marginBottom: 0 }}>Loading reports...</p>
+                    ) : reports.length === 0 ? (
                         <p className="hero-subtitle" style={{ marginBottom: 0 }}>No reports submitted yet.</p>
                     ) : (
                         <div className="booking-list">
                             {reports.map((report) => (
                                 <div key={report.id} className="booking-item">
                                     <div>
-                                        <div className="booking-title">{report.itemDescription}</div>
-                                        <div className="booking-time">Last seen at {report.location}</div>
+                                        <div className="booking-title">{report.item_description}</div>
+                                        <div className="booking-time">Last seen at {report.last_seen_location}</div>
                                     </div>
                                     <span className="booking-status">{report.status}</span>
                                 </div>

@@ -8,6 +8,9 @@ from .notification import NotificationDocument
 from .offer import OfferDocument
 from .parking import ParkingSlotDocument
 from .queue import QueueDocument
+from .event_reminder import EventReminderDocument
+from .movie_booking import MovieBookingDocument
+from .lost_report import LostReportDocument
 
 ALL_DOCUMENT_MODELS = [
     UserDocument,
@@ -19,6 +22,9 @@ ALL_DOCUMENT_MODELS = [
     OfferDocument,
     ParkingSlotDocument,
     QueueDocument,
+    EventReminderDocument,
+    MovieBookingDocument,
+    LostReportDocument,
 ]
 
 __all__ = [
@@ -32,4 +38,7 @@ __all__ = [
     "OfferDocument",
     "ParkingSlotDocument",
     "QueueDocument",
+    "EventReminderDocument",
+    "MovieBookingDocument",
+    "LostReportDocument",
 ]
