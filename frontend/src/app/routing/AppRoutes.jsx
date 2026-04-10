@@ -31,6 +31,8 @@ import { OfferManagementPage } from "@/features/store-admin/OfferManagementPage"
 import { SalesDashboardPage } from "@/features/store-admin/SalesDashboardPage";
 import { QueueMonitoringPage } from "@/features/store-admin/QueueMonitoringPage";
 import { CustomerInsightsPage } from "@/features/store-admin/CustomerInsightsPage";
+import { AdminBookingsPage } from "@/features/store-admin/AdminBookingsPage";
+import { AdminLostReportsPage } from "@/features/store-admin/AdminLostReportsPage";
 // Super admin pages
 import { AnalyticsPage } from "@/features/super-admin/AnalyticsPage";
 import { CrowdTrafficPage } from "@/features/super-admin/CrowdTrafficPage";
@@ -78,6 +80,8 @@ export const AppRoutes = () => {
 				<Route element={<AdminLayout />}>
 					<Route path="/admin/products" element={<ProductManagementPage />}/>
 					<Route path="/admin/offers" element={<OfferManagementPage />}/>
+					<Route path="/admin/bookings" element={<AdminBookingsPage />}/>
+					<Route path="/admin/lost-reports" element={<AdminLostReportsPage />}/>
 					<Route path="/admin/sales" element={<SalesDashboardPage />}/>
 					<Route path="/admin/queue" element={<QueueMonitoringPage />}/>
 					<Route path="/admin/customers" element={<CustomerInsightsPage />}/>

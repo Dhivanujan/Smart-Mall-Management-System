@@ -18,6 +18,8 @@ export const ADMIN_NAV = [
     { to: "/admin/stores", label: "Stores", icon: "🏪" },
     { to: "/admin/products", label: "Products", icon: "📦" },
     { to: "/admin/offers", label: "Offers", icon: "🏷️" },
+    { to: "/admin/bookings", label: "Movie Bookings", icon: "🎬" },
+    { to: "/admin/lost-reports", label: "Lost Reports", icon: "📦" },
     { to: "/admin/sales", label: "Sales", icon: "💰" },
     { to: "/admin/queue", label: "Queue Monitor", icon: "🔢" },
     { to: "/admin/customers", label: "Customer Insights", icon: "👥" },
