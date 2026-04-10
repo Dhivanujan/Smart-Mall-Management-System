@@ -12,6 +12,9 @@ export const AdminLostReportsPage = () => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState("");
   const [selectedReportIds, setSelectedReportIds] = useState([]);
+  const [showBulkConfirm, setShowBulkConfirm] = useState(false);
+  const [bulkUpdating, setBulkUpdating] = useState(false);
+  const [bulkResult, setBulkResult] = useState(null);
 
   const fetchReports = async () => {
     setLoading(true);
@@ -27,7 +30,6 @@ export const AdminLostReportsPage = () => {
       setReports(res.data.reports ?? []);
       setSummary(res.data.summary ?? null);
       setSelectedReportIds([]);
-      setMessage("");
     } catch (err) {
       setMessage(err.response?.data?.detail ?? "Failed to load lost reports");
       setReports([]);
@@ -74,16 +76,54 @@ export const AdminLostReportsPage = () => {
       return;
     }
 
+    setShowBulkConfirm(true);
+  };
+
+  const confirmBulkStatusUpdate = async () => {
+    setBulkUpdating(true);
+    setBulkResult(null);
+
+    const rowsById = Object.fromEntries(reports.map((row) => [row.id, row]));
+
     try {
-      await Promise.all(
+      const results = await Promise.allSettled(
         selectedReportIds.map((reportId) =>
           lostFoundApi.adminUpdateReportStatus(reportId, bulkStatus)
         )
       );
-      setMessage(`Updated ${selectedReportIds.length} report(s) to ${bulkStatus}.`);
+
+      const successes = [];
+      const failures = [];
+
+      results.forEach((result, index) => {
+        const reportId = selectedReportIds[index];
+        const row = rowsById[reportId];
+        if (result.status === "fulfilled") {
+          successes.push({
+            id: reportId,
+            username: row?.username ?? "unknown",
+          });
+          return;
+        }
+
+        failures.push({
+          id: reportId,
+          username: row?.username ?? "unknown",
+          error:
+            result.reason?.response?.data?.detail ??
+            result.reason?.message ??
+            "Request failed",
+        });
+      });
+
+      setBulkResult({ successes, failures, status: bulkStatus });
+      setMessage(
+        `Bulk update finished: ${successes.length} succeeded, ${failures.length} failed.`
+      );
       await fetchReports();
-    } catch (err) {
-      setMessage(err.response?.data?.detail ?? "Bulk update failed.");
+    } finally {
+      setBulkUpdating(false);
+      setShowBulkConfirm(false);
     }
   };
 
@@ -182,6 +222,41 @@ export const AdminLostReportsPage = () => {
         </div>
       </div>
 
+      {bulkResult && (
+        <div className="section-card" style={{ marginBottom: "1rem" }}>
+          <h3 style={{ marginTop: 0, marginBottom: "0.6rem" }}>Last Bulk Update Result</h3>
+          <p style={{ marginTop: 0, color: "var(--color-text-muted)" }}>
+            Target status: <strong>{bulkResult.status}</strong>
+          </p>
+          <div style={{ display: "flex", gap: "1rem", flexWrap: "wrap", marginBottom: "0.75rem" }}>
+            <span className="status-badge active">Success: {bulkResult.successes.length}</span>
+            <span className="status-badge pending">Failed: {bulkResult.failures.length}</span>
+          </div>
+          {bulkResult.failures.length > 0 && (
+            <div className="data-table-wrapper">
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Report ID</th>
+                    <th>User</th>
+                    <th>Error</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {bulkResult.failures.map((item) => (
+                    <tr key={item.id}>
+                      <td className="font-mono">#{item.id}</td>
+                      <td>{item.username}</td>
+                      <td>{item.error}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+        </div>
+      )}
+
       {summary && (
         <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", marginBottom: "1rem" }}>
           <div className="metric-card"><span className="metric-label">Total</span><span className="metric-value">{summary.total}</span></div>
@@ -259,6 +334,47 @@ export const AdminLostReportsPage = () => {
           </div>
         )}
       </div>
+
+      {showBulkConfirm && (
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            background: "rgba(2, 6, 23, 0.68)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 80,
+            padding: "1rem",
+          }}
+        >
+          <div
+            className="section-card"
+            style={{
+              width: "min(560px, 100%)",
+              border: "1px solid rgba(148, 163, 184, 0.2)",
+            }}
+          >
+            <h3 style={{ marginTop: 0 }}>Confirm Bulk Status Update</h3>
+            <p style={{ color: "var(--color-text-muted)" }}>
+              You are about to update <strong>{selectedReportIds.length}</strong> report(s) to
+              <strong> {bulkStatus}</strong>.
+            </p>
+            <div style={{ display: "flex", gap: "0.6rem", justifyContent: "flex-end" }}>
+              <button
+                className="btn btn-ghost"
+                onClick={() => setShowBulkConfirm(false)}
+                disabled={bulkUpdating}
+              >
+                Cancel
+              </button>
+              <button className="btn btn-primary" onClick={confirmBulkStatusUpdate} disabled={bulkUpdating}>
+                {bulkUpdating ? "Updating..." : "Confirm Update"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
