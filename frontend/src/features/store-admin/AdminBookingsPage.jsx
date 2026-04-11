@@ -401,6 +401,10 @@ export const AdminBookingsPage = () => {
       {showBulkConfirm && (
         <div
           ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="bulk-bookings-dialog-title"
+          aria-describedby="bulk-bookings-dialog-description"
           style={{
             position: "fixed",
             inset: 0,
@@ -419,8 +423,8 @@ export const AdminBookingsPage = () => {
               border: "1px solid rgba(148, 163, 184, 0.2)",
             }}
           >
-            <h3 style={{ marginTop: 0 }}>Confirm Bulk Status Update</h3>
-            <p style={{ color: "var(--color-text-muted)" }}>
+            <h3 id="bulk-bookings-dialog-title" style={{ marginTop: 0 }}>Confirm Bulk Status Update</h3>
+            <p id="bulk-bookings-dialog-description" style={{ color: "var(--color-text-muted)" }}>
               You are about to update <strong>{selectedBookingIds.length}</strong> booking(s) to
               <strong> {bulkStatus}</strong>.
             </p>

@@ -406,6 +406,10 @@ export const AdminLostReportsPage = () => {
       {showBulkConfirm && (
         <div
           ref={modalRef}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="bulk-reports-dialog-title"
+          aria-describedby="bulk-reports-dialog-description"
           style={{
             position: "fixed",
             inset: 0,
@@ -424,8 +428,8 @@ export const AdminLostReportsPage = () => {
               border: "1px solid rgba(148, 163, 184, 0.2)",
             }}
           >
-            <h3 style={{ marginTop: 0 }}>Confirm Bulk Status Update</h3>
-            <p style={{ color: "var(--color-text-muted)" }}>
+            <h3 id="bulk-reports-dialog-title" style={{ marginTop: 0 }}>Confirm Bulk Status Update</h3>
+            <p id="bulk-reports-dialog-description" style={{ color: "var(--color-text-muted)" }}>
               You are about to update <strong>{selectedReportIds.length}</strong> report(s) to
               <strong> {bulkStatus}</strong>.
             </p>
