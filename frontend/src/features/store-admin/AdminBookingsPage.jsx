@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { moviesApi } from "@/services/api/movies";
 
 const BOOKING_STATUSES = ["all", "booked", "cancelled", "completed"];
@@ -15,11 +15,20 @@ export const AdminBookingsPage = () => {
   const [showBulkConfirm, setShowBulkConfirm] = useState(false);
   const [bulkUpdating, setBulkUpdating] = useState(false);
   const [bulkResult, setBulkResult] = useState(null);
+  const modalRef = useRef(null);
+  const cancelButtonRef = useRef(null);
+  const confirmButtonRef = useRef(null);
 
   useEffect(() => {
     if (!showBulkConfirm) {
       return undefined;
     }
+
+    const previouslyFocused = document.activeElement;
+
+    window.requestAnimationFrame(() => {
+      confirmButtonRef.current?.focus();
+    });
 
     const handleKeyDown = (event) => {
       if (event.key === "Escape") {
@@ -27,6 +36,35 @@ export const AdminBookingsPage = () => {
         if (!bulkUpdating) {
           setShowBulkConfirm(false);
         }
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const focusableElements = modalRef.current?.querySelectorAll(
+        'button:not([disabled]), [href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])'
+      );
+
+      if (!focusableElements || focusableElements.length === 0) {
+        event.preventDefault();
+        return;
+      }
+
+      const firstFocusable = focusableElements[0];
+      const lastFocusable = focusableElements[focusableElements.length - 1];
+
+      if (event.shiftKey && document.activeElement === firstFocusable) {
+        event.preventDefault();
+        lastFocusable.focus();
+        return;
+      }
+
+      if (!event.shiftKey && document.activeElement === lastFocusable) {
+        event.preventDefault();
+        firstFocusable.focus();
+        return;
       }
 
       if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
@@ -38,7 +76,12 @@ export const AdminBookingsPage = () => {
     };
 
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+      if (previouslyFocused instanceof HTMLElement) {
+        previouslyFocused.focus();
+      }
+    };
   }, [showBulkConfirm, bulkUpdating]);
 
   const fetchBookings = async () => {
@@ -357,6 +400,7 @@ export const AdminBookingsPage = () => {
 
       {showBulkConfirm && (
         <div
+          ref={modalRef}
           style={{
             position: "fixed",
             inset: 0,
@@ -385,13 +429,14 @@ export const AdminBookingsPage = () => {
             </p>
             <div style={{ display: "flex", gap: "0.6rem", justifyContent: "flex-end" }}>
               <button
+                ref={cancelButtonRef}
                 className="btn btn-ghost"
                 onClick={() => setShowBulkConfirm(false)}
                 disabled={bulkUpdating}
               >
                 Cancel
               </button>
-              <button className="btn btn-primary" onClick={confirmBulkStatusUpdate} disabled={bulkUpdating}>
+              <button ref={confirmButtonRef} className="btn btn-primary" onClick={confirmBulkStatusUpdate} disabled={bulkUpdating}>
                 {bulkUpdating ? "Updating..." : "Confirm Update"}
               </button>
             </div>
