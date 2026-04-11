@@ -16,6 +16,31 @@ export const AdminBookingsPage = () => {
   const [bulkUpdating, setBulkUpdating] = useState(false);
   const [bulkResult, setBulkResult] = useState(null);
 
+  useEffect(() => {
+    if (!showBulkConfirm) {
+      return undefined;
+    }
+
+    const handleKeyDown = (event) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        if (!bulkUpdating) {
+          setShowBulkConfirm(false);
+        }
+      }
+
+      if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+        event.preventDefault();
+        if (!bulkUpdating) {
+          confirmBulkStatusUpdate();
+        }
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [showBulkConfirm, bulkUpdating]);
+
   const fetchBookings = async () => {
     setLoading(true);
     try {
@@ -354,6 +379,9 @@ export const AdminBookingsPage = () => {
             <p style={{ color: "var(--color-text-muted)" }}>
               You are about to update <strong>{selectedBookingIds.length}</strong> booking(s) to
               <strong> {bulkStatus}</strong>.
+            </p>
+            <p style={{ marginTop: "-0.25rem", color: "var(--color-text-dim)", fontSize: "0.85rem" }}>
+              Shortcuts: Esc closes this dialog. Ctrl/Cmd + Enter confirms the update.
             </p>
             <div style={{ display: "flex", gap: "0.6rem", justifyContent: "flex-end" }}>
               <button
