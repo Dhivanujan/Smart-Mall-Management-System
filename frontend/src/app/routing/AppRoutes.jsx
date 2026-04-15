@@ -25,6 +25,7 @@ import { ServicesPage } from "@/features/customer/ServicesPage";
 import { EventsPage } from "@/features/customer/EventsPage";
 import { MoviesPage } from "@/features/customer/MoviesPage";
 import { LostFoundPage } from "@/features/customer/LostFoundPage";
+import { AIAssistantPage } from "@/features/customer/AIAssistantPage";
 // Store admin pages
 import { ProductManagementPage } from "@/features/store-admin/ProductManagementPage";
 import { OfferManagementPage } from "@/features/store-admin/OfferManagementPage";
@@ -67,6 +68,7 @@ export const AppRoutes = () => {
 					<Route path="/events" element={<EventsPage />}/>
 					<Route path="/movies" element={<MoviesPage />}/>
 					<Route path="/lost-found" element={<LostFoundPage />}/>
+					<Route path="/ai-concierge" element={<AIAssistantPage />}/>
 					<Route path="/notifications" element={<NotificationsPage />}/>
 					<Route path="/complaints" element={<ComplaintsPage />}/>
 				</Route>

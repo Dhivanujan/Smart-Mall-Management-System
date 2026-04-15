@@ -11,6 +11,7 @@ from .queue import QueueDocument
 from .event_reminder import EventReminderDocument
 from .movie_booking import MovieBookingDocument
 from .lost_report import LostReportDocument
+from .favorite import FavoriteDocument
 
 ALL_DOCUMENT_MODELS = [
     UserDocument,
@@ -25,6 +26,7 @@ ALL_DOCUMENT_MODELS = [
     EventReminderDocument,
     MovieBookingDocument,
     LostReportDocument,
+    FavoriteDocument,
 ]
 
 __all__ = [
@@ -41,4 +43,5 @@ __all__ = [
     "EventReminderDocument",
     "MovieBookingDocument",
     "LostReportDocument",
+    "FavoriteDocument",
 ]

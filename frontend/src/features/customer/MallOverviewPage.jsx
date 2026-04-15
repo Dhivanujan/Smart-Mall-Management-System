@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiClient } from "@/services/api/client";
+import { favoritesApi } from "@/services/api/favorites";
+import { discoveryApi } from "@/services/api/discovery";
 const StarRating = ({ rating }) => {
     const full = Math.floor(rating);
     const half = rating - full >= 0.5 ? 1 : 0;
@@ -33,6 +35,10 @@ export const MallOverviewPage = () => {
     const [category, setCategory] = useState("all");
     const [statusFilter, setStatusFilter] = useState("all");
     const [sortBy, setSortBy] = useState("name");
+	const [favoriteStoreIds, setFavoriteStoreIds] = useState([]);
+	const [favoritesOnly, setFavoritesOnly] = useState(false);
+	const [trendingStores, setTrendingStores] = useState([]);
+	const [bannerMessage, setBannerMessage] = useState("");
     useEffect(() => {
         let cancelled = false;
         const load = async () => {
@@ -41,6 +47,14 @@ export const MallOverviewPage = () => {
                 if (cancelled)
                     return;
                 setStores(res.data.stores);
+				const [favoritesRes, trendingRes] = await Promise.all([
+					favoritesApi.list(),
+					discoveryApi.trendingStores(4),
+				]);
+				if (cancelled)
+					return;
+				setFavoriteStoreIds(favoritesRes.data.store_ids ?? []);
+				setTrendingStores(trendingRes.data.stores ?? []);
                 setError(null);
             }
             catch (err) {
@@ -70,7 +84,8 @@ export const MallOverviewPage = () => {
             const matchesCategory = category === "all" || store.category === category;
             const matchesSearch = !search || store.name.toLowerCase().includes(search.toLowerCase());
             const matchesStatus = statusFilter === "all" || store.status === statusFilter;
-            return matchesCategory && matchesSearch && matchesStatus;
+			const matchesFavorites = !favoritesOnly || favoriteStoreIds.includes(store.id);
+			return matchesCategory && matchesSearch && matchesStatus && matchesFavorites;
         });
         result.sort((a, b) => {
             switch (sortBy) {
@@ -81,7 +96,7 @@ export const MallOverviewPage = () => {
             }
         });
         return result;
-    }, [stores, search, category, statusFilter, sortBy]);
+	}, [stores, search, category, statusFilter, sortBy, favoritesOnly, favoriteStoreIds]);
     const totalFootfall = useMemo(() => stores.reduce((sum, s) => sum + s.current_footfall, 0), [stores]);
     const avgOccupancy = useMemo(() => {
         if (!stores.length)
@@ -89,6 +104,23 @@ export const MallOverviewPage = () => {
         return stores.reduce((sum, s) => sum + s.current_occupancy_percent, 0) / stores.length;
     }, [stores]);
     const openStores = useMemo(() => stores.filter((s) => s.status === "open").length, [stores]);
+	const toggleFavorite = async (storeId) => {
+		try {
+			if (favoriteStoreIds.includes(storeId)) {
+				await favoritesApi.removeStore(storeId);
+				setFavoriteStoreIds((prev) => prev.filter((id) => id !== storeId));
+				setBannerMessage("Store removed from favorites.");
+			}
+			else {
+				await favoritesApi.addStore(storeId);
+				setFavoriteStoreIds((prev) => [...prev, storeId]);
+				setBannerMessage("Store added to favorites.");
+			}
+		}
+		catch (err) {
+			setBannerMessage(err.response?.data?.detail ?? "Could not update favorites.");
+		}
+	};
     return (<div className="app-page" style={{ flexDirection: "column", alignItems: "center", gap: 0 }}>
 			<div className="app-page-inner animate-fade-in-up">
 				<section>
@@ -164,25 +196,57 @@ export const MallOverviewPage = () => {
 			</div>
 
 			<div style={{ width: "100%", maxWidth: "1120px", padding: "0 1.5rem", marginTop: "1.5rem" }}>
+				{bannerMessage && (<div className="message-banner" style={{ marginBottom: "1rem" }}>{bannerMessage}</div>)}
 				{loading && <div className="loading-spinner">Loading stores…</div>}
 				{!loading && error && (<div className="error-banner">
 						<span className="error-icon">⚠️</span>
 						<span>{error}</span>
 					</div>)}
 				{!loading && !error && (<>
+						{trendingStores.length > 0 && (<div className="section-card" style={{ marginBottom: "1rem" }}>
+							<h2 className="section-title">Trending Right Now</h2>
+							<div className="booking-list">
+								{trendingStores.map((store) => (<div key={store.id} className="booking-item">
+									<div>
+										<div className="booking-title">{store.name}</div>
+										<div className="booking-time">{store.category}</div>
+									</div>
+									<span className="booking-status">👥 {store.current_footfall}</span>
+								</div>))}
+							</div>
+						</div>)}
+
 						<div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.75rem" }}>
 							<div style={{ fontSize: "0.82rem", color: "var(--color-text-muted)" }}>
 								Showing {filteredStores.length} of {stores.length} stores
 							</div>
+							<label style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontSize: "0.82rem", color: "var(--color-text-muted)" }}>
+								<input type="checkbox" checked={favoritesOnly} onChange={(e) => setFavoritesOnly(e.target.checked)}/>
+								Favorites only
+							</label>
 						</div>
 						<div className="app-feature-grid" aria-label="Store cards" style={{ marginTop: 0, gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
 							{filteredStores.map((store, i) => (<Link key={store.id} to={`/mall/stores/${store.id}`} className={`app-feature-card animate-fade-in-up stagger-${Math.min(i + 1, 6)}`} style={{ textDecoration: "none", color: "inherit" }}>
 									<div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "0.25rem" }}>
 										<div className="app-feature-label">{store.category}</div>
-										<span className={`status-badge ${store.status}`}>
-											<span className="dot"/>
-											{store.status}
-										</span>
+										<div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
+											<button
+												type="button"
+												onClick={(event) => {
+													event.preventDefault();
+													event.stopPropagation();
+													toggleFavorite(store.id);
+												}}
+												className="btn btn-ghost btn-sm"
+												style={{ lineHeight: 1 }}
+											>
+												{favoriteStoreIds.includes(store.id) ? "♥" : "♡"}
+											</button>
+											<span className={`status-badge ${store.status}`}>
+												<span className="dot"/>
+												{store.status}
+											</span>
+										</div>
 									</div>
 									<div className="app-feature-title" style={{ marginBottom: "0.35rem" }}>{store.name}</div>
 									<StarRating rating={store.average_rating}/>

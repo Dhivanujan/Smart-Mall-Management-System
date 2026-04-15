@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { apiClient } from "@/services/api/client";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { favoritesApi } from "@/services/api/favorites";
+import { discoveryApi } from "@/services/api/discovery";
 const ACTIONS = [
     { to: "/mall", icon: "🏪", label: "Browse Stores", color: "purple" },
     { to: "/queue", icon: "🎫", label: "Join Queue", color: "blue" },
@@ -12,6 +14,7 @@ const QUICK_LINKS = [
     { to: "/offers", icon: "🏷️", label: "Active Offers", color: "pink" },
     { to: "/events", icon: "📅", label: "Events", color: "emerald" },
     { to: "/movies", icon: "🍿", label: "Cinema", color: "purple" },
+	{ to: "/ai-concierge", icon: "🤖", label: "AI Concierge", color: "indigo" },
     { to: "/map", icon: "🗺️", label: "Mall Map", color: "cyan" },
     { to: "/services", icon: "ℹ️", label: "Services", color: "blue" },
     { to: "/lost-found", icon: "🔍", label: "Lost & Found", color: "orange" },
@@ -22,11 +25,19 @@ export const CustomerDashboardPage = () => {
     const { user } = useAuth();
     const [stores, setStores] = useState([]);
     const [loading, setLoading] = useState(true);
+	const [favoriteStores, setFavoriteStores] = useState([]);
+	const [trendingStores, setTrendingStores] = useState([]);
     useEffect(() => {
-        apiClient.get("/api/v1/stores/").then((res) => {
-            setStores(res.data.stores);
-            setLoading(false);
-        }).catch(() => setLoading(false));
+		Promise.all([
+			apiClient.get("/api/v1/stores/"),
+			favoritesApi.list(),
+			discoveryApi.trendingStores(3),
+		]).then(([storesRes, favoritesRes, trendingRes]) => {
+			setStores(storesRes.data.stores);
+			setFavoriteStores(favoritesRes.data.stores ?? []);
+			setTrendingStores(trendingRes.data.stores ?? []);
+			setLoading(false);
+		}).catch(() => setLoading(false));
     }, []);
     const openStores = stores.filter((s) => s.status === "open");
     return (<div className="customer-page">
@@ -60,6 +71,27 @@ export const CustomerDashboardPage = () => {
 						</Link>))}
 				</div>
 			</div>
+
+			{!loading && (<div className="panel animate-fade-in-up stagger-6" style={{ marginTop: "0.25rem" }}>
+					<div className="panel-header">
+						<h2 className="panel-title">🧠 For You</h2>
+						<Link to="/ai-concierge" className="btn btn-ghost btn-sm">Open AI Concierge</Link>
+					</div>
+					<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "0.8rem" }}>
+						<div className="store-card">
+							<div className="store-card-header"><h3 style={{ margin: 0, fontSize: "0.95rem" }}>Favorite Stores</h3></div>
+							<div style={{ marginTop: "0.4rem" }}>
+								{favoriteStores.length ? favoriteStores.slice(0, 3).map((store) => (<div key={store.id} style={{ fontSize: "0.85rem", marginBottom: "0.3rem", color: "var(--color-text-muted)" }}>♥ {store.name}</div>)) : (<div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>No favorites yet.</div>)}
+							</div>
+						</div>
+						<div className="store-card">
+							<div className="store-card-header"><h3 style={{ margin: 0, fontSize: "0.95rem" }}>Trending Stores</h3></div>
+							<div style={{ marginTop: "0.4rem" }}>
+								{trendingStores.length ? trendingStores.map((store) => (<div key={store.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "0.3rem" }}><span style={{ color: "var(--color-text-muted)" }}>{store.name}</span><span>👥 {store.current_footfall}</span></div>)) : (<div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>No trends right now.</div>)}
+							</div>
+						</div>
+					</div>
+				</div>)}
 
 			{!loading && openStores.length > 0 && (<div className="panel animate-fade-in-up stagger-6" style={{ marginTop: "0.25rem" }}>
 					<div className="panel-header">
