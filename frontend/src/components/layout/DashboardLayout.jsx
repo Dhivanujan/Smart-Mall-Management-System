@@ -5,6 +5,9 @@ export const DashboardLayout = ({ title, navItems, children }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [showUserMenu, setShowUserMenu] = useState(false);
+	const openCommandPalette = useCallback(() => {
+		window.dispatchEvent(new Event("smartmall:open-command-palette"));
+	}, []);
     const handleLogout = useCallback(() => {
         logout();
         navigate("/");
@@ -21,7 +24,12 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 					<span className="dashboard-section-title">{title}</span>
 				</div>
 				<div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-					<div className="topbar-search" role="button" tabIndex={0}>
+					<div className="topbar-search" role="button" tabIndex={0} onClick={openCommandPalette} onKeyDown={(event) => {
+            if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                openCommandPalette();
+            }
+        }}>
 						<span style={{ fontSize: "0.82rem" }}>🔍</span>
 						<span>Search…</span>
 						<kbd>⌘K</kbd>
