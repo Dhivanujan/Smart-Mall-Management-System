@@ -340,30 +340,67 @@ export const GlobalCommandPalette = () => {
     return scored;
   }, [allCommands, query, historyStats]);
 
+  const recentCommands = useMemo(() => {
+    if (query.trim()) {
+      return [];
+    }
+
+    const commandById = new Map(allCommands.map((command) => [command.id, command]));
+    const seen = new Set();
+    const recent = [];
+
+    for (const id of historyIds) {
+      if (seen.has(id)) {
+        continue;
+      }
+      const command = commandById.get(id);
+      if (!command) {
+        continue;
+      }
+      seen.add(id);
+      recent.push(command);
+      if (recent.length >= 6) {
+        break;
+      }
+    }
+
+    return recent;
+  }, [allCommands, historyIds, query]);
+
+  const displayedCommands = useMemo(() => {
+    if (query.trim() || !recentCommands.length) {
+      return filteredCommands;
+    }
+
+    const recentIds = new Set(recentCommands.map((command) => command.id));
+    const remaining = filteredCommands.filter((command) => !recentIds.has(command.id));
+    return [...recentCommands, ...remaining];
+  }, [filteredCommands, recentCommands, query]);
+
   useEffect(() => {
     setActiveIndex(0);
   }, [query]);
 
   const onInputKeyDown = (event) => {
-    if (!filteredCommands.length) {
+    if (!displayedCommands.length) {
       return;
     }
 
     if (event.key === "ArrowDown") {
       event.preventDefault();
-      setActiveIndex((prev) => (prev + 1) % filteredCommands.length);
+      setActiveIndex((prev) => (prev + 1) % displayedCommands.length);
       return;
     }
 
     if (event.key === "ArrowUp") {
       event.preventDefault();
-      setActiveIndex((prev) => (prev - 1 + filteredCommands.length) % filteredCommands.length);
+      setActiveIndex((prev) => (prev - 1 + displayedCommands.length) % displayedCommands.length);
       return;
     }
 
     if (event.key === "Enter") {
       event.preventDefault();
-      executeCommand(filteredCommands[Math.min(activeIndex, filteredCommands.length - 1)]);
+      executeCommand(displayedCommands[Math.min(activeIndex, displayedCommands.length - 1)]);
     }
   };
 
@@ -389,24 +426,33 @@ export const GlobalCommandPalette = () => {
         </div>
 
         <div className="command-palette-body">
-          {!filteredCommands.length ? (
+          {!displayedCommands.length ? (
             <div className="command-palette-empty">No matches found.</div>
           ) : (
-            filteredCommands.map((command, index) => (
-              <button
-                key={command.id}
-                className={`command-palette-item ${index === activeIndex ? "active" : ""}`}
-                onMouseEnter={() => setActiveIndex(index)}
-                onClick={() => executeCommand(command)}
-              >
-                <span className="command-palette-item-icon">{command.icon ?? "•"}</span>
-                <span className="command-palette-item-main">
-                  <span className="command-palette-item-label">{command.label}</span>
-                  <span className="command-palette-item-subtitle">{command.subtitle ?? command.section}</span>
-                </span>
-                <span className="command-palette-item-section">{command.section}</span>
-              </button>
-            ))
+            <>
+              {!query.trim() && recentCommands.length > 0 && (
+                <div className="command-palette-section-title">Recent Commands</div>
+              )}
+              {displayedCommands.map((command, index) => (
+                <React.Fragment key={command.id}>
+                  {!query.trim() && recentCommands.length > 0 && index === recentCommands.length && (
+                    <div className="command-palette-section-title">All Commands</div>
+                  )}
+                  <button
+                    className={`command-palette-item ${index === activeIndex ? "active" : ""}`}
+                    onMouseEnter={() => setActiveIndex(index)}
+                    onClick={() => executeCommand(command)}
+                  >
+                    <span className="command-palette-item-icon">{command.icon ?? "•"}</span>
+                    <span className="command-palette-item-main">
+                      <span className="command-palette-item-label">{command.label}</span>
+                      <span className="command-palette-item-subtitle">{command.subtitle ?? command.section}</span>
+                    </span>
+                    <span className="command-palette-item-section">{command.section}</span>
+                  </button>
+                </React.Fragment>
+              ))}
+            </>
           )}
         </div>
 

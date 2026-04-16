@@ -4058,6 +4058,14 @@ textarea.form-control {
   text-align: center;
 }
 
+.command-palette-section-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--color-text-dim);
+  padding: 0.5rem 0.55rem 0.35rem;
+}
+
 .command-palette-item {
   width: 100%;
   display: flex;
