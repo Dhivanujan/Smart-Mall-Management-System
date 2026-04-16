@@ -5,6 +5,7 @@ import { useAuth } from "@/app/providers/AuthProvider";
 import { ADMIN_NAV, CUSTOMER_NAV, SUPER_ADMIN_NAV } from "@/constants/navigation";
 
 const OPEN_EVENT_NAME = "smartmall:open-command-palette";
+const COMMAND_HISTORY_KEY = "smartmall.command-palette.history";
 
 const COMMON_COMMANDS = [
   { id: "home", label: "Home", path: "/", icon: "🏠", section: "Pages" },
@@ -22,6 +23,54 @@ const dedupeByPath = (commands) => {
   });
 };
 
+const fuzzyCommandScore = (command, q) => {
+  if (!q) {
+    return 0;
+  }
+
+  const label = (command.label ?? "").toLowerCase();
+  const subtitle = (command.subtitle ?? "").toLowerCase();
+  const section = (command.section ?? "").toLowerCase();
+  const haystack = `${label} ${subtitle} ${section}`;
+
+  let score = 0;
+
+  if (label === q) {
+    score += 180;
+  }
+  if (label.startsWith(q)) {
+    score += 120;
+  }
+  if (label.includes(q)) {
+    score += 80;
+  }
+  if (!label.includes(q) && haystack.includes(q)) {
+    score += 45;
+  }
+
+  const words = q.split(/\s+/).filter(Boolean);
+  if (words.length > 1 && words.every((word) => haystack.includes(word))) {
+    score += 50;
+  }
+
+  // Basic subsequence matching for typo-tolerant search.
+  let cursor = 0;
+  let matchedChars = 0;
+  for (const char of q) {
+    const index = label.indexOf(char, cursor);
+    if (index === -1) {
+      break;
+    }
+    matchedChars += 1;
+    cursor = index + 1;
+  }
+  if (matchedChars >= 3) {
+    score += matchedChars * 3;
+  }
+
+  return score;
+};
+
 export const GlobalCommandPalette = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -33,6 +82,7 @@ export const GlobalCommandPalette = () => {
   const [stores, setStores] = useState([]);
   const [offers, setOffers] = useState([]);
   const [hasLoadedData, setHasLoadedData] = useState(false);
+  const [historyIds, setHistoryIds] = useState([]);
 
   const inputRef = useRef(null);
   const previouslyFocusedRef = useRef(null);
@@ -50,6 +100,35 @@ export const GlobalCommandPalette = () => {
       previouslyFocusedRef.current.focus();
     }
   };
+
+  const rememberCommand = (commandId) => {
+    setHistoryIds((prev) => {
+      const next = [commandId, ...prev].slice(0, 80);
+      window.localStorage.setItem(COMMAND_HISTORY_KEY, JSON.stringify(next));
+      return next;
+    });
+  };
+
+  const executeCommand = (command) => {
+    rememberCommand(command.id);
+    command.action();
+    closePalette();
+  };
+
+  useEffect(() => {
+    const raw = window.localStorage.getItem(COMMAND_HISTORY_KEY);
+    if (!raw) {
+      return;
+    }
+    try {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        setHistoryIds(parsed.filter((item) => typeof item === "string"));
+      }
+    } catch {
+      setHistoryIds([]);
+    }
+  }, []);
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -222,18 +301,44 @@ export const GlobalCommandPalette = () => {
     return [...pages, ...storeCommands, ...offerCommands];
   }, [pageCommands, storeCommands, offerCommands, navigate]);
 
+  const historyStats = useMemo(() => {
+    const firstIndexById = new Map();
+    const countById = new Map();
+
+    historyIds.forEach((id, index) => {
+      if (!firstIndexById.has(id)) {
+        firstIndexById.set(id, index);
+      }
+      countById.set(id, (countById.get(id) ?? 0) + 1);
+    });
+
+    return { firstIndexById, countById };
+  }, [historyIds]);
+
   const filteredCommands = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) {
-      return allCommands.slice(0, 30);
-    }
-    return allCommands
-      .filter((command) => {
-        const haystack = [command.label, command.subtitle, command.section].join(" ").toLowerCase();
-        return haystack.includes(q);
+    const scored = allCommands
+      .map((command) => {
+        const baseScore = q ? fuzzyCommandScore(command, q) : 10;
+        const firstIndex = historyStats.firstIndexById.get(command.id);
+        const recencyBoost = firstIndex !== undefined ? Math.max(0, 35 - firstIndex) : 0;
+        const frequencyBoost = (historyStats.countById.get(command.id) ?? 0) * 4;
+        const totalScore = baseScore + recencyBoost + frequencyBoost;
+
+        return { command, score: totalScore };
       })
-      .slice(0, 30);
-  }, [allCommands, query]);
+      .filter((entry) => (q ? entry.score > 0 : true))
+      .sort((a, b) => {
+        if (b.score !== a.score) {
+          return b.score - a.score;
+        }
+        return a.command.label.localeCompare(b.command.label);
+      })
+      .slice(0, 30)
+      .map((entry) => entry.command);
+
+    return scored;
+  }, [allCommands, query, historyStats]);
 
   useEffect(() => {
     setActiveIndex(0);
@@ -258,7 +363,7 @@ export const GlobalCommandPalette = () => {
 
     if (event.key === "Enter") {
       event.preventDefault();
-      filteredCommands[Math.min(activeIndex, filteredCommands.length - 1)].action();
+      executeCommand(filteredCommands[Math.min(activeIndex, filteredCommands.length - 1)]);
     }
   };
 
@@ -292,7 +397,7 @@ export const GlobalCommandPalette = () => {
                 key={command.id}
                 className={`command-palette-item ${index === activeIndex ? "active" : ""}`}
                 onMouseEnter={() => setActiveIndex(index)}
-                onClick={() => command.action()}
+                onClick={() => executeCommand(command)}
               >
                 <span className="command-palette-item-icon">{command.icon ?? "•"}</span>
                 <span className="command-palette-item-main">
