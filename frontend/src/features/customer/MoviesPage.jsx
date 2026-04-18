@@ -112,57 +112,57 @@ export const MoviesPage = () => {
   };
 
   return (
-    <div className="customer-page animate-fade-in">
+    <div className="customer-page animate-fade-in text-lg">
       <div className="page-header">
-        <h1 className="hero-heading">Cinema Showtimes</h1>
-        <p className="hero-subtitle">Catch the latest blockbusters at SmartMall Cinema 4K.</p>
+        <h1 className="hero-heading text-5xl font-extrabold mb-4">Cinema Showtimes</h1>
+        <p className="hero-subtitle text-2xl">Catch the latest blockbusters at SmartMall Cinema 4K.</p>
       </div>
 
-      {message && <div className="message-banner" style={{ marginBottom: "1rem" }}>{message}</div>}
+      {message && <div className="message-banner text-xl font-semibold" style={{ marginBottom: "1rem" }}>{message}</div>}
 
       <div className="cinema-info animate-fade-in-up">
         <div>
-          <div className="cinema-info-title">
+          <div className="cinema-info-title text-3xl font-bold">
             Now Showing
           </div>
-          <div className="cinema-info-subtitle">
+          <div className="cinema-info-subtitle text-xl mt-2">
             Today's Schedule • All halls equipped with Dolby Atmos
           </div>
         </div>
-        <div className="feature-kpi">
-          <span className="feature-kpi-value">{upcomingCount}</span>
-          <span>Upcoming bookings</span>
+        <div className="feature-kpi text-center">
+          <span className="feature-kpi-value text-4xl font-black">{upcomingCount}</span>
+          <span className="text-xl font-medium block mt-1">Upcoming bookings</span>
         </div>
       </div>
 
-      <div className="movies-grid">
+      <div className="movies-grid mt-8">
         {MOVIES.map((movie, index) => (
           <div 
             key={movie.id} 
             className={`movie-card animate-fade-in-up stagger-${(index % 4) + 1}`}
           >
-            <div className="movie-poster">
+            <div className="movie-poster text-8xl py-10">
               {movie.poster}
-              <div className="movie-rating-pill">
+              <div className="movie-rating-pill text-xl font-bold px-4 py-2 mt-4 inline-block bg-gray-200 dark:bg-gray-800 rounded-full">
                 {movie.rating}
               </div>
             </div>
             
-            <div className="movie-details">
-              <h3 className="movie-title">{movie.title}</h3>
-              <div className="movie-meta-row">
+            <div className="movie-details p-6">
+              <h3 className="movie-title text-3xl font-bold mb-4">{movie.title}</h3>
+              <div className="movie-meta-row flex gap-6 text-xl text-gray-600 dark:text-gray-300 mb-6">
                 <span>⏱️ {movie.duration}</span>
                 <span>🎬 {movie.genre}</span>
               </div>
               
-              <div className="movie-showtimes-wrap">
-                <div className="movie-showtimes-title">Showtimes:</div>
-                <div className="movie-showtimes-list">
+              <div className="movie-showtimes-wrap mb-6">
+                <div className="movie-showtimes-title text-2xl font-semibold mb-4">Showtimes:</div>
+                <div className="movie-showtimes-list flex flex-wrap gap-3">
                   {movie.showtimes.map(time => (
                     <button
                       key={time}
                       type="button"
-                      className={`movie-time-btn ${selectedByMovie[movie.id] === time ? "active" : ""}`}
+                      className={`movie-time-btn text-xl font-medium px-4 py-2 rounded-md transition-colors ${selectedByMovie[movie.id] === time ? "active bg-blue-600 text-white" : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"}`}
                       onClick={() => toggleShowtime(movie.id, time)}
                     >
                       {time}
@@ -173,7 +173,7 @@ export const MoviesPage = () => {
 
               <button
                 type="button"
-                className="btn btn-primary movie-book-btn"
+                className="btn btn-primary movie-book-btn w-full text-2xl font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
                 onClick={() => bookTicket(movie)}
                 disabled={!selectedByMovie[movie.id]}
               >
@@ -184,28 +184,28 @@ export const MoviesPage = () => {
         ))}
       </div>
 
-      <div className="panel animate-fade-in-up" style={{ marginTop: "2rem" }}>
-        <h2 className="panel-title">Your Recent Bookings</h2>
+      <div className="panel animate-fade-in-up" style={{ marginTop: "3rem", padding: "2rem" }}>
+        <h2 className="panel-title text-4xl font-bold mb-6">Your Recent Bookings</h2>
         {loading ? (
-          <p className="hero-subtitle" style={{ marginBottom: 0 }}>Loading bookings...</p>
+          <p className="hero-subtitle text-2xl" style={{ marginBottom: 0 }}>Loading bookings...</p>
         ) : bookings.length === 0 ? (
-          <p className="hero-subtitle" style={{ marginBottom: 0 }}>No bookings yet. Pick a showtime above to reserve your ticket.</p>
+          <p className="hero-subtitle text-2xl" style={{ marginBottom: 0 }}>No bookings yet. Pick a showtime above to reserve your ticket.</p>
         ) : (
-          <div className="booking-list">
+          <div className="booking-list mt-6 flex flex-col gap-4">
             {bookings.map((booking) => (
-              <div key={booking.id} className="booking-item">
+              <div key={booking.id} className="booking-item p-4 bg-gray-50 dark:bg-gray-800 rounded-lg flex justify-between items-center shadow-sm">
                 <div>
-                  <div className="booking-title">{booking.movie_title}</div>
-                  <div className="booking-time">{booking.showtime}</div>
+                  <div className="booking-title text-2xl font-bold">{booking.movie_title}</div>
+                  <div className="booking-time text-xl text-gray-500 mt-1">{booking.showtime}</div>
                 </div>
-                <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-                  <span className={`booking-status ${booking.booking_status === "cancelled" ? "cancelled" : ""}`}>
+                <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
+                  <span className={`booking-status text-xl font-semibold uppercase px-3 py-1 rounded ${booking.booking_status === "cancelled" ? "cancelled text-red-600 bg-red-100" : "text-green-600 bg-green-100"}`}>
                     {booking.booking_status}
                   </span>
                   {booking.booking_status === "booked" && (
                     <button
                       type="button"
-                      className="btn btn-ghost btn-sm"
+                      className="btn btn-ghost btn-sm text-xl font-bold text-red-500 hover:text-red-700 hover:bg-red-50 px-4 py-2 rounded"
                       onClick={() => cancelBooking(booking.id)}
                     >
                       Cancel
