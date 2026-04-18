@@ -225,7 +225,7 @@ export const MallOverviewPage = () => {
 								Favorites only
 							</label>
 						</div>
-						<div className="app-feature-grid" aria-label="Store cards" style={{ marginTop: 0, gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))" }}>
+						<div className="app-feature-grid" aria-label="Store cards" style={{ marginTop: 0, gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 260px), 1fr))" }}>
 							{filteredStores.map((store, i) => (<Link key={store.id} to={`/mall/stores/${store.id}`} className={`app-feature-card animate-fade-in-up stagger-${Math.min(i + 1, 6)}`} style={{ textDecoration: "none", color: "inherit" }}>
 									<div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "0.25rem" }}>
 										<div className="app-feature-label">{store.category}</div>

@@ -62,7 +62,7 @@ export const ComplaintManagementPage = () => {
 
 			{message && <div className="alert-item alert-info" style={{ marginBottom: "1rem" }}>{message}</div>}
 
-			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", marginBottom: "1.5rem" }}>
+			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 140px), 1fr))", marginBottom: "1.5rem" }}>
 				{Object.entries(statusColors).map(([status, color]) => (<div key={status} className="metric-card" style={{ cursor: "pointer", borderColor: filter === status ? color : undefined }} onClick={() => setFilter(filter === status ? "all" : status)}>
 						<span className="metric-label" style={{ textTransform: "capitalize" }}>{status.replace("_", " ")}</span>
 						<span className="metric-value" style={{ color }}>{statusCounts[status] || 0}</span>

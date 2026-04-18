@@ -21,7 +21,7 @@ export const CustomerInsightsPage = () => {
 				<p className="hero-subtitle">Understand your customers with segmentation and behavior analytics</p>
 			</div>
 
-			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", marginBottom: "2rem" }}>
+			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))", marginBottom: "2rem" }}>
 				<div className="metric-card">
 					<span className="metric-icon">👥</span>
 					<span className="metric-label">Total Customers</span>

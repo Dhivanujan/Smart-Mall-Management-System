@@ -326,7 +326,7 @@ export const AdminLostReportsPage = () => {
       )}
 
       {summary && (
-        <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", marginBottom: "1rem" }}>
+        <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 160px), 1fr))", marginBottom: "1rem" }}>
           <div className="metric-card"><span className="metric-label">Total</span><span className="metric-value">{summary.total}</span></div>
           <div className="metric-card"><span className="metric-label">Open</span><span className="metric-value">{summary.open}</span></div>
           <div className="metric-card"><span className="metric-label">In Progress</span><span className="metric-value">{summary.in_progress}</span></div>

@@ -324,7 +324,7 @@ export const AdminBookingsPage = () => {
       )}
 
       {summary && (
-        <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", marginBottom: "1rem" }}>
+        <div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 160px), 1fr))", marginBottom: "1rem" }}>
           <div className="metric-card"><span className="metric-label">Total</span><span className="metric-value">{summary.total}</span></div>
           <div className="metric-card"><span className="metric-label">Booked</span><span className="metric-value">{summary.booked}</span></div>
           <div className="metric-card"><span className="metric-label">Cancelled</span><span className="metric-value">{summary.cancelled}</span></div>

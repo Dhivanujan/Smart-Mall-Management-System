@@ -24,7 +24,7 @@ export const ParkingManagementPage = () => {
 				<p className="hero-subtitle">Monitor parking utilization with AI demand predictions</p>
 			</div>
 
-			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(150px, 1fr))" }}>
+			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 150px), 1fr))" }}>
 				<div className="metric-card">
 					<span className="metric-icon">📊</span>
 					<span className="metric-label">Current Utilization</span>

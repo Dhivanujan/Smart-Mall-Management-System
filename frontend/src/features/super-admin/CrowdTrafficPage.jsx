@@ -41,7 +41,7 @@ export const CrowdTrafficPage = () => {
 				<p className="hero-subtitle">Real-time crowd density heatmap and congestion monitoring</p>
 			</div>
 
-			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", marginBottom: "2rem" }}>
+			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))", marginBottom: "2rem" }}>
 				<div className="metric-card">
 					<span className="metric-icon">👥</span>
 					<span className="metric-label">Current Visitors</span>
@@ -76,7 +76,7 @@ export const CrowdTrafficPage = () => {
 
 			<div className="section-card">
 				<h2 className="section-title">Crowd Density Heatmap</h2>
-				<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(140px, 1fr))", gap: "1rem", padding: "1rem 0" }}>
+				<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 140px), 1fr))", gap: "1rem", padding: "1rem 0" }}>
 					{data.heatmap.map((zone) => (<div key={zone.id} style={{
                 background: `${densityColor(zone.density)}22`,
                 border: `2px solid ${densityColor(zone.density)}`,

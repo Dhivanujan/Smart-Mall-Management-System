@@ -80,7 +80,7 @@ export const StoreDetailsPage = () => {
                                 </p>
                             )}
 
-                            <div className="store-meta-grid" style={{ marginBottom: "1.5rem", display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))" }}>
+                            <div className="store-meta-grid" style={{ marginBottom: "1.5rem", display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))" }}>
                                 {details.store.floor && (
                                     <div className="meta-item">
                                         <span className="text-muted text-sm">📍 Location</span>

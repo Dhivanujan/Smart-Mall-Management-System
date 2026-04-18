@@ -29,7 +29,7 @@ export const QueueEfficiencyPage = () => {
 				<p className="hero-subtitle">AI-powered queue performance analysis across all stores</p>
 			</div>
 
-			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", marginBottom: "2rem" }}>
+			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))", marginBottom: "2rem" }}>
 				<div className="metric-card">
 					<span className="metric-icon">⏱️</span>
 					<span className="metric-label">Avg Service Time</span>

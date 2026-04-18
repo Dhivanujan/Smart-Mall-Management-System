@@ -77,7 +77,7 @@ export const CustomerDashboardPage = () => {
 						<h2 className="panel-title">🧠 For You</h2>
 						<Link to="/ai-concierge" className="btn btn-ghost btn-sm">Open AI Concierge</Link>
 					</div>
-					<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(230px, 1fr))", gap: "0.8rem" }}>
+					<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 230px), 1fr))", gap: "0.8rem" }}>
 						<div className="store-card">
 							<div className="store-card-header"><h3 style={{ margin: 0, fontSize: "0.95rem" }}>Favorite Stores</h3></div>
 							<div style={{ marginTop: "0.4rem" }}>

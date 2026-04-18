@@ -84,7 +84,7 @@ export const QueueMonitoringPage = () => {
 				</span>
 			</div>
 
-			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))", marginBottom: "2rem" }}>
+			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 160px), 1fr))", marginBottom: "2rem" }}>
 				<div className="metric-card">
 					<span className="metric-icon">🎫</span>
 					<span className="metric-label">Now Serving</span>
