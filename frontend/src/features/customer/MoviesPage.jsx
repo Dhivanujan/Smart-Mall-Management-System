@@ -162,7 +162,11 @@ export const MoviesPage = () => {
                     <button
                       key={time}
                       type="button"
-                      className={`text-xl font-medium px-4 py-2 rounded-md transition-colors ${selectedByMovie[movie.id] === time ? "bg-primary text-primary-foreground shadow-md ring-2 ring-primary ring-offset-2" : "bg-secondary text-secondary-foreground hover:bg-primary/20"}`}
+                      className={`inline-flex items-center justify-center whitespace-nowrap text-lg font-semibold px-5 py-2.5 rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 active:scale-[0.98] ${
+                        selectedByMovie[movie.id] === time 
+                          ? "bg-primary text-primary-foreground shadow-md ring-2 ring-primary ring-offset-background" 
+                          : "bg-secondary text-secondary-foreground hover:bg-primary/10 border border-transparent hover:border-primary/20"
+                      }`}
                       onClick={() => toggleShowtime(movie.id, time)}
                     >
                       {time}
@@ -173,11 +177,11 @@ export const MoviesPage = () => {
 
               <button
                 type="button"
-                className="bg-primary text-primary-foreground w-full text-2xl font-bold py-4 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
+                className="inline-flex items-center justify-center whitespace-nowrap w-full text-xl font-bold py-4 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground shadow-lg hover:bg-primary/95 hover:shadow-[0_8px_30px_rgb(var(--primary)_/_0.24)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]"
                 onClick={() => bookTicket(movie)}
                 disabled={!selectedByMovie[movie.id]}
               >
-                {selectedByMovie[movie.id] ? `Book ${selectedByMovie[movie.id]}` : "Select a showtime"}
+                {selectedByMovie[movie.id] ? `Book Ticket for ${selectedByMovie[movie.id]}` : "Select a showtime"}
               </button>
             </div>
           </div>
@@ -209,7 +213,7 @@ export const MoviesPage = () => {
                   {booking.booking_status === "booked" && (
                     <button
                       type="button"
-                      className="text-sm font-bold text-destructive hover:bg-destructive/10 px-4 py-2 rounded-lg transition-colors border border-transparent hover:border-destructive/20"
+                      className="inline-flex items-center justify-center whitespace-nowrap text-sm font-bold text-destructive bg-destructive/5 hover:bg-destructive hover:text-destructive-foreground px-4 py-2 rounded-md transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 border border-destructive/20 hover:border-destructive active:scale-[0.98]"
                       onClick={() => cancelBooking(booking.id)}
                     >
                       Cancel

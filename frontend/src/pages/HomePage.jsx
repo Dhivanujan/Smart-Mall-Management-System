@@ -69,26 +69,26 @@ export const HomePage = () => {
 
 					<div className="flex flex-wrap justify-center lg:justify-start gap-4">
 						{user ? (<>
-								{user.role === "customer" && (<Link to="/dashboard" className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
+								{user.role === "customer" && (<Link to="/dashboard" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
 										🛍️ My Dashboard
 									</Link>)}
-								{["admin", "super_admin"].includes(user.role) && (<Link to="/admin" className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
+								{["admin", "super_admin"].includes(user.role) && (<Link to="/admin" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
 										📊 Open admin console
 									</Link>)}
-								{user.role === "super_admin" && (<Link to="/super-admin" className="px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/80 transition-all">
+								{user.role === "super_admin" && (<Link to="/super-admin" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
 										🏗️ Super admin overview
 									</Link>)}
-								<button type="button" className="px-6 py-3 border border-border text-foreground font-bold rounded-lg hover:bg-secondary/50 transition-all" onClick={() => { logout(); navigate("/"); }}>
+								<button type="button" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 border border-border text-foreground font-bold rounded-lg hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]" onClick={() => { logout(); navigate("/"); }}>
 									Sign out
 								</button>
 							</>) : (<>
-								<Link to="/login" className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
+								<Link to="/login" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
 									Sign in to dashboard
 								</Link>
-								<Link to="/register" className="px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/80 transition-all">
+								<Link to="/register" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
 									Create account
 								</Link>
-								<Link to="/mall" className="px-6 py-3 border border-border text-foreground font-bold rounded-lg hover:bg-secondary/50 transition-all">
+								<Link to="/mall" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 border border-border text-foreground font-bold rounded-xl hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]">
 									🛍️ Browse mall directory
 								</Link>
 							</>)}

@@ -88,7 +88,7 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 							<kbd className="hidden lg:inline-block bg-background border border-border px-2 rounded text-xs font-bold shadow-sm">⌘K</kbd>
 						</div>
 						{user && (<div className="relative">
-								<button type="button" onClick={() => setShowUserMenu((v) => !v)} className="user-menu-button flex items-center gap-2 sm:gap-3 hover:bg-secondary p-1.5 sm:p-2 rounded-xl transition-colors border border-transparent hover:border-border">
+								<button type="button" onClick={() => setShowUserMenu((v) => !v)} className="inline-flex items-center gap-2 sm:gap-3 bg-transparent hover:bg-secondary p-1.5 sm:p-2 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border border-transparent hover:border-border active:scale-[0.98]">
 									<div className="dashboard-avatar h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-md ring-2 ring-background ring-offset-1 ring-offset-border">
 										{(user.full_name ?? user.username)?.[0]?.toUpperCase()}
 									</div>
@@ -109,7 +109,7 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 												<Link to="/" className="user-menu-item flex items-center gap-3 px-3 py-2 text-sm font-semibold text-foreground hover:bg-secondary rounded-lg transition-colors" onClick={() => setShowUserMenu(false)}>
 													<span className="text-lg">🏠</span> Home
 												</Link>
-												<button type="button" onClick={handleLogout} className="user-menu-item flex items-center w-full gap-3 px-3 py-2 text-sm font-bold text-destructive hover:bg-destructive/10 hover:text-destructive rounded-lg transition-colors border border-transparent hover:border-destructive/20 text-left">
+												<button type="button" onClick={handleLogout} className="inline-flex items-center w-full gap-3 px-3 py-2 text-sm font-bold text-destructive hover:bg-destructive/10 hover:text-destructive rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 border border-transparent hover:border-destructive/20 text-left active:scale-[0.98]">
 													<span className="text-lg">🚪</span> Sign out
 												</button>
 											</div>
