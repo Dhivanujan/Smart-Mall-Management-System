@@ -40,86 +40,87 @@ const STATS = [
 export const HomePage = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    return (<div className="app-page" style={{ flexDirection: "column", gap: "0" }}>
-			<div className="app-page-inner animate-fade-in-up">
-				<section>
-					<div className="app-badge" aria-label="Smart mall platform badge" style={{ marginBottom: "1rem" }}>
-						<span className="app-badge-pill" style={{ color: "#4ade80" }}>●</span>
+    return (<div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 sm:p-8" style={{ gap: "0" }}>
+			<div className="w-full max-w-7xl animate-fade-in-up flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-24 mb-16 mt-8">
+				<section className="flex-1 text-center lg:text-left">
+					<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-semibold mb-8 shadow-sm">
+						<span className="text-green-500 animate-pulse">●</span>
 						Top-rated smart mall operations platform
 					</div>
-					<h1 className="app-hero-heading">
-						Orchestrate your malls<br />with confidence.
+					<h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-primary leading-tight tracking-tight mb-6">
+						Orchestrate your malls<br /><span className="text-foreground">with confidence.</span>
 					</h1>
-					<p className="app-hero-subtitle">
+					<p className="text-xl sm:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto lg:mx-0">
 						Smart Mall gives super admins and mall operators a live command center for stores, revenue,
 						footfall, and support — all in one modern dashboard.
 					</p>
 
 					{/* Stats row */}
-					<div className="d-flex flex-wrap gap-6 mb-4 pb-2 border-b">
-						{STATS.map((stat) => (<div key={stat.label}>
-								<div className="text-xl font-bold" style={{ letterSpacing: "-0.02em", color: "#a5b4fc" }}>
+					<div className="flex flex-wrap justify-center lg:justify-start gap-8 sm:gap-12 mb-10 pb-8 border-b border-border">
+						{STATS.map((stat) => (<div key={stat.label} className="text-center lg:text-left">
+								<div className="text-4xl font-black text-primary tracking-tighter">
 									{stat.value}
 								</div>
-								<div className="text-xs text-muted" style={{ textTransform: "uppercase", letterSpacing: "0.06em" }}>
+								<div className="text-sm font-bold text-muted-foreground uppercase tracking-widest mt-1">
 									{stat.label}
 								</div>
 							</div>))}
 					</div>
 
-					<div className="app-actions">
+					<div className="flex flex-wrap justify-center lg:justify-start gap-4">
 						{user ? (<>
-								{user.role === "customer" && (<Link to="/dashboard" className="btn btn-primary">
+								{user.role === "customer" && (<Link to="/dashboard" className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
 										🛍️ My Dashboard
 									</Link>)}
-								{["admin", "super_admin"].includes(user.role) && (<Link to="/admin" className="btn btn-primary">
+								{["admin", "super_admin"].includes(user.role) && (<Link to="/admin" className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
 										📊 Open admin console
 									</Link>)}
-								{user.role === "super_admin" && (<Link to="/super-admin" className="btn btn-ghost">
+								{user.role === "super_admin" && (<Link to="/super-admin" className="px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/80 transition-all">
 										🏗️ Super admin overview
 									</Link>)}
-								<button type="button" className="btn btn-muted" onClick={() => { logout(); navigate("/"); }}>
+								<button type="button" className="px-6 py-3 border border-border text-foreground font-bold rounded-lg hover:bg-secondary/50 transition-all" onClick={() => { logout(); navigate("/"); }}>
 									Sign out
 								</button>
 							</>) : (<>
-								<Link to="/login" className="btn btn-primary">
+								<Link to="/login" className="px-6 py-3 bg-primary text-primary-foreground font-bold rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all">
 									Sign in to dashboard
 								</Link>
-								<Link to="/register" className="btn btn-ghost">
+								<Link to="/register" className="px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-lg hover:bg-secondary/80 transition-all">
 									Create account
 								</Link>
-								<Link to="/mall" className="btn btn-muted">
+								<Link to="/mall" className="px-6 py-3 border border-border text-foreground font-bold rounded-lg hover:bg-secondary/50 transition-all">
 									🛍️ Browse mall directory
 								</Link>
 							</>)}
 					</div>
-					{!user && (<p className="app-note">
+					{!user && (<p className="text-sm text-muted-foreground mt-6 font-medium">
 							Use demo credentials for instant access — no setup required.
 						</p>)}
 				</section>
-				<aside>
-					<div className="app-feature-grid" aria-label="Role based entry cards" style={{ marginTop: 0 }}>
-						{FEATURES.map((f, i) => (<div key={f.label} className={`app-feature-card animate-fade-in-up stagger-${i + 1}`}>
-								<div style={{ fontSize: "1.4rem", marginBottom: "0.5rem" }}>{f.icon}</div>
-								<div className="app-feature-label">{f.label}</div>
-								<div className="app-feature-title">{f.title}</div>
-								<div style={{ fontSize: "0.78rem", color: "var(--color-text-muted)", margin: "0.25rem 0 0.5rem" }}>
+				
+				<aside className="flex-1 w-full max-w-2xl">
+					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6" aria-label="Role based entry cards">
+						{FEATURES.map((f, i) => (<div key={f.label} className={`bg-card text-card-foreground border border-border p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up stagger-${i + 1}`}>
+								<div className="text-4xl mb-4 bg-secondary/50 h-16 w-16 rounded-xl flex items-center justify-center border border-border">{f.icon}</div>
+								<div className="text-xs font-bold text-primary uppercase tracking-wider mb-2">{f.label}</div>
+								<div className="text-xl font-bold mb-2 leading-tight">{f.title}</div>
+								<div className="text-sm text-muted-foreground mb-6 h-10">
 									{f.desc}
 								</div>
-								<div className="app-feature-meta">
-									{f.tags.map((tag) => (<span key={tag} className="app-feature-tag">{tag}</span>))}
+								<div className="flex flex-wrap gap-2">
+									{f.tags.map((tag) => (<span key={tag} className="px-2 py-1 bg-secondary text-secondary-foreground text-xs font-semibold rounded shrink-0">{tag}</span>))}
 								</div>
 							</div>))}
 					</div>
 				</aside>
 			</div>
 			
-			<footer style={{ width: "100%", maxWidth: "1120px", padding: "2rem 0", marginTop: "auto", borderTop: "1px solid rgba(148,163,184,0.1)", display: "flex", justifyContent: "space-between", fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
+			<footer className="w-full max-w-7xl py-8 mt-auto border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4 text-sm font-medium text-muted-foreground">
 				<div>&copy; {new Date().getFullYear()} Smart Mall Management System</div>
-				<div style={{ display: "flex", gap: "1.5rem" }}>
-					<Link to="#" style={{ color: "inherit", textDecoration: "none" }}>Privacy</Link>
-					<Link to="#" style={{ color: "inherit", textDecoration: "none" }}>Terms</Link>
-					<Link to="#" style={{ color: "inherit", textDecoration: "none" }}>Help</Link>
+				<div className="flex gap-8">
+					<Link to="#" className="hover:text-primary transition-colors">Privacy</Link>
+					<Link to="#" className="hover:text-primary transition-colors">Terms</Link>
+					<Link to="#" className="hover:text-primary transition-colors">Help</Link>
 				</div>
 			</footer>
 		</div>);
