@@ -1,76 +1,72 @@
 # Smart Mall Management System
 
-Smart Mall Management System is a full-stack, multi-role mall operations platform built with FastAPI + React.
+Smart Mall Management System is a full-stack platform for mall operations, customer engagement, and real-time services.
 
-It includes:
-- Secure JWT authentication
-- Role-based access (customer, admin, super admin)
+The project includes:
+- JWT authentication and role-based authorization
+- Customer, Admin, and Super Admin dashboards
 - Store and product management
-- Queue management with WebSocket updates
-- Parking operations
-- Loyalty and rewards
-- Offers and redemptions
-- Complaint handling
-- Notifications
-- Analytics dashboards
+- Queue management with live WebSocket updates
+- Parking reservation and administration
+- Loyalty points and redemption
+- Offers and redemption workflows
+- Complaints and notifications
+- Analytics for store and mall operations
+- Extended modules for events, movies, favorites, discovery concierge, and lost-and-found
+
+## Table of Contents
+
+- [Tech Stack](#tech-stack)
+- [Architecture](#architecture)
+- [Repository Structure](#repository-structure)
+- [Prerequisites](#prerequisites)
+- [Environment Variables](#environment-variables)
+- [Run with Docker Compose](#run-with-docker-compose)
+- [Run Locally (Recommended for Development)](#run-locally-recommended-for-development)
+- [Seed Data and Demo Credentials](#seed-data-and-demo-credentials)
+- [API and WebSocket Overview](#api-and-websocket-overview)
+- [Testing, Linting, and Build Commands](#testing-linting-and-build-commands)
+- [Troubleshooting](#troubleshooting)
+- [License](#license)
 
 ## Tech Stack
 
 ### Backend
 - Python 3.10+
 - FastAPI
-- Pydantic / pydantic-settings
+- Pydantic + pydantic-settings
 - MongoDB (Motor + Beanie)
-- JWT auth (python-jose)
-- Password hashing (bcrypt)
+- python-jose (JWT)
+- bcrypt (password hashing)
 - Uvicorn
 - Pytest + pytest-cov
 - Ruff
 
 ### Frontend
-- React 18 (JavaScript)
+- React 18
 - Vite
 - React Router v6
 - Axios
+- Tailwind CSS
 - Vitest
 
 ### Infrastructure
 - Docker Compose
-- MongoDB 7 container
+- MongoDB 7
 
-## Architecture Overview
+## Architecture
 
-- Backend service exposes REST APIs under `/api/v1` and a WebSocket endpoint under `/ws/queues/{store_id}`.
-- Frontend consumes REST APIs for all CRUD/business flows and subscribes to queue updates via WebSocket.
-- MongoDB stores users, stores, products, queues, complaints, loyalty data, notifications, offers, and parking data.
-- On backend startup, the app initializes DB and seeds demo data when DB is empty.
+- Frontend (Vite + React) consumes REST APIs from the backend.
+- Backend (FastAPI) exposes APIs under /api/v1 and real-time queue updates over WebSocket.
+- MongoDB stores all operational and user-domain data.
+- On backend startup, database initialization runs and demo seed data is inserted when the user collection is empty.
 
-## User Roles
-
-- Customer:
-  - Browse stores and products
-  - Join and track queues
-  - Reserve/release parking
-  - View loyalty account and redeem points
-  - View/redeem offers
-  - Create and track complaints
-  - Read notifications
-
-- Admin:
-  - Dashboard and monitoring
-  - Store-level metrics
-  - Queue operations (next, skip, pause, resume)
-  - Product management
-  - Parking admin actions
-  - Offer management
-  - Complaint assignment and status handling
-
-- Super Admin:
-  - Platform dashboard
-  - Admin/tenant oversight
-  - User lifecycle management
-  - Store lifecycle management
-  - Platform analytics endpoints
+Primary runtime endpoints:
+- Frontend: http://localhost:5173
+- Backend API: http://localhost:8000
+- OpenAPI docs: http://localhost:8000/docs
+- ReDoc: http://localhost:8000/redoc
+- MongoDB: mongodb://localhost:27017
 
 ## Repository Structure
 
@@ -85,16 +81,21 @@ SmartMallManagementSystem/
 │   ├── app/
 │   │   ├── main.py
 │   │   ├── api/v1/
-│   │   │   ├── auth/
 │   │   │   ├── admin/
-│   │   │   ├── stores/
-│   │   │   ├── queues/
-│   │   │   ├── parking/
-│   │   │   ├── loyalty/
+│   │   │   ├── analytics/
+│   │   │   ├── auth/
 │   │   │   ├── complaints/
+│   │   │   ├── discovery/
+│   │   │   ├── events/
+│   │   │   ├── favorites/
+│   │   │   ├── lost_found/
+│   │   │   ├── loyalty/
+│   │   │   ├── movies/
 │   │   │   ├── notifications/
 │   │   │   ├── offers/
-│   │   │   ├── analytics/
+│   │   │   ├── parking/
+│   │   │   ├── queues/
+│   │   │   ├── stores/
 │   │   │   └── users/
 │   │   ├── auth/
 │   │   ├── core/
@@ -104,230 +105,179 @@ SmartMallManagementSystem/
 │   └── tests/
 └── frontend/
     ├── .env.example
-    ├── index.html
     ├── package.json
     ├── vite.config.js
     └── src/
 ```
 
+## Prerequisites
+
+For local development:
+- Python 3.10 or later
+- Node.js 18 or later (Node 20+ or 22 recommended)
+- npm
+- MongoDB 7 (local install) or Docker
+
+For containerized development:
+- Docker Desktop with Docker Compose
+
 ## Environment Variables
 
-### Backend (`backend/.env`)
+### Backend
 
-Copy from `backend/.env.example`.
+Create backend/.env from backend/.env.example.
 
-Required/important settings:
-- `APP_ENV`
-- `APP_DEBUG`
-- `APP_VERSION`
-- `SECRET_KEY`
-- `JWT_ALGORITHM`
-- `JWT_ACCESS_TOKEN_EXPIRE_MINUTES`
-- `BACKEND_CORS_ORIGINS`
+```env
+APP_ENV=development
+APP_DEBUG=true
+APP_VERSION=0.1.0
+SECRET_KEY=change-me-to-a-random-secret
+JWT_ALGORITHM=HS256
+JWT_ACCESS_TOKEN_EXPIRE_MINUTES=60
+BACKEND_CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+```
 
-Notes:
-- Backend configuration is loaded through `pydantic-settings`.
-- MongoDB URL/DB are also read from environment, with defaults in config.
+Additional backend settings supported by the app configuration:
+- MONGODB_URL (default: mongodb://localhost:27017)
+- MONGODB_DB_NAME (default: smart_mall)
+- API_PREFIX (default: /api/v1)
 
-### Frontend (`frontend/.env`)
+### Frontend
 
-Copy from `frontend/.env.example`.
+Create frontend/.env from frontend/.env.example.
 
-- `VITE_API_BASE_URL=http://localhost:8000`
+```env
+VITE_API_BASE_URL=http://localhost:8000
+```
 
-## Getting Started
+## Run with Docker Compose
 
-## Option 1: Run with Docker (recommended)
-
-From repository root:
+From the project root:
 
 ```bash
 docker compose up --build
 ```
 
-Services:
-- Backend: `http://localhost:8000`
-- Frontend: `http://localhost:5173`
-- MongoDB: `mongodb://localhost:27017`
+What starts:
+- mongodb service on 27017
+- backend service on 8000
+- frontend service on 5173
 
-## Option 2: Run Locally
+Notes:
+- Backend uses backend/.env.
+- Docker Compose overrides backend DB connection to use mongodb service.
+
+To stop:
+
+```bash
+docker compose down
+```
+
+To stop and remove persisted Mongo volume:
+
+```bash
+docker compose down -v
+```
+
+## Run Locally (Recommended for Development)
 
 ### 1) Backend
 
-```bash
-cd backend
-python -m venv ../.venv
-```
-
-Activate virtual environment:
-
-- PowerShell:
+From project root:
 
 ```powershell
+cd backend
+python -m venv ..\.venv
 ..\.venv\Scripts\Activate.ps1
-```
-
-- Bash:
-
-```bash
-source ../.venv/Scripts/activate
-```
-
-Install dependencies and run:
-
-```bash
+python -m pip install --upgrade pip
 python -m pip install -e ".[dev]"
 python -m uvicorn app.main:app --reload --port 8000
 ```
 
 ### 2) Frontend
 
-```bash
+Open a second terminal:
+
+```powershell
 cd frontend
 npm install
 npm run dev
 ```
 
-Frontend URL: `http://localhost:5173`
+Frontend development server:
+- http://localhost:5173
 
-## Demo Credentials (Seed Data)
+## Seed Data and Demo Credentials
 
-- Admin:
-  - Username: `admin@example.com`
-  - Password: `admin123`
+The backend automatically seeds demo data on startup only when the users collection is empty.
 
-- Super Admin:
-  - Username: `superadmin@example.com`
-  - Password: `super123`
+Seeded users:
+- Admin
+  - Username: admin@example.com
+  - Password: admin123
+- Super Admin
+  - Username: superadmin@example.com
+  - Password: super123
+- Customer
+  - Username: customer@example.com
+  - Password: customer123
 
-- Customer:
-  - Username: `customer@example.com`
-  - Password: `customer123`
+Seeded domains include:
+- Users
+- Stores and products
+- Complaints
+- Notifications
+- Offers
+- Parking slots
 
-## API Surface (High Level)
+## API and WebSocket Overview
 
 ### Health
-- `GET /health`
-- `GET /health/ready`
+- GET /health
+- GET /health/ready
+- GET /
 
-### Auth
-- `POST /api/v1/auth/login`
-- `POST /api/v1/auth/refresh`
-- `GET /api/v1/auth/me`
-- `POST /api/v1/auth/register`
+### Authentication and Access
+- /api/v1/auth
+- /api/v1/users
+- /api/v1/admin
 
-### Stores / Products
-- `GET /api/v1/stores/`
-- `GET /api/v1/stores/map`
-- `GET /api/v1/stores/{store_id}`
-- `GET /api/v1/stores/{store_id}/products`
-- `POST /api/v1/stores/{store_id}/products` (admin)
-- `PUT /api/v1/stores/{store_id}/products/{product_id}` (admin)
-- `DELETE /api/v1/stores/{store_id}/products/{product_id}` (admin)
-- `POST /api/v1/stores/admin/create` (super admin)
-- `PUT /api/v1/stores/admin/{store_id}` (super admin)
-- `DELETE /api/v1/stores/admin/{store_id}` (super admin)
+### Core Mall Operations
+- /api/v1/stores
+- /api/v1/queues
+- /api/v1/parking
+- /api/v1/loyalty
+- /api/v1/offers
+- /api/v1/complaints
+- /api/v1/notifications
+- /api/v1/analytics
 
-### Queues
-- `GET /api/v1/queues/{store_id}`
-- `POST /api/v1/queues/{store_id}/join`
-- `GET /api/v1/queues/{store_id}/status`
+### Extended Experience Modules
+- /api/v1/events
+- /api/v1/movies
+- /api/v1/lost-found
+- /api/v1/favorites
+- /api/v1/discovery
 
-### Admin Queue Controls
-- `GET /api/v1/admin/queues`
-- `POST /api/v1/admin/queues/{store_id}/next`
-- `POST /api/v1/admin/queues/{store_id}/skip`
-- `POST /api/v1/admin/queues/{store_id}/pause`
-- `POST /api/v1/admin/queues/{store_id}/resume`
+### Real-Time Queue Channel
+- WebSocket endpoint: /ws/queues/{store_id}
+- Sends an initial queue snapshot on connection
+- Pushes updates whenever queue state changes
 
-### Parking
-- `GET /api/v1/parking/summary`
-- `GET /api/v1/parking/slots`
-- `GET /api/v1/parking/available`
-- `POST /api/v1/parking/reserve`
-- `POST /api/v1/parking/release/{slot_id}`
-- `GET /api/v1/parking/my-slots`
-- `GET /api/v1/parking/admin/overview` (admin)
-- `POST /api/v1/parking/admin/occupy` (admin)
-- `POST /api/v1/parking/admin/release/{slot_id}` (admin)
+Use interactive API docs for complete request/response schemas:
+- /docs
 
-### Loyalty
-- `GET /api/v1/loyalty/account`
-- `GET /api/v1/loyalty/history`
-- `POST /api/v1/loyalty/earn`
-- `POST /api/v1/loyalty/redeem`
+## Testing, Linting, and Build Commands
 
-### Complaints
-- `GET /api/v1/complaints/my`
-- `POST /api/v1/complaints/`
-- `GET /api/v1/complaints/{complaint_id}`
-- `GET /api/v1/complaints/admin/all` (admin)
-- `PUT /api/v1/complaints/admin/{complaint_id}/status` (admin)
-- `PUT /api/v1/complaints/admin/{complaint_id}/assign` (admin)
-- `POST /api/v1/complaints/admin/{complaint_id}/escalate` (admin)
-- `POST /api/v1/complaints/admin/{complaint_id}/log` (admin)
-
-### Notifications
-- `GET /api/v1/notifications/`
-- `POST /api/v1/notifications/{notification_id}/read`
-- `POST /api/v1/notifications/read-all`
-
-### Offers
-- `GET /api/v1/offers/active`
-- `GET /api/v1/offers/store/{store_id}`
-- `GET /api/v1/offers/{offer_id}`
-- `POST /api/v1/offers/{offer_id}/redeem`
-- `POST /api/v1/offers/admin/create` (admin)
-- `PUT /api/v1/offers/admin/{offer_id}` (admin)
-- `DELETE /api/v1/offers/admin/{offer_id}` (admin)
-- `GET /api/v1/offers/admin/recommendations` (admin)
-
-### Analytics
-- `GET /api/v1/analytics/store/sales` (admin)
-- `GET /api/v1/analytics/store/customers` (admin)
-- `GET /api/v1/analytics/mall/overview` (super admin)
-- `GET /api/v1/analytics/mall/crowd` (super admin)
-- `GET /api/v1/analytics/mall/queue-efficiency` (super admin)
-- `GET /api/v1/analytics/mall/parking` (super admin)
-
-### Users
-- `POST /api/v1/users/register`
-- `GET /api/v1/users/profile`
-- `PUT /api/v1/users/profile`
-- `GET /api/v1/users/admin/list` (super admin)
-- `POST /api/v1/users/admin/create` (super admin)
-- `PUT /api/v1/users/admin/{username}` (super admin)
-- `POST /api/v1/users/admin/{username}/reset-password` (super admin)
-- `DELETE /api/v1/users/admin/{username}` (super admin)
-
-## WebSocket
-
-Queue updates stream endpoint:
-- `WS /ws/queues/{store_id}`
-
-Behavior:
-- Sends initial queue snapshot when connected
-- Broadcasts queue updates on queue state changes
-
-## Testing
-
-### Backend
+### Backend tests
 
 ```bash
 cd backend
+pytest
 pytest --cov
 ```
 
-### Frontend
-
-```bash
-cd frontend
-npm test
-```
-
-## Linting and Formatting
-
-### Backend
+### Backend lint/format
 
 ```bash
 cd backend
@@ -335,7 +285,14 @@ ruff check .
 ruff format .
 ```
 
-## Build Frontend
+### Frontend tests
+
+```bash
+cd frontend
+npm test
+```
+
+### Frontend build and preview
 
 ```bash
 cd frontend
@@ -343,19 +300,31 @@ npm run build
 npm run preview
 ```
 
+### Frontend lint
+
+```bash
+cd frontend
+npm run lint
+```
+
 ## Troubleshooting
 
-- If frontend cannot call backend:
-  - Check `VITE_API_BASE_URL` in `frontend/.env`
-  - Ensure backend is running on port 8000
+### Frontend cannot reach backend
+- Confirm frontend/.env has VITE_API_BASE_URL=http://localhost:8000.
+- Ensure backend is running on port 8000.
+- Ensure BACKEND_CORS_ORIGINS includes your frontend origin.
 
-- If auth fails unexpectedly:
-  - Confirm `SECRET_KEY` and token settings in backend `.env`
-  - Re-login to refresh tokens
+### Authentication errors
+- Validate SECRET_KEY and JWT settings.
+- Clear stored tokens in browser storage and login again.
 
-- If demo users are missing:
-  - Seeding runs only when user collection is empty
-  - Reset database if you need fresh seed data
+### Seed users are missing
+- Seeding runs only when there are no users in DB.
+- Reset MongoDB data and restart backend to reseed.
+
+### Docker backend cannot connect to DB
+- Verify mongodb container is healthy.
+- Check docker-compose service logs.
 
 ## License
 
