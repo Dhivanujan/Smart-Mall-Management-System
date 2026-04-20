@@ -112,57 +112,57 @@ export const MoviesPage = () => {
   };
 
   return (
-    <div className="customer-page animate-fade-in text-lg">
-      <div className="page-header">
-        <h1 className="hero-heading text-5xl font-extrabold mb-4">Cinema Showtimes</h1>
-        <p className="hero-subtitle text-2xl">Catch the latest blockbusters at SmartMall Cinema 4K.</p>
+    <div className="customer-page animate-fade-in text-base bg-background min-h-screen text-foreground">
+      <div className="page-header mb-10 flex flex-col items-center text-center">
+        <h1 className="hero-heading text-5xl font-black tracking-tight text-primary mb-4 block">Cinema Showtimes</h1>
+        <p className="hero-subtitle text-xl text-muted-foreground max-w-2xl">Catch the latest blockbusters at SmartMall Cinema 4K. Experience the magic of the movies.</p>
       </div>
 
-      {message && <div className="message-banner text-xl font-semibold" style={{ marginBottom: "1rem" }}>{message}</div>}
+      {message && <div className="message-banner text-lg font-medium bg-primary/10 text-primary border border-primary/20 p-4 rounded-xl shadow-sm text-center mb-8">{message}</div>}
 
-      <div className="cinema-info animate-fade-in-up">
-        <div>
-          <div className="cinema-info-title text-3xl font-bold">
+      <div className="cinema-info animate-fade-in-up bg-primary text-primary-foreground rounded-2xl p-8 flex flex-col md:flex-row items-center justify-between shadow-xl">
+        <div className="mb-6 md:mb-0 text-center md:text-left">
+          <div className="cinema-info-title text-3xl font-extrabold mb-2">
             Now Showing
           </div>
-          <div className="cinema-info-subtitle text-xl mt-2">
-            Today's Schedule • All halls equipped with Dolby Atmos
+          <div className="cinema-info-subtitle text-primary-foreground/80 font-medium">
+            Today's Schedule • All halls equipped with Dolby Atmos & IMAX
           </div>
         </div>
-        <div className="feature-kpi text-center">
-          <span className="feature-kpi-value text-4xl font-black">{upcomingCount}</span>
-          <span className="text-xl font-medium block mt-1">Upcoming bookings</span>
+        <div className="feature-kpi text-center bg-background/10 backdrop-blur-md rounded-xl p-6 min-w-[200px] border border-primary-foreground/10">
+          <span className="feature-kpi-value text-5xl font-black block">{upcomingCount}</span>
+          <span className="text-sm font-semibold uppercase tracking-wider text-primary-foreground/70 mt-2 block">Your Bookings</span>
         </div>
       </div>
 
-      <div className="movies-grid mt-8">
+      <div className="movies-grid mt-12 grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-8">
         {MOVIES.map((movie, index) => (
           <div 
             key={movie.id} 
-            className={`movie-card animate-fade-in-up stagger-${(index % 4) + 1}`}
+            className={`movie-card animate-fade-in-up stagger-${(index % 4) + 1} bg-card text-card-foreground rounded-2xl shadow-md border border-border overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2`}
           >
-            <div className="movie-poster text-8xl py-10">
+            <div className="movie-poster flex flex-col items-center justify-center text-8xl py-12 bg-secondary/50 border-b border-border">
               {movie.poster}
-              <div className="movie-rating-pill text-xl font-bold px-4 py-2 mt-4 inline-block bg-gray-200 dark:bg-gray-800 rounded-full">
+              <div className="movie-rating-pill text-sm font-bold px-4 py-1.5 mt-6 inline-block bg-background text-foreground rounded-full shadow-sm border border-border">
                 {movie.rating}
               </div>
             </div>
             
-            <div className="movie-details p-6">
-              <h3 className="movie-title text-3xl font-bold mb-4">{movie.title}</h3>
-              <div className="movie-meta-row flex gap-6 text-xl text-gray-600 dark:text-gray-300 mb-6">
+            <div className="movie-details p-8">
+              <h3 className="movie-title text-2xl font-bold mb-3 line-clamp-1">{movie.title}</h3>
+              <div className="movie-meta-row flex gap-4 text-base text-muted-foreground mb-6 font-medium">
                 <span>⏱️ {movie.duration}</span>
                 <span>🎬 {movie.genre}</span>
               </div>
               
-              <div className="movie-showtimes-wrap mb-6">
-                <div className="movie-showtimes-title text-2xl font-semibold mb-4">Showtimes:</div>
-                <div className="movie-showtimes-list flex flex-wrap gap-3">
+              <div className="movie-showtimes-wrap mb-8">
+                <div className="movie-showtimes-title text-lg font-semibold mb-3">Showtimes</div>
+                <div className="movie-showtimes-list flex flex-wrap gap-2">
                   {movie.showtimes.map(time => (
                     <button
                       key={time}
                       type="button"
-                      className={`movie-time-btn text-xl font-medium px-4 py-2 rounded-md transition-colors ${selectedByMovie[movie.id] === time ? "active bg-blue-600 text-white" : "bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600"}`}
+                      className={`movie-time-btn text-xl font-medium px-4 py-2 rounded-md transition-colors ${selectedByMovie[movie.id] === time ? "active bg-primary text-primary-foreground shadow-md ring-2 ring-primary ring-offset-2" : "bg-secondary text-secondary-foreground hover:bg-primary/20"}`}
                       onClick={() => toggleShowtime(movie.id, time)}
                     >
                       {time}
@@ -173,7 +173,7 @@ export const MoviesPage = () => {
 
               <button
                 type="button"
-                className="btn btn-primary movie-book-btn w-full text-2xl font-bold py-4 rounded-lg shadow-lg hover:shadow-xl transition-shadow disabled:opacity-50 disabled:cursor-not-allowed"
+                className="btn btn-primary movie-book-btn bg-primary text-primary-foreground w-full text-2xl font-bold py-4 rounded-lg shadow-lg hover:shadow-xl hover:-translate-y-1 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:shadow-none"
                 onClick={() => bookTicket(movie)}
                 disabled={!selectedByMovie[movie.id]}
               >
@@ -184,28 +184,32 @@ export const MoviesPage = () => {
         ))}
       </div>
 
-      <div className="panel animate-fade-in-up" style={{ marginTop: "3rem", padding: "2rem" }}>
-        <h2 className="panel-title text-4xl font-bold mb-6">Your Recent Bookings</h2>
+      <div className="panel animate-fade-in-up bg-card text-card-foreground shadow-lg rounded-2xl border border-border" style={{ marginTop: "4rem", padding: "2.5rem" }}>
+        <h2 className="panel-title text-3xl font-bold mb-6 flex items-center gap-3">
+          <span className="text-primary">🎟️</span> Your Recent Bookings
+        </h2>
         {loading ? (
-          <p className="hero-subtitle text-2xl" style={{ marginBottom: 0 }}>Loading bookings...</p>
+          <p className="text-muted-foreground text-lg animate-pulse" style={{ marginBottom: 0 }}>Loading bookings...</p>
         ) : bookings.length === 0 ? (
-          <p className="hero-subtitle text-2xl" style={{ marginBottom: 0 }}>No bookings yet. Pick a showtime above to reserve your ticket.</p>
+          <p className="text-muted-foreground text-lg bg-secondary/50 p-6 rounded-xl border border-dashed border-border" style={{ marginBottom: 0 }}>No bookings yet. Pick a showtime above to reserve your ticket.</p>
         ) : (
-          <div className="booking-list mt-6 flex flex-col gap-4">
+          <div className="booking-list mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             {bookings.map((booking) => (
-              <div key={booking.id} className="booking-item p-4 bg-gray-50 dark:bg-gray-800 rounded-lg flex justify-between items-center shadow-sm">
+              <div key={booking.id} className="booking-item p-5 bg-background border border-border rounded-xl flex justify-between items-center shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
                 <div>
-                  <div className="booking-title text-2xl font-bold">{booking.movie_title}</div>
-                  <div className="booking-time text-xl text-gray-500 mt-1">{booking.showtime}</div>
+                  <div className="booking-title text-xl font-bold text-foreground">{booking.movie_title}</div>
+                  <div className="booking-time text-sm font-medium text-muted-foreground mt-1 flex items-center gap-2">
+                    <span className="bg-secondary px-2 py-0.5 rounded text-secondary-foreground">{booking.showtime}</span>
+                  </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-                  <span className={`booking-status text-xl font-semibold uppercase px-3 py-1 rounded ${booking.booking_status === "cancelled" ? "cancelled text-red-600 bg-red-100" : "text-green-600 bg-green-100"}`}>
+                  <span className={`booking-status text-xs font-bold uppercase px-3 py-1.5 rounded-full tracking-wider ${booking.booking_status === "cancelled" ? "cancelled text-destructive bg-destructive/10 border border-destructive/20" : "text-green-700 bg-green-100 border border-green-200 dark:bg-green-900/30 dark:text-green-400"}`}>
                     {booking.booking_status}
                   </span>
                   {booking.booking_status === "booked" && (
                     <button
                       type="button"
-                      className="btn btn-ghost btn-sm text-xl font-bold text-red-500 hover:text-red-700 hover:bg-red-50 px-4 py-2 rounded"
+                      className="btn btn-ghost btn-sm text-sm font-bold text-destructive hover:bg-destructive/10 px-4 py-2 rounded-lg transition-colors border border-transparent hover:border-destructive/20"
                       onClick={() => cancelBooking(booking.id)}
                     >
                       Cancel
