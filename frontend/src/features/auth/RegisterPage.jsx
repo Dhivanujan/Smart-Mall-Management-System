@@ -38,83 +38,61 @@ export const RegisterPage = () => {
             setIsSubmitting(false);
         }
     };
-    return (<div className="app-page" style={{ alignItems: "stretch" }}>
-			<div className="app-page-inner animate-fade-in-up" style={{ maxWidth: 480, margin: "0 auto" }}>
-				<div className="app-card">
-					<div className="app-card-header">
-						<Link to="/login" style={{
-            fontSize: "0.82rem",
-            color: "var(--color-text-muted)",
-            textDecoration: "none",
-            marginBottom: "0.75rem",
-            display: "inline-block",
-        }}>
-							← Back to login
-						</Link>
-						<h2 className="app-card-title">Create your account</h2>
-						<p className="app-card-subtitle">
-							Sign up to access queues, parking, loyalty rewards and more.
-						</p>
-					</div>
+    return (<div className="app-page auth-page auth-page-register">
+            <div className="app-page-inner auth-register-wrapper animate-fade-in-up">
+                <div className="app-card auth-card auth-register-card">
+                    <div className="app-card-header">
+                        <Link to="/login" className="auth-back-link">
+                            ← Back to login
+                        </Link>
+                        <div className="app-badge auth-badge" aria-label="Create account badge">
+                            <span className="app-badge-pill auth-badge-pill">✨</span>
+                            New account setup
+                        </div>
+                        <h2 className="app-card-title auth-register-title">Create your Smart Mall account</h2>
+                        <p className="app-card-subtitle">
+                            Set up your profile to access queue updates, parking reservations, loyalty rewards, and more.
+                        </p>
+                    </div>
 
-					<form onSubmit={handleSubmit} className="app-form">
-						<label className="app-field-label">
-							<span>Full name</span>
-							<input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="app-input" placeholder="Jane Doe" required/>
-						</label>
+                    <form onSubmit={handleSubmit} className="app-form auth-form-grid">
+                        <label className="app-field-label">
+                            <span>Full name</span>
+                            <input type="text" value={fullName} onChange={(e) => setFullName(e.target.value)} className="app-input" placeholder="Jane Doe" required/>
+                        </label>
 
-						<label className="app-field-label">
-							<span>Email address</span>
-							<input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="app-input" placeholder="you@example.com" required autoFocus/>
-						</label>
+                        <label className="app-field-label">
+                            <span>Email address</span>
+                            <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className="app-input" placeholder="you@example.com" required autoFocus/>
+                        </label>
 
-						<label className="app-field-label">
-							<span>Password</span>
-							<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="app-input" placeholder="At least 6 characters" required minLength={6}/>
-						</label>
+                        <label className="app-field-label">
+                            <span>Password</span>
+                            <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="app-input" placeholder="At least 6 characters" required minLength={6}/>
+                        </label>
 
-						<label className="app-field-label">
-							<span>Confirm password</span>
-							<input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="app-input" placeholder="Repeat password" required minLength={6}/>
-						</label>
+                        <label className="app-field-label">
+                            <span>Confirm password</span>
+                            <input type="password" value={confirmPassword} onChange={(e) => setConfirmPassword(e.target.value)} className="app-input" placeholder="Repeat password" required minLength={6}/>
+                        </label>
 
-						{error && (<div className="error-banner" style={{ marginBottom: 0 }}>
-								<span className="error-icon">⚠️</span>
-								<span>{error}</span>
-							</div>)}
+                        {error && (<div className="error-banner">
+                                <span className="error-icon">⚠️</span>
+                                <span>{error}</span>
+                            </div>)}
 
-						<button type="submit" className="btn btn-primary" disabled={isSubmitting} style={{ width: "100%", marginTop: "0.25rem" }}>
-							{isSubmitting ? (<span style={{
-                display: "flex",
-                alignItems: "center",
-                gap: "0.5rem",
-            }}>
-									<span style={{
-                width: 14,
-                height: 14,
-                border: "2px solid rgba(255,255,255,0.3)",
-                borderTopColor: "#fff",
-                borderRadius: "999px",
-                animation: "spin 0.6s linear infinite",
-                display: "inline-block",
-            }}/>
-									Creating account…
-								</span>) : ("Create account →")}
-						</button>
-					</form>
+                        <button type="submit" className="btn btn-primary auth-submit-btn" disabled={isSubmitting}>
+                            {isSubmitting ? (<span className="auth-loading-content">
+                                    <span className="auth-spinner"/>
+                                    Creating account...
+                                </span>) : ("Create account")}
+                        </button>
+                    </form>
 
-					<div style={{
-            marginTop: "1rem",
-            textAlign: "center",
-            fontSize: "0.78rem",
-            color: "var(--color-text-muted)",
-        }}>
-						Already have an account?{" "}
-						<Link to="/login" style={{ color: "var(--color-accent-strong)" }}>
-							Sign in
-						</Link>
-					</div>
-				</div>
-			</div>
-		</div>);
+                    <div className="auth-footer-text">
+                        Already have an account? <Link to="/login" className="auth-inline-link">Sign in</Link>
+                    </div>
+                </div>
+            </div>
+        </div>);
 };

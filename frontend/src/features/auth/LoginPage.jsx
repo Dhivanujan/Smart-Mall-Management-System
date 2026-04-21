@@ -36,30 +36,26 @@ export const LoginPage = () => {
         setPassword(pw);
         setError(null);
     };
-    return (<div className="app-page" style={{ alignItems: "stretch" }}>
-			<div className="app-page-inner animate-fade-in-up" style={{ maxWidth: 1000 }}>
-				<section style={{ display: "flex", alignItems: "center" }}>
+    return (<div className="app-page auth-page">
+			<div className="app-page-inner auth-page-inner animate-fade-in-up">
+				<section className="auth-hero-panel">
 					<div>
-						<Link to="/" style={{ display: "inline-flex", alignItems: "center", gap: "0.4rem", fontSize: "0.82rem", color: "var(--color-text-muted)", textDecoration: "none", marginBottom: "1rem" }}>
+						<Link to="/" className="auth-back-link">
 							← Back to home
 						</Link>
-						<div className="app-badge" aria-label="Smart mall badge" style={{ marginBottom: "0.75rem" }}>
-							<span className="app-badge-pill" style={{ color: "#818cf8" }}>🔒</span>
-							Secure admin access
+						<div className="app-badge auth-badge" aria-label="Smart mall badge">
+							<span className="app-badge-pill auth-badge-pill">🔒</span>
+							Secure access
 						</div>
-						<h1 className="app-hero-heading" style={{ marginBottom: "0.8rem" }}>
-							Sign in to your<br />control center.
+						<h1 className="app-hero-heading auth-title">
+							Welcome back to<br />Smart Mall Control.
 						</h1>
-						<p className="app-hero-subtitle">
-							Access the admin dashboard to manage stores, track performance, and oversee mall operations.
+						<p className="app-hero-subtitle auth-subtitle">
+							Sign in to manage operations, monitor analytics, and keep customer experiences running smoothly.
 						</p>
-
-						{/* Demo account cards */}
-						<div style={{ marginTop: "1.25rem" }}>
-							<div style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.08em", color: "var(--color-text-muted)", marginBottom: "0.6rem" }}>
-								Quick demo access
-							</div>
-							<div style={{ display: "grid", gap: "0.6rem" }}>
+						<div className="auth-quick-access">
+							<p className="auth-kicker">Quick demo access</p>
+							<div className="auth-demo-grid">
 								{DEMO_ACCOUNTS.map((acct) => (
 									<button
 										key={acct.email}
@@ -67,13 +63,11 @@ export const LoginPage = () => {
 										onClick={() => fillDemo(acct.email, acct.password)}
 										className={`demo-account-btn ${username === acct.email ? "active" : ""}`}
 									>
-										<span style={{ fontSize: "1.2rem", flexShrink: 0 }}>{acct.icon}</span>
+										<span className="auth-account-icon">{acct.icon}</span>
 										<div>
-											<div style={{ fontWeight: 550, marginBottom: "0.1rem" }}>{acct.label}</div>
-											<div style={{ fontSize: "0.75rem", color: "var(--color-text-muted)" }}>{acct.desc}</div>
-											<div style={{ fontSize: "0.72rem", color: "var(--color-accent-strong)", marginTop: "0.25rem", fontFamily: "monospace" }}>
-												{acct.email}
-											</div>
+											<div className="auth-account-role">{acct.label}</div>
+											<div className="auth-account-desc">{acct.desc}</div>
+											<div className="auth-account-email">{acct.email}</div>
 										</div>
 									</button>
 								))}
@@ -81,35 +75,34 @@ export const LoginPage = () => {
 						</div>
 					</div>
 				</section>
-				<aside>
-					<div className="app-card animate-fade-in-up stagger-2" aria-label="Sign in form">
+				<aside className="auth-form-column">
+					<div className="app-card auth-card animate-fade-in-up stagger-2" aria-label="Sign in form">
 						<div className="app-card-header">
 							<h2 className="app-card-title">Sign in</h2>
-							<p className="app-card-subtitle">Authenticate to access your mall dashboards.</p>
+							<p className="app-card-subtitle">Use your account to access dashboard tools and workflows.</p>
 						</div>
 						<form onSubmit={handleSubmit} className="app-form">
 							<label className="app-field-label">
 								<span>Username or email</span>
-								<input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="app-input" placeholder="your username or email" required autoFocus/>
+								<input type="text" value={username} onChange={(e) => setUsername(e.target.value)} className="app-input" placeholder="you@example.com" required autoFocus/>
 							</label>
 							<label className="app-field-label">
 								<span>Password</span>
 								<input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className="app-input" placeholder="Enter your password" required/>
 							</label>
-							{error && (<div className="error-banner" style={{ marginBottom: 0 }}>
+							{error && (<div className="error-banner">
 									<span className="error-icon">⚠️</span>
 									<span>{error}</span>
 								</div>)}
-							<button type="submit" className="btn btn-primary" disabled={isSubmitting} style={{ width: "100%", marginTop: "0.25rem" }}>
-								{isSubmitting ? (<span style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
-										<span style={{ width: 14, height: 14, border: "2px solid rgba(255,255,255,0.3)", borderTopColor: "#fff", borderRadius: "999px", animation: "spin 0.6s linear infinite", display: "inline-block" }}/>
-										Signing in…
-									</span>) : "Sign in →"}
+							<button type="submit" className="btn btn-primary auth-submit-btn" disabled={isSubmitting}>
+								{isSubmitting ? (<span className="auth-loading-content">
+										<span className="auth-spinner"/>
+										Signing in...
+									</span>) : "Sign in"}
 							</button>
 						</form>
-						<div style={{ marginTop: "1rem", textAlign: "center", fontSize: "0.78rem", color: "var(--color-text-muted)" }}>
-							Don&apos;t have an account?{" "}
-							<Link to="/register" style={{ color: "var(--color-accent-strong)" }}>Create one</Link>
+						<div className="auth-footer-text">
+							Don&apos;t have an account? <Link to="/register" className="auth-inline-link">Create one</Link>
 						</div>
 					</div>
 				</aside>
