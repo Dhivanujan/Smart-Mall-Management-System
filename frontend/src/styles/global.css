@@ -1,6 +1,6 @@
-@import "tailwindcss";
-
-@config "../../tailwind.config.js";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 @layer base {
   :root {
@@ -51,8 +51,12 @@
   :root {
     --color-text-muted: hsl(var(--muted-foreground));
     --color-text-dim: hsl(var(--muted-foreground) / 0.7);
+    --color-text-primary: hsl(var(--foreground));
+    --color-accent: hsl(var(--secondary-foreground));
     --color-accent-strong: hsl(var(--primary));
     --color-success: #16a34a;
+    --shadow-soft: 0 18px 40px hsl(var(--foreground) / 0.12);
+    --transition-fast: 150ms ease;
   }
 }
 
@@ -74,5 +78,236 @@
     color: hsl(var(--primary));
     font-weight: 700;
     letter-spacing: -0.025em;
+  }
+}
+
+@layer components {
+  .app-page {
+    min-height: 100vh;
+    padding: 2.5rem 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .app-page-inner {
+    width: 100%;
+    max-width: 1120px;
+  }
+
+  @media (min-width: 960px) {
+    .app-page-inner {
+      display: grid;
+      grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+      gap: 3.5rem;
+      align-items: center;
+    }
+  }
+
+  .app-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.18rem 0.58rem 0.18rem 0.25rem;
+    border-radius: 999px;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--secondary) / 0.55);
+    color: hsl(var(--foreground));
+    font-size: 0.74rem;
+  }
+
+  .app-badge-pill {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 1.45rem;
+    height: 1.45rem;
+    border-radius: 999px;
+    background: hsl(var(--background));
+    box-shadow: 0 0 0 1px hsl(var(--border));
+    font-size: 0.68rem;
+  }
+
+  .app-hero-heading {
+    font-size: clamp(2.25rem, 3vw, 2.9rem);
+    font-weight: 650;
+    letter-spacing: -0.03em;
+    margin: 0 0 1.25rem;
+    line-height: 1.1;
+  }
+
+  .app-hero-subtitle {
+    margin: 0 0 1.75rem;
+    color: var(--color-text-muted);
+    max-width: 32rem;
+    font-size: 0.98rem;
+  }
+
+  .app-card {
+    border-radius: 1rem;
+    border: 1px solid hsl(var(--border));
+    background:
+      radial-gradient(circle at top left, hsl(var(--primary) / 0.09), transparent 60%),
+      radial-gradient(circle at bottom right, hsl(var(--ring) / 0.08), transparent 60%),
+      hsl(var(--card));
+    box-shadow: var(--shadow-soft);
+    padding: 1.5rem 1.65rem;
+  }
+
+  .app-card-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .app-card-title {
+    margin: 0 0 0.35rem;
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+
+  .app-card-subtitle {
+    margin: 0;
+    font-size: 0.88rem;
+    color: var(--color-text-muted);
+  }
+
+  .app-form {
+    display: grid;
+    gap: 0.85rem;
+  }
+
+  .app-field-label {
+    display: grid;
+    gap: 0.25rem;
+    font-size: 0.85rem;
+  }
+
+  .app-input {
+    padding: 0.55rem 0.7rem;
+    border-radius: 0.6rem;
+    border: 1px solid hsl(var(--border));
+    background: hsl(var(--background));
+    color: var(--color-text-primary);
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background-color var(--transition-fast);
+  }
+
+  .app-input:focus {
+    border-color: hsl(var(--ring));
+    box-shadow: 0 0 0 3px hsl(var(--ring) / 0.18);
+  }
+
+  .demo-account-btn {
+    width: 100%;
+    border: 1px solid hsl(var(--border));
+    border-radius: 0.85rem;
+    padding: 0.65rem 0.7rem;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.65rem;
+    text-align: left;
+    background: hsl(var(--background));
+    color: var(--color-text-primary);
+    cursor: pointer;
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .demo-account-btn:hover {
+    transform: translateY(-1px);
+    border-color: hsl(var(--ring));
+  }
+
+  .demo-account-btn.active {
+    border-color: hsl(var(--primary));
+    box-shadow: 0 0 0 3px hsl(var(--primary) / 0.14);
+  }
+
+  .error-banner {
+    border: 1px solid hsl(var(--destructive) / 0.35);
+    background: hsl(var(--destructive) / 0.09);
+    color: hsl(var(--destructive));
+    border-radius: 0.7rem;
+    padding: 0.62rem 0.72rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.84rem;
+  }
+
+  .error-icon {
+    flex-shrink: 0;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.55rem 0.95rem;
+    border-radius: 999px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    border: 1px solid transparent;
+    cursor: pointer;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast),
+      background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--color-accent), var(--color-accent-strong));
+    color: hsl(var(--primary-foreground));
+    box-shadow: 0 12px 30px hsl(var(--primary) / 0.28);
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 18px 36px hsl(var(--primary) / 0.34);
+  }
+
+  .btn-primary:disabled {
+    opacity: 0.75;
+    cursor: not-allowed;
+    transform: none;
+  }
+
+  .btn-ghost {
+    background: hsl(var(--secondary));
+    border-color: hsl(var(--border));
+    color: var(--color-text-primary);
+  }
+
+  .btn-ghost:hover {
+    background: hsl(var(--secondary) / 0.75);
+    border-color: hsl(var(--ring));
+  }
+
+  .btn-sm {
+    padding: 0.4rem 0.7rem;
+    font-size: 0.8rem;
+  }
+
+  .animate-fade-in-up {
+    animation: fade-in-up 360ms ease both;
+  }
+
+  .stagger-2 {
+    animation-delay: 120ms;
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
   }
 }
