@@ -1086,3 +1086,27 @@
     transform: rotate(360deg);
   }
 }
+  .customer-page { @apply min-h-screen bg-background text-foreground space-y-6 lg:space-y-8 p-4 md:p-8 max-w-7xl mx-auto; }
+  .welcome-section { @apply bg-card p-6 md:p-10 rounded-2xl shadow-lg border border-border mb-8 text-center md:text-left; }
+  .welcome-greeting { @apply text-3xl md:text-4xl font-extrabold tracking-tight mb-2 text-primary; }
+  .welcome-greeting .name { @apply text-primary/80; }
+  .welcome-subtitle { @apply text-lg text-muted-foreground; }
+  
+  .action-grid { @apply grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-8; }
+  .action-card { @apply bg-card border border-border rounded-xl p-4 flex items-center gap-4 hover:shadow-md hover:-translate-y-1 transition-all duration-200 cursor-pointer; }
+  .action-card-icon { @apply text-2xl h-12 w-12 rounded-lg flex items-center justify-center bg-secondary text-primary; }
+  .action-card-text { @apply flex flex-col; }
+  .action-card-label { @apply text-sm font-semibold text-foreground; }
+  .action-card-value { @apply text-xs text-muted-foreground; }
+  
+  .panel { @apply bg-card border border-border rounded-2xl p-6 shadow-sm mb-6; }
+  .panel-header { @apply flex justify-between items-center mb-6; }
+  .panel-title { @apply text-xl font-bold text-primary flex items-center gap-2 m-0; }
+  
+  .store-grid { @apply grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6; }
+  .store-card { @apply bg-background border border-border rounded-xl p-5 hover:shadow-md hover:border-primary/30 transition-all duration-200; }
+  .store-card-header { @apply flex justify-between items-center mb-2; }
+  
+  .status-badge { @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-secondary text-secondary-foreground; }
+  .status-badge.open { @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400; }
+  .status-badge.open .dot { @apply bg-green-500; }

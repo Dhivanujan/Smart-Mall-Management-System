@@ -60,7 +60,7 @@ export const LoginPage = () => {
   };
 
   return (
-    <div className="min-h-screen grid md:grid-cols-2 bg-background">
+    <div className="auth-page min-h-screen grid md:grid-cols-2 bg-background">
       
       {/* LEFT SIDE (HERO) */}
       <div className="hidden md:flex flex-col justify-center px-12 bg-muted">

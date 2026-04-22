@@ -46,8 +46,8 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-muted px-4">
-      <div className="w-full max-w-md bg-card text-card-foreground shadow-xl rounded-2xl p-8 space-y-6">
+    <div className="auth-page auth-page-register min-h-screen flex items-center justify-center bg-muted px-4">
+      <div className="w-full max-w-md bg-card text-card-foreground shadow-xl rounded-2xl p-8 space-y-6 relative z-10">
         
         {/* Header */}
         <div className="space-y-2 text-center">
