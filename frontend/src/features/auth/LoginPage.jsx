@@ -2,30 +2,6 @@ import React, { useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/app/providers/AuthProvider";
 
-const DEMO_ACCOUNTS = [
-  {
-    label: "Customer",
-    email: "customer@example.com",
-    password: "customer123",
-    icon: "🛍️",
-    desc: "Browse stores, queues & rewards",
-  },
-  {
-    label: "Mall Admin",
-    email: "admin@example.com",
-    password: "admin123",
-    icon: "📊",
-    desc: "Manage stores & analytics",
-  },
-  {
-    label: "Super Admin",
-    email: "superadmin@example.com",
-    password: "super123",
-    icon: "🏗️",
-    desc: "Full platform control",
-  },
-];
-
 export const LoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -53,12 +29,6 @@ export const LoginPage = () => {
     }
   };
 
-  const fillDemo = (email, pw) => {
-    setUsername(email);
-    setPassword(pw);
-    setError(null);
-  };
-
   return (
     <div className="auth-page min-h-screen grid md:grid-cols-2 bg-background">
       
@@ -78,31 +48,6 @@ export const LoginPage = () => {
             customer experiences.
           </p>
 
-          {/* Demo Accounts */}
-          <div className="space-y-3">
-            <p className="text-sm font-medium">Quick Demo Access</p>
-
-            {DEMO_ACCOUNTS.map((acct) => (
-              <button
-                key={acct.email}
-                onClick={() => fillDemo(acct.email, acct.password)}
-                className={`w-full flex items-start gap-3 p-3 rounded-lg border transition hover:bg-accent ${
-                  username === acct.email ? "border-primary" : ""
-                }`}
-              >
-                <span className="text-xl">{acct.icon}</span>
-                <div className="text-left">
-                  <div className="font-medium">{acct.label}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {acct.desc}
-                  </div>
-                  <div className="text-xs text-primary">
-                    {acct.email}
-                  </div>
-                </div>
-              </button>
-            ))}
-          </div>
         </div>
       </div>
 

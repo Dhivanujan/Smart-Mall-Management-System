@@ -93,9 +93,6 @@ export const HomePage = () => {
 								</Link>
 							</>)}
 					</div>
-					{!user && (<p className="text-sm text-muted-foreground mt-6 font-medium">
-							Use demo credentials for instant access — no setup required.
-						</p>)}
 				</section>
 				
 				<aside className="flex-1 w-full max-w-2xl">
