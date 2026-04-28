@@ -46,6 +46,7 @@ export const AuthProvider = ({ children }) => {
             const loggedInUser = meResponse.data;
             setUser(loggedInUser);
             window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ token: accessToken, user: loggedInUser }));
+            return loggedInUser;
         }
         finally {
             setIsLoading(false);

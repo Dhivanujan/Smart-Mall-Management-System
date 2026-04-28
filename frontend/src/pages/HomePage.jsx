@@ -82,10 +82,16 @@ export const HomePage = () => {
 									Sign out
 								</button>
 							</>) : (<>
-								<Link to="/login" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
+								<Link to="/login?role=customer" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
 									Sign in to dashboard
 								</Link>
-								<Link to="/register" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
+								<Link to="/login?role=admin" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
+									Store admin login
+								</Link>
+								<Link to="/login?role=super_admin" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
+									Super admin login
+								</Link>
+								<Link to="/register" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 border border-border text-foreground font-bold rounded-xl hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]">
 									Create account
 								</Link>
 								<Link to="/mall" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 border border-border text-foreground font-bold rounded-xl hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]">
