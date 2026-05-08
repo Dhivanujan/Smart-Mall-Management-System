@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { apiClient } from "@/services/api/client";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { ADMIN_NAV } from "@/constants/navigation";
+
 export const AdminStoresPage = () => {
     const [stores, setStores] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -60,7 +59,7 @@ export const AdminStoresPage = () => {
         footfall: stores.reduce((s, st) => s + st.footfall, 0),
         tickets: stores.reduce((s, st) => s + st.open_tickets, 0),
     }), [stores]);
-    return (<DashboardLayout title="Admin Panel" navItems={ADMIN_NAV}>
+    return (<>
 			{/* Header */}
 			<div className="flex-between" style={{ flexWrap: "wrap", gap: "0.75rem" }}>
 				<div>
@@ -161,5 +160,6 @@ export const AdminStoresPage = () => {
 						</div>
 					</div>
 				</>)}
-		</DashboardLayout>);
+		</>
+);
 };

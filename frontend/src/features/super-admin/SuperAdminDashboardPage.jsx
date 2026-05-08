@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { apiClient } from "@/services/api/client";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { SUPER_ADMIN_NAV } from "@/constants/navigation";
 export const SuperAdminDashboardPage = () => {
     const { user } = useAuth();
     const [metrics, setMetrics] = useState(null);
@@ -40,7 +38,7 @@ export const SuperAdminDashboardPage = () => {
             cancelled = true;
         };
     }, []);
-    return (<DashboardLayout title="Super Admin Panel" navItems={SUPER_ADMIN_NAV}>
+    return (<>
 			{/* Header */}
 			<div className="flex-between" style={{ flexWrap: "wrap", gap: "0.75rem" }}>
 				<div>
@@ -119,5 +117,6 @@ export const SuperAdminDashboardPage = () => {
 						</table>
 					</div>
 				</div>)}
-		</DashboardLayout>);
+		</>
+);
 };

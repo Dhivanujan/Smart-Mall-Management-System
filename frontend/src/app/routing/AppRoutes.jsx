@@ -74,12 +74,11 @@ export const AppRoutes = () => {
 				</Route>
 			</Route>
 
-			{/* Store admin routes — existing pages have own DashboardLayout */}
+			{/* Store admin routes */}
 			<Route element={<ProtectedRoute requireRole="admin"/>}>
-				<Route path="/admin" element={<AdminDashboardPage />}/>
-				<Route path="/admin/stores" element={<AdminStoresPage />}/>
-				{/* New admin pages use layout wrapper */}
 				<Route element={<AdminLayout />}>
+					<Route path="/admin" element={<AdminDashboardPage />}/>
+					<Route path="/admin/stores" element={<AdminStoresPage />}/>
 					<Route path="/admin/products" element={<ProductManagementPage />}/>
 					<Route path="/admin/offers" element={<OfferManagementPage />}/>
 					<Route path="/admin/bookings" element={<AdminBookingsPage />}/>
@@ -90,13 +89,12 @@ export const AppRoutes = () => {
 				</Route>
 			</Route>
 
-			{/* Super admin routes — existing pages have own DashboardLayout */}
+			{/* Super admin routes */}
 			<Route element={<ProtectedRoute requireRole="super_admin"/>}>
-				<Route path="/super-admin" element={<SuperAdminDashboardPage />}/>
-				<Route path="/super-admin/admins" element={<SuperAdminAdminsPage />}/>
-				<Route path="/super-admin/tenants" element={<SuperAdminTenantsPage />}/>
-				{/* New super-admin pages use layout wrapper */}
 				<Route element={<SuperAdminLayout />}>
+					<Route path="/super-admin" element={<SuperAdminDashboardPage />}/>
+					<Route path="/super-admin/admins" element={<SuperAdminAdminsPage />}/>
+					<Route path="/super-admin/tenants" element={<SuperAdminTenantsPage />}/>
 					<Route path="/super-admin/analytics" element={<AnalyticsPage />}/>
 					<Route path="/super-admin/crowd" element={<CrowdTrafficPage />}/>
 					<Route path="/super-admin/queues" element={<QueueEfficiencyPage />}/>

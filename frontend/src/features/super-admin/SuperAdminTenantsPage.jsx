@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { apiClient } from "@/services/api/client";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { SUPER_ADMIN_NAV } from "@/constants/navigation";
 const occupancyColor = (pct) => {
     if (pct >= 85)
         return "var(--color-success)";
@@ -44,7 +42,7 @@ export const SuperAdminTenantsPage = () => {
         mrr: tenants.reduce((s, t) => s + t.monthly_recurring_revenue, 0),
         avgOccupancy: tenants.length ? tenants.reduce((s, t) => s + t.occupancy_percent, 0) / tenants.length : 0,
     }), [tenants]);
-    return (<DashboardLayout title="Super Admin Panel" navItems={SUPER_ADMIN_NAV}>
+    return (<>
 			{/* Header */}
 			<div className="flex-between" style={{ flexWrap: "wrap", gap: "0.75rem" }}>
 				<div>
@@ -134,5 +132,6 @@ export const SuperAdminTenantsPage = () => {
 						</div>
 					</div>
 				</>)}
-		</DashboardLayout>);
+		</>
+);
 };

@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { apiClient } from "@/services/api/client";
-import { DashboardLayout } from "@/components/layout/DashboardLayout";
-import { SUPER_ADMIN_NAV } from "@/constants/navigation";
 export const SuperAdminAdminsPage = () => {
     const [admins, setAdmins] = useState([]);
     const [loading, setLoading] = useState(true);
@@ -43,7 +41,7 @@ export const SuperAdminAdminsPage = () => {
             a.mall.toLowerCase().includes(q));
     }, [admins, search]);
     const mallCount = useMemo(() => new Set(admins.map((a) => a.mall)).size, [admins]);
-    return (<DashboardLayout title="Super Admin Panel" navItems={SUPER_ADMIN_NAV}>
+    return (<>
 			{/* Header */}
 			<div className="flex-between" style={{ flexWrap: "wrap", gap: "0.75rem" }}>
 				<div>
@@ -120,5 +118,6 @@ export const SuperAdminAdminsPage = () => {
 						</div>
 					</div>
 				</>)}
-		</DashboardLayout>);
+		</>
+);
 };

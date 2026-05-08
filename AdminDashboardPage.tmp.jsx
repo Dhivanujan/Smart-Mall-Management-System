@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { apiClient } from "@/services/api/client";
-
+import { DashboardLayout } from "@/components/layout/DashboardLayout";
+import { ADMIN_NAV } from "@/constants/navigation";
 const severityColor = (s) => {
     switch (s.toLowerCase()) {
         case "critical":
@@ -62,7 +63,7 @@ export const AdminDashboardPage = () => {
     const zoneMax = snapshot
         ? Math.max(...Object.values(snapshot.footfall.by_zone), 1)
         : 1;
-    return (<>
+    return (<DashboardLayout title="Admin Panel" navItems={ADMIN_NAV}>
 			{/* Header */}
 			<div className="flex-between" style={{ flexWrap: "wrap", gap: "0.75rem" }}>
 				<div>
@@ -217,6 +218,6 @@ export const AdminDashboardPage = () => {
 						</table>
 					</div>
 				</div>)}
-		</>
-);
+		</DashboardLayout>);
 };
+
