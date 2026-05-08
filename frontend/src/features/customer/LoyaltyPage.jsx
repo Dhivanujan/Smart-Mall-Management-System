@@ -63,6 +63,12 @@ export const LoyaltyPage = () => {
 				<p className="hero-subtitle">Earn points, unlock rewards, and track your loyalty journey</p>
 			</div>
 
+    return (<div className="customer-page">
+			<div className="page-header">
+				<h1 className="hero-heading">Loyalty & Rewards</h1>
+				<p className="hero-subtitle">Earn points, unlock rewards, and track your loyalty journey</p>
+			</div>
+
 			{message && (<div className="message-banner info">
 					<span>ℹ️</span>
 					<span>{message}</span>
@@ -70,32 +76,33 @@ export const LoyaltyPage = () => {
 
 			{account && (<>
 					<div className="stat-grid">
-						<div className="stat-card animate-fade-in-up stagger-1" style={{ borderColor: `${tierColors[account.tier]}44` }}>
+						<div className="stat-card animate-fade-in-up stagger-1 card-hover relative overflow-hidden" style={{ borderColor: `${tierColors[account.tier]}44` }}>
+                            <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ background: `radial-gradient(circle at top right, ${tierColors[account.tier]}, transparent 70%)` }}></div>
 							<span className="stat-card-icon amber">🏆</span>
-							<span className="stat-card-text">
-								<span className="stat-card-label">Current Tier</span>
-								<span className="stat-card-value" style={{ color: tierColors[account.tier] }}>{account.tier}</span>
+							<span className="stat-card-text relative z-10">
+								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Current Tier</span>
+								<span className="stat-card-value text-3xl font-black" style={{ color: tierColors[account.tier] }}>{account.tier}</span>
 							</span>
 						</div>
-						<div className="stat-card animate-fade-in-up stagger-2">
+						<div className="stat-card animate-fade-in-up stagger-2 card-hover">
 							<span className="stat-card-icon purple">⭐</span>
 							<span className="stat-card-text">
-								<span className="stat-card-label">Available Points</span>
-								<span className="stat-card-value">{account.total_points.toLocaleString()}</span>
+								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Available Points</span>
+								<span className="stat-card-value text-3xl font-black">{account.total_points.toLocaleString()}</span>
 							</span>
 						</div>
-						<div className="stat-card animate-fade-in-up stagger-3">
+						<div className="stat-card animate-fade-in-up stagger-3 card-hover">
 							<span className="stat-card-icon green">📈</span>
 							<span className="stat-card-text">
-								<span className="stat-card-label">Lifetime Earned</span>
-								<span className="stat-card-value">{account.lifetime_earned.toLocaleString()}</span>
+								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Lifetime Earned</span>
+								<span className="stat-card-value text-3xl font-black">{account.lifetime_earned.toLocaleString()}</span>
 							</span>
 						</div>
-						<div className="stat-card animate-fade-in-up stagger-4">
+						<div className="stat-card animate-fade-in-up stagger-4 card-hover">
 							<span className="stat-card-icon pink">🎁</span>
 							<span className="stat-card-text">
-								<span className="stat-card-label">Lifetime Redeemed</span>
-								<span className="stat-card-value">{account.lifetime_redeemed.toLocaleString()}</span>
+								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Lifetime Redeemed</span>
+								<span className="stat-card-value text-3xl font-black">{account.lifetime_redeemed.toLocaleString()}</span>
 							</span>
 						</div>
 					</div>
@@ -109,9 +116,10 @@ export const LoyaltyPage = () => {
 										<small>{t.pts > 0 ? `${(t.pts / 1000).toFixed(0)}K` : "0"}</small>
 									</span>))}
 							</div>
-							<div className="zone-util-bar" style={{ marginTop: "0.5rem" }}>
-								<div className="zone-util-track" style={{ height: "10px" }}>
-									<div className="zone-util-fill" style={{
+							<div className="zone-util-bar relative" style={{ marginTop: "0.5rem" }}>
+                                <div className="absolute inset-0 blur-md opacity-30" style={{ background: tierColors[account.tier] }}></div>
+								<div className="zone-util-track relative z-10 overflow-hidden bg-secondary/50" style={{ height: "10px" }}>
+									<div className="zone-util-fill absolute inset-y-0 left-0 transition-all duration-1000 ease-out" style={{
                 width: `${Math.min((account.lifetime_earned / 10000) * 100, 100)}%`,
                 background: `linear-gradient(90deg, #cd7f32, #c0c0c0, #ffd700, #e5e4e2)`,
             }}/>
@@ -153,20 +161,22 @@ export const LoyaltyPage = () => {
 										</tr>
 									</thead>
 									<tbody>
-										{transactions.map((tx) => (<tr key={tx.id}>
+										{transactions.map((tx) => (<tr key={tx.id} className="group">
 												<td>
-													<span className={`complaint-status-badge ${tx.transaction_type === "earn" ? "resolved" : "pending"}`}>
-														{tx.transaction_type === "earn" ? "+" : "−"} {tx.transaction_type.toUpperCase()}
+													<span className={`status-badge ${tx.transaction_type === "earn" ? "open" : "closed"}`}>
+                                                        <span className="dot"/>
+														{tx.transaction_type === "earn" ? "Earned" : "Redeemed"}
 													</span>
 												</td>
 												<td style={{
                         color: tx.transaction_type === "earn" ? "var(--color-success)" : "var(--color-danger)",
-                        fontWeight: 600,
+                        fontWeight: 700,
+                        fontSize: "1.1rem"
                     }}>
 													{tx.transaction_type === "earn" ? "+" : "−"}{tx.points}
 												</td>
-												<td>{tx.description}</td>
-												<td style={{ color: "var(--color-text-muted)" }}>{new Date(tx.timestamp * 1000).toLocaleDateString()}</td>
+												<td className="font-medium text-foreground">{tx.description}</td>
+												<td className="text-sm font-medium text-muted-foreground">{new Date(tx.timestamp * 1000).toLocaleDateString()}</td>
 											</tr>))}
 									</tbody>
 								</table>

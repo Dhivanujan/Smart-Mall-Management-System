@@ -40,15 +40,22 @@ const STATS = [
 export const HomePage = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
-    return (<div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 sm:p-8" style={{ gap: "0" }}>
-			<div className="w-full max-w-7xl animate-fade-in-up flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-24 mb-16 mt-8">
+    return (
+        <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden" style={{ gap: "0" }}>
+            {/* Animated Background Mesh */}
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
+                <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-primary/5 blur-[120px] animate-pulse"></div>
+                <div className="absolute top-[40%] -left-[10%] w-[40%] h-[40%] rounded-full bg-indigo-500/5 blur-[100px] animate-pulse" style={{ animationDelay: "1s" }}></div>
+                <div className="absolute -bottom-[10%] right-[20%] w-[60%] h-[60%] rounded-full bg-blue-500/5 blur-[150px] animate-pulse" style={{ animationDelay: "2s" }}></div>
+            </div>
+			<div className="w-full max-w-7xl animate-fade-in-up flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-24 mb-16 mt-8 relative z-10">
 				<section className="flex-1 text-center lg:text-left">
 					<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-semibold mb-8 shadow-sm">
 						<span className="text-green-500 animate-pulse">●</span>
 						Top-rated smart mall operations platform
 					</div>
-					<h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-primary leading-tight tracking-tight mb-6">
-						Orchestrate your malls<br /><span className="text-foreground">with confidence.</span>
+					<h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-6">
+						<span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-600 to-indigo-600">Orchestrate your malls</span><br /><span className="text-foreground">with confidence.</span>
 					</h1>
 					<p className="text-xl sm:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto lg:mx-0">
 						Smart Mall gives super admins and mall operators a live command center for stores, revenue,
@@ -56,15 +63,17 @@ export const HomePage = () => {
 					</p>
 
 					{/* Stats row */}
-					<div className="flex flex-wrap justify-center lg:justify-start gap-8 sm:gap-12 mb-10 pb-8 border-b border-border">
-						{STATS.map((stat) => (<div key={stat.label} className="text-center lg:text-left">
-								<div className="text-4xl font-black text-primary tracking-tighter">
+					<div className="flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-6 mb-10 pb-8 border-b border-border/50">
+						{STATS.map((stat) => (
+                            <div key={stat.label} className="text-center lg:text-left bg-card/40 backdrop-blur-md border border-border/50 rounded-2xl p-6 shadow-sm flex-1 min-w-[140px] transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-card/60">
+								<div className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-br from-primary to-primary/70 tracking-tighter mb-1">
 									{stat.value}
 								</div>
-								<div className="text-sm font-bold text-muted-foreground uppercase tracking-widest mt-1">
+								<div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
 									{stat.label}
 								</div>
-							</div>))}
+							</div>
+                        ))}
 					</div>
 
 					<div className="flex flex-wrap justify-center lg:justify-start gap-4">
@@ -103,22 +112,22 @@ export const HomePage = () => {
 				
 				<aside className="flex-1 w-full max-w-2xl">
 					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6" aria-label="Role based entry cards">
-						{FEATURES.map((f, i) => (<div key={f.label} className={`bg-card text-card-foreground border border-border p-6 rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up stagger-${i + 1}`}>
-								<div className="text-4xl mb-4 bg-secondary/50 h-16 w-16 rounded-xl flex items-center justify-center border border-border">{f.icon}</div>
+						{FEATURES.map((f, i) => (<div key={f.label} className={`bg-card/80 backdrop-blur-sm text-card-foreground border border-border/50 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up stagger-${i + 1}`}>
+								<div className="text-4xl mb-4 bg-gradient-to-br from-secondary to-secondary/40 h-16 w-16 rounded-2xl flex items-center justify-center border border-border/50 shadow-sm">{f.icon}</div>
 								<div className="text-xs font-bold text-primary uppercase tracking-wider mb-2">{f.label}</div>
 								<div className="text-xl font-bold mb-2 leading-tight">{f.title}</div>
 								<div className="text-sm text-muted-foreground mb-6 h-10">
 									{f.desc}
 								</div>
 								<div className="flex flex-wrap gap-2">
-									{f.tags.map((tag) => (<span key={tag} className="px-2 py-1 bg-secondary text-secondary-foreground text-xs font-semibold rounded shrink-0">{tag}</span>))}
+									{f.tags.map((tag) => (<span key={tag} className="px-2.5 py-1 bg-secondary/80 text-secondary-foreground text-xs font-semibold rounded-md shrink-0">{tag}</span>))}
 								</div>
 							</div>))}
 					</div>
 				</aside>
 			</div>
 			
-			<footer className="w-full max-w-7xl py-8 mt-auto border-t border-border flex flex-col sm:flex-row justify-between items-center gap-4 text-sm font-medium text-muted-foreground">
+			<footer className="w-full max-w-7xl py-8 mt-auto border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm font-medium text-muted-foreground/80 relative z-10">
 				<div>&copy; {new Date().getFullYear()} Smart Mall Management System</div>
 				<div className="flex gap-8">
 					<Link to="#" className="hover:text-primary transition-colors">Privacy</Link>

@@ -5,6 +5,7 @@ export const DashboardLayout = ({ title, navItems, children }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [showUserMenu, setShowUserMenu] = useState(false);
+    const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 	const openCommandPalette = useCallback(() => {
 		window.dispatchEvent(new Event("smartmall:open-command-palette"));
 	}, []);
@@ -14,12 +15,18 @@ export const DashboardLayout = ({ title, navItems, children }) => {
     }, [logout, navigate]);
     const roleBadge = user?.role === "super_admin" ? "Super Admin" : user?.role === "admin" ? "Admin" : user?.role ?? "";
 	return (<div className="flex h-screen bg-background text-foreground overflow-hidden w-full dashboard-root">
-			<aside className="hidden md:flex w-64 border-r border-border bg-card flex-col flex-shrink-0 z-20 dashboard-sidebar">
-				<div className="h-16 flex items-center px-6 border-b border-border dashboard-brand">
-					<Link to="/" className="flex items-center gap-3 text-primary hover:text-primary-foreground transition-colors" style={{ textDecoration: "none" }}>
+            {/* Mobile Sidebar Overlay */}
+            {showMobileSidebar && (
+                <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden animate-fade-in" onClick={() => setShowMobileSidebar(false)} />
+            )}
+			<aside className={`${showMobileSidebar ? "flex fixed inset-y-0 left-0 z-50 shadow-2xl" : "hidden"} md:flex relative w-64 border-r border-border bg-card flex-col flex-shrink-0 md:z-20 dashboard-sidebar transition-transform duration-300`}>
+				<div className="h-16 flex items-center justify-between px-6 border-b border-border dashboard-brand relative overflow-hidden">
+                    <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
+					<Link to="/" className="flex items-center gap-3 text-primary hover:text-primary-foreground transition-colors" style={{ textDecoration: "none" }} onClick={() => setShowMobileSidebar(false)}>
 						<span className="text-2xl drop-shadow-md">🏬</span>
 						<span className="font-black text-xl tracking-tight dashboard-logo">Smart Mall</span>
 					</Link>
+                    <button type="button" className="md:hidden text-muted-foreground p-1" onClick={() => setShowMobileSidebar(false)}>✕</button>
 				</div>
 				
 				<div className="flex-1 overflow-y-auto py-6 px-4 space-y-8 no-scrollbar">
@@ -30,8 +37,8 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 								{navItems.map((item) => (<li key={item.to}>
 										<NavLink to={item.to} end={item.to === "/admin" || item.to === "/super-admin" || item.to === "/dashboard"} className={({ isActive }) => isActive
 					? "flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold shadow-md transition-all hover:-translate-y-0.5 dashboard-nav-link dashboard-nav-link--active"
-					: "flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm"}>
-											{item.icon && <span className="nav-icon text-lg">{item.icon}</span>}
+					: "flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm group relative"} onClick={() => setShowMobileSidebar(false)}>
+											{item.icon && <span className="nav-icon text-lg group-hover:scale-110 transition-transform">{item.icon}</span>}
 											{item.label}
 											{item.badge !== undefined && item.badge > 0 && (<span className="count-badge ml-auto bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">{item.badge}</span>)}
 										</NavLink>
@@ -61,19 +68,24 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 					</div>
 				</div>
 				<div className="p-4 border-t border-border mt-auto">
-					<div className="text-xs font-bold text-muted-foreground text-center bg-secondary/50 py-2 rounded-lg border border-border/50 shadow-inner">
-						Smart Mall v0.1.0
+					<div className="text-xs font-bold text-muted-foreground text-center bg-secondary/50 py-2 rounded-lg border border-border/50 shadow-inner flex items-center justify-center gap-2">
+						<span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                        Smart Mall v0.1.0
 					</div>
 				</div>
 			</aside>
 			
 			<div className="flex-1 flex flex-col min-w-0">
-				<header className="h-16 border-b border-border bg-background/80 backdrop-blur-lg flex items-center justify-between px-4 sm:px-8 z-10 dashboard-topbar">
+				<header className="h-16 border-b border-border bg-background/80 backdrop-blur-lg flex items-center justify-between px-4 sm:px-8 z-10 dashboard-topbar relative">
+                    <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 					<div className="flex items-center gap-2 sm:gap-4">
-						<Link to="/" className="md:hidden flex items-center justify-center p-2 mr-1">
+						<button type="button" className="md:hidden flex items-center justify-center p-2 mr-1 hamburger-menu" onClick={() => setShowMobileSidebar(true)}>
+							<span className="text-xl">☰</span>
+						</button>
+						<Link to="/" className="md:hidden hidden sm:flex items-center justify-center p-2 mr-1">
 							<span className="text-xl">🏬</span>
 						</Link>
-						<span className="hidden sm:inline-block text-muted-foreground/40 text-2xl font-light">/</span>
+						<span className="hidden sm:inline-flex items-center justify-center text-muted-foreground/40 text-xl font-light">›</span>
 						<h2 className="text-lg sm:text-xl font-extrabold text-foreground tracking-tight dashboard-section-title truncate max-w-[150px] sm:max-w-none">{title}</h2>
 					</div>
 					<div className="flex items-center gap-2 sm:gap-6">
@@ -89,21 +101,22 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 						</div>
 						{user && (<div className="relative">
 								<button type="button" onClick={() => setShowUserMenu((v) => !v)} className="inline-flex items-center gap-2 sm:gap-3 bg-transparent hover:bg-secondary p-1.5 sm:p-2 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border border-transparent hover:border-border active:scale-[0.98]">
-									<div className="dashboard-avatar h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-primary text-primary-foreground flex items-center justify-center font-bold shadow-md ring-2 ring-background ring-offset-1 ring-offset-border">
+									<div className="dashboard-avatar h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-gradient-to-br from-primary to-blue-600 text-primary-foreground flex items-center justify-center font-bold shadow-md ring-2 ring-background ring-offset-2 ring-offset-primary/20">
 										{(user.full_name ?? user.username)?.[0]?.toUpperCase()}
 									</div>
 									<div className="hidden sm:block text-left">
 										<div className="text-sm font-bold text-foreground leading-tight">{user.full_name ?? user.username}</div>
 										<div className="text-xs font-semibold text-muted-foreground">{roleBadge}</div>
 									</div>
-									<span className="hidden sm:inline-block text-xs text-muted-foreground ml-1">▼</span>
+									<span className="hidden sm:inline-block text-xs text-muted-foreground ml-1 transition-transform duration-200" style={{ transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
 								</button>
 								{showUserMenu && (<>
 										<div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)}/>
-										<div className="animate-fade-in user-menu-dropdown absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-xl shadow-2xl z-50 overflow-hidden">
-											<div className="p-4 border-b border-border bg-secondary/30">
-												<div className="font-bold text-sm text-foreground">{user.full_name ?? user.username}</div>
-												<div className="text-xs font-medium text-muted-foreground mt-0.5 truncate">{user.email ?? user.username}</div>
+										<div className="animate-scale-in user-menu-dropdown absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-xl shadow-2xl z-50 overflow-hidden transform origin-top-right">
+											<div className="p-4 border-b border-border bg-secondary/30 relative overflow-hidden">
+                                                <div className="absolute top-0 right-0 -mr-4 -mt-4 w-16 h-16 rounded-full bg-primary/10 blur-xl"></div>
+												<div className="font-bold text-sm text-foreground relative z-10">{user.full_name ?? user.username}</div>
+												<div className="text-xs font-medium text-muted-foreground mt-0.5 truncate relative z-10">{user.email ?? user.username}</div>
 											</div>
 											<div className="p-2 space-y-1 bg-card">
 												<Link to="/" className="user-menu-item flex items-center gap-3 px-3 py-2 text-sm font-semibold text-foreground hover:bg-secondary rounded-lg transition-colors" onClick={() => setShowUserMenu(false)}>

@@ -17,12 +17,12 @@ const StarRating = ({ rating }) => {
 		</span>);
 };
 const OccupancyBar = ({ percent }) => {
-    const color = percent > 80 ? "#f87171" : percent > 50 ? "#fbbf24" : "#4ade80";
+    const color = percent > 80 ? "#ef4444" : percent > 50 ? "#f59e0b" : "#22c55e";
     return (<div style={{ display: "flex", alignItems: "center", gap: "0.4rem", marginTop: "0.35rem" }}>
-			<div className="progress-bar-track">
-				<div className="progress-bar-fill" style={{ width: `${Math.min(percent, 100)}%`, background: color }}/>
+			<div className="progress-bar-track relative overflow-hidden bg-secondary/50">
+				<div className="progress-bar-fill transition-all duration-500 ease-out absolute inset-y-0 left-0" style={{ width: `${Math.min(percent, 100)}%`, background: color }}/>
 			</div>
-			<span style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", minWidth: "28px", textAlign: "right" }}>
+			<span style={{ fontSize: "0.7rem", color: color, minWidth: "28px", textAlign: "right", fontWeight: "bold" }}>
 				{percent.toFixed(0)}%
 			</span>
 		</div>);
@@ -136,35 +136,35 @@ export const MallOverviewPage = () => {
 						Browse all stores in the mall, check live footfall and occupancy, and explore what each store offers.
 					</p>
 
-					{!loading && !error && (<div style={{ display: "flex", flexWrap: "wrap", gap: "1.5rem", marginTop: "1rem", paddingTop: "0.75rem", borderTop: "1px solid rgba(148,163,184,0.12)" }}>
-							<div>
+					{!loading && !error && (<div style={{ display: "flex", flexWrap: "wrap", gap: "1rem", marginTop: "1rem", paddingTop: "0.75rem", borderTop: "1px solid rgba(148,163,184,0.12)" }}>
+							<div className="bg-secondary/40 backdrop-blur-md border border-border/50 rounded-xl px-4 py-3 min-w-[110px]">
 								<div style={{ fontSize: "1.3rem", fontWeight: 700, color: "#a5b4fc" }}>{stores.length}</div>
-								<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Total stores</div>
+								<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600 }}>Total stores</div>
 							</div>
-							<div>
+							<div className="bg-secondary/40 backdrop-blur-md border border-border/50 rounded-xl px-4 py-3 min-w-[110px]">
 								<div style={{ fontSize: "1.3rem", fontWeight: 700, color: "#4ade80" }}>{openStores}</div>
-								<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Open now</div>
+								<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600 }}>Open now</div>
 							</div>
-							<div>
+							<div className="bg-secondary/40 backdrop-blur-md border border-border/50 rounded-xl px-4 py-3 min-w-[110px]">
 								<div style={{ fontSize: "1.3rem", fontWeight: 700, color: "#38bdf8" }}>{totalFootfall.toLocaleString()}</div>
-								<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Live footfall</div>
+								<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600 }}>Live footfall</div>
 							</div>
-							<div>
+							<div className="bg-secondary/40 backdrop-blur-md border border-border/50 rounded-xl px-4 py-3 min-w-[110px]">
 								<div style={{ fontSize: "1.3rem", fontWeight: 700, color: "#fbbf24" }}>{avgOccupancy.toFixed(0)}%</div>
-								<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em" }}>Avg occupancy</div>
+								<div style={{ fontSize: "0.7rem", color: "var(--color-text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", fontWeight: 600 }}>Avg occupancy</div>
 							</div>
 						</div>)}
 				</section>
 				<aside>
 					<div className="app-card animate-fade-in-up stagger-2" aria-label="Store filters">
-						<div className="app-card-header">
-							<h2 className="app-card-title">🔍 Filter stores</h2>
+						<div className="app-card-header pb-3 border-b border-border/50 mb-4">
+							<h2 className="app-card-title text-xl flex items-center gap-2"><span className="text-primary">🔍</span> Filter stores</h2>
 							<p className="app-card-subtitle">Quickly find the store or category you care about.</p>
 						</div>
 						<div className="app-form" style={{ gap: "0.75rem" }}>
-							<label className="app-field-label">
-								<span>Search</span>
-								<input type="search" value={search} onChange={(e) => setSearch(e.target.value)} className="app-input" placeholder="Search by store name…"/>
+							<label className="app-field-label border-b border-border/30 pb-3">
+								<span className="font-semibold">Search</span>
+								<input type="search" value={search} onChange={(e) => setSearch(e.target.value)} className="app-input bg-secondary/30" placeholder="Search by store name…"/>
 							</label>
 							<label className="app-field-label">
 								<span>Category</span>
@@ -226,9 +226,10 @@ export const MallOverviewPage = () => {
 							</label>
 						</div>
 						<div className="app-feature-grid" aria-label="Store cards" style={{ marginTop: 0, gridTemplateColumns: "repeat(auto-fill, minmax(min(100%, 260px), 1fr))" }}>
-							{filteredStores.map((store, i) => (<Link key={store.id} to={`/mall/stores/${store.id}`} className={`app-feature-card animate-fade-in-up stagger-${Math.min(i + 1, 6)}`} style={{ textDecoration: "none", color: "inherit" }}>
-									<div style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "0.25rem" }}>
-										<div className="app-feature-label">{store.category}</div>
+							{filteredStores.map((store, i) => (<Link key={store.id} to={`/mall/stores/${store.id}`} className={`app-feature-card animate-fade-in-up stagger-${Math.min(i + 1, 6)} card-hover group relative overflow-hidden`} style={{ textDecoration: "none", color: "inherit" }}>
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+									<div className="relative z-10" style={{ display: "flex", alignItems: "flex-start", justifyContent: "space-between", marginBottom: "0.25rem" }}>
+										<div className="app-feature-label font-bold text-primary">{store.category}</div>
 										<div style={{ display: "flex", alignItems: "center", gap: "0.4rem" }}>
 											<button
 												type="button"
@@ -237,7 +238,7 @@ export const MallOverviewPage = () => {
 													event.stopPropagation();
 													toggleFavorite(store.id);
 												}}
-												className="btn btn-ghost btn-sm"
+												className="btn btn-ghost btn-sm rounded-full w-8 h-8 p-0 flex items-center justify-center hover:bg-red-100 hover:text-red-500 hover:border-red-200 transition-colors"
 												style={{ lineHeight: 1 }}
 											>
 												{favoriteStoreIds.includes(store.id) ? "♥" : "♡"}
@@ -248,15 +249,15 @@ export const MallOverviewPage = () => {
 											</span>
 										</div>
 									</div>
-									<div className="app-feature-title" style={{ marginBottom: "0.35rem" }}>{store.name}</div>
-									<StarRating rating={store.average_rating}/>
-									<div style={{ display: "flex", gap: "1rem", marginTop: "0.5rem", fontSize: "0.78rem" }}>
+									<div className="app-feature-title relative z-10" style={{ marginBottom: "0.35rem" }}>{store.name}</div>
+									<div className="relative z-10"><StarRating rating={store.average_rating}/></div>
+									<div className="relative z-10" style={{ display: "flex", gap: "1rem", marginTop: "0.5rem", fontSize: "0.78rem" }}>
 										<div>
-											<div style={{ color: "var(--color-text-muted)" }}>Footfall</div>
-											<div style={{ fontWeight: 600 }}>{store.current_footfall}</div>
+											<div style={{ color: "var(--color-text-muted)", fontWeight: 600 }}>Footfall</div>
+											<div style={{ fontWeight: 700, fontSize: "1rem" }}>{store.current_footfall}</div>
 										</div>
 										<div style={{ flex: 1 }}>
-											<div style={{ color: "var(--color-text-muted)" }}>Occupancy</div>
+											<div style={{ color: "var(--color-text-muted)", fontWeight: 600 }}>Occupancy</div>
 											<OccupancyBar percent={store.current_occupancy_percent}/>
 										</div>
 									</div>

@@ -44,12 +44,12 @@ export const StoreDetailsPage = () => {
 			<div className="app-page-inner animate-fade-in-up">
 				<section>
 					{/* Breadcrumbs */}
-					<div className="breadcrumbs">
-						<Link to="/">Home</Link>
-						<span className="sep">/</span>
-						<Link to="/mall">Mall directory</Link>
-						<span className="sep">/</span>
-						<span className="current">{details?.store.name ?? "Store details"}</span>
+					<div className="breadcrumbs flex items-center gap-2 text-sm text-muted-foreground mb-6">
+						<Link to="/" className="hover:text-primary transition-colors">Home</Link>
+						<span className="text-muted-foreground/40 font-light">›</span>
+						<Link to="/mall" className="hover:text-primary transition-colors">Mall directory</Link>
+						<span className="text-muted-foreground/40 font-light">›</span>
+						<span className="font-semibold text-foreground">{details?.store.name ?? "Store details"}</span>
 					</div>
 
 					{loading && (<>
@@ -102,26 +102,26 @@ export const StoreDetailsPage = () => {
                             </div>
 
 							{/* Live stats row */}
-							<div className="stats-row">
-								<div className="mini-stat">
-									<span className="mini-stat-icon">👥</span>
+							<div className="stats-row flex flex-wrap gap-4 mt-6">
+								<div className="mini-stat bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-sm flex items-center gap-4 flex-1 min-w-[160px] card-hover">
+									<span className="mini-stat-icon text-2xl">👥</span>
 									<div>
-										<div className="mini-stat-label">Footfall</div>
-										<div className="mini-stat-value">{details.store.current_footfall} <span className="mini-stat-sub">visitors</span></div>
+										<div className="mini-stat-label text-xs font-semibold text-muted-foreground uppercase tracking-wider">Footfall</div>
+										<div className="mini-stat-value text-xl font-bold text-foreground">{details.store.current_footfall} <span className="mini-stat-sub text-sm font-normal text-muted-foreground">visitors</span></div>
 									</div>
 								</div>
-								<div className="mini-stat">
-									<span className="mini-stat-icon">📊</span>
+								<div className="mini-stat bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-sm flex items-center gap-4 flex-1 min-w-[160px] card-hover">
+									<span className="mini-stat-icon text-2xl">📊</span>
 									<div>
-										<div className="mini-stat-label">Occupancy</div>
-										<div className="mini-stat-value">{details.store.current_occupancy_percent.toFixed(0)}%</div>
+										<div className="mini-stat-label text-xs font-semibold text-muted-foreground uppercase tracking-wider">Occupancy</div>
+										<div className="mini-stat-value text-xl font-bold text-foreground">{details.store.current_occupancy_percent.toFixed(0)}%</div>
 									</div>
 								</div>
-								<div className="mini-stat">
-									<span className="bg-transparent text-warning text-base">★</span>
+								<div className="mini-stat bg-card/80 backdrop-blur-sm border border-border/50 rounded-xl p-4 shadow-sm flex items-center gap-4 flex-1 min-w-[160px] card-hover">
+									<span className="text-2xl bg-clip-text text-transparent bg-gradient-to-br from-yellow-400 to-amber-600">★</span>
 									<div>
-										<div className="mini-stat-label">Rating</div>
-										<div className="mini-stat-value">{details.store.average_rating.toFixed(1)} <span className="mini-stat-sub">/ 5.0</span></div>
+										<div className="mini-stat-label text-xs font-semibold text-muted-foreground uppercase tracking-wider">Rating</div>
+										<div className="mini-stat-value text-xl font-bold text-foreground">{details.store.average_rating.toFixed(1)} <span className="mini-stat-sub text-sm font-normal text-muted-foreground">/ 5.0</span></div>
 									</div>
 								</div>
 							</div>
@@ -161,11 +161,12 @@ export const StoreDetailsPage = () => {
 								{products.length} product{products.length !== 1 ? "s" : ""}
 							</span>
 						</div>
-						<div className="products-grid">
-							{products.map((product, i) => (<div key={product.id} className={`product-card animate-fade-in-up stagger-${Math.min(i + 1, 6)}`}>
-									<div className="product-card-category">{product.category}</div>
-									<div className="product-card-name">{product.name}</div>
-									<div className="product-card-price">${product.price.toFixed(2)}</div>
+						<div className="products-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+							{products.map((product, i) => (<div key={product.id} className={`product-card bg-card border border-border rounded-xl p-5 card-hover relative overflow-hidden group animate-fade-in-up stagger-${Math.min(i + 1, 6)}`}>
+                                    <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+									<div className="product-card-category text-xs font-bold text-primary uppercase tracking-wider mb-2 relative z-10">{product.category}</div>
+									<div className="product-card-name font-semibold text-lg mb-4 relative z-10">{product.name}</div>
+									<div className="product-card-price text-xl font-black relative z-10">${product.price.toFixed(2)}</div>
 								</div>))}
 						</div>
 					</div>)}

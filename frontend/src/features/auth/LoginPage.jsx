@@ -93,8 +93,9 @@ export const LoginPage = () => {
 
   return (
     <div className="auth-page min-h-screen grid md:grid-cols-[1.15fr_0.95fr] bg-background px-4 py-6 sm:px-6 lg:px-8">
-      <div className="hidden md:flex items-center justify-center">
-        <div className="max-w-xl space-y-8 p-10 rounded-[2rem] border border-border bg-card/90 shadow-[0_24px_70px_rgba(15,23,42,0.12)] backdrop-blur-xl">
+      <div className="hidden md:flex items-center justify-center relative">
+        <div className="absolute w-[400px] h-[400px] rounded-full bg-primary/20 blur-[100px] pointer-events-none -translate-x-1/4 -translate-y-1/4"></div>
+        <div className="max-w-xl space-y-8 p-10 rounded-[2rem] border border-border bg-card/80 shadow-[0_24px_70px_rgba(15,23,42,0.12)] backdrop-blur-xl relative z-10">
           <div className="space-y-4">
             <Link to="/" className="auth-back-link text-sm">
               ← Back to home
@@ -134,7 +135,7 @@ export const LoginPage = () => {
       </div>
 
       <div className="flex items-center justify-center">
-        <div className="auth-card space-y-6 animate-fade-in-up">
+        <div className="auth-card space-y-6 animate-scale-in">
           <div className="space-y-2 text-center">
             <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
               <span className="w-2 h-2 rounded-full bg-primary" />
@@ -152,8 +153,9 @@ export const LoginPage = () => {
                 key={option.role}
                 type="button"
                 onClick={() => setSelectedRole(option.role)}
-                className={`rounded-2xl border px-3 py-3 text-left transition-all ${selectedRole === option.role ? "border-primary bg-primary/10 shadow-[0_0_0_3px_hsl(var(--primary)/0.12)]" : "border-border bg-background hover:border-ring hover:bg-secondary/50"}`}
+                className={`rounded-2xl border px-4 py-3 text-left transition-all relative overflow-hidden ${selectedRole === option.role ? "border-primary bg-primary/10 shadow-[0_0_0_3px_hsl(var(--primary)/0.12)]" : "border-border bg-background hover:border-ring hover:bg-secondary/50"}`}
               >
+                {selectedRole === option.role && <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-primary animate-pulse"></div>}
                 <div className="text-sm font-semibold text-foreground">{option.label}</div>
                 <div className="mt-1 text-xs text-muted-foreground">{option.description}</div>
               </button>
@@ -210,11 +212,14 @@ export const LoginPage = () => {
             </button>
           </form>
 
-          <div className="rounded-2xl border border-border bg-secondary/40 p-4 text-sm text-muted-foreground">
-            <p className="font-semibold text-foreground">Demo access</p>
-            <p className="mt-1">
-              Tap a role on the left to auto-fill the seeded credentials, or keep your own username and password and the app will route you to the correct dashboard after login.
-            </p>
+          <div className="rounded-2xl border border-border bg-secondary/40 p-4 text-sm text-muted-foreground flex gap-3">
+            <div className="text-primary text-xl mt-0.5">💡</div>
+            <div>
+              <p className="font-semibold text-foreground">Demo access</p>
+              <p className="mt-1 leading-relaxed">
+                Tap a role on the left to auto-fill the seeded credentials, or keep your own username and password and the app will route you to the correct dashboard after login.
+              </p>
+            </div>
           </div>
 
           <p className="auth-footer-text">

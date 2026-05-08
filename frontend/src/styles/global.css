@@ -55,6 +55,9 @@
     --color-accent: hsl(var(--secondary-foreground));
     --color-accent-strong: hsl(var(--primary));
     --color-success: #16a34a;
+    --color-warning: #f59e0b;
+    --color-danger: #ef4444;
+    --color-info: #3b82f6;
     --shadow-soft: 0 18px 40px hsl(var(--foreground) / 0.12);
     --transition-fast: 150ms ease;
   }
@@ -69,6 +72,7 @@
     color: hsl(var(--foreground));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    transition: color 200ms, background-color 200ms;
   }
   ::selection {
     background-color: hsl(var(--primary));
@@ -78,6 +82,8 @@
     color: hsl(var(--primary));
     font-weight: 700;
     letter-spacing: -0.025em;
+    line-height: 1.2;
+    text-rendering: optimizeLegibility;
   }
 }
 
@@ -788,12 +794,32 @@
     border-collapse: collapse;
   }
 
+  .data-table th {
+    position: sticky;
+    top: 0;
+    background: hsl(var(--secondary) / 0.8);
+    backdrop-filter: blur(4px);
+    z-index: 10;
+  }
+
   .data-table th,
   .data-table td {
     border-bottom: 1px solid hsl(var(--border));
     padding: 0.65rem;
     text-align: left;
     font-size: 0.87rem;
+  }
+
+  .data-table tbody tr {
+    transition: background-color var(--transition-fast);
+  }
+
+  .data-table tbody tr:nth-child(even) {
+    background-color: hsl(var(--secondary) / 0.2);
+  }
+
+  .data-table tbody tr:hover {
+    background-color: hsl(var(--secondary) / 0.5);
   }
 
   .panel,
@@ -1110,3 +1136,61 @@
   .status-badge { @apply inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider bg-secondary text-secondary-foreground; }
   .status-badge.open { @apply bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400; }
   .status-badge.open .dot { @apply bg-green-500; }
+
+  /* --- UI Polish Additions --- */
+  .skeleton {
+    @apply relative overflow-hidden bg-secondary/50 rounded-md;
+  }
+  .skeleton::after {
+    @apply absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/20 to-transparent animate-[shimmer_2s_infinite];
+    content: '';
+  }
+  .card-hover {
+    @apply transition-all duration-300 hover:-translate-y-1 hover:shadow-card-hover;
+  }
+  .empty-state {
+    @apply flex flex-col items-center justify-center p-8 text-center text-muted-foreground border border-dashed border-border rounded-xl bg-secondary/10;
+  }
+  .empty-state-icon {
+    @apply w-12 h-12 mb-4 text-muted-foreground/50;
+  }
+  .metric-card {
+    @apply relative overflow-hidden;
+  }
+  .metric-card::before {
+    @apply absolute left-0 top-0 bottom-0 w-1 bg-primary content-[''];
+  }
+  .status-badge {
+    @apply transition-shadow duration-300;
+  }
+  .status-badge.open, .status-badge.active {
+    @apply shadow-[0_0_12px_rgba(34,197,94,0.4)];
+  }
+  .status-badge.critical, .status-badge.error, .status-badge.red {
+    @apply shadow-[0_0_12px_rgba(239,68,68,0.4)];
+  }
+  .event-card-cover {
+    @apply relative overflow-hidden;
+  }
+  .event-card-cover::after {
+    @apply absolute inset-0 bg-gradient-to-t from-black/60 to-transparent content-[''];
+  }
+  .movie-poster-area {
+    @apply relative overflow-hidden;
+  }
+  .movie-poster-area::after {
+    @apply absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent content-[''];
+  }
+  .complaint-item {
+    @apply relative pl-5;
+  }
+  .complaint-item::before {
+    @apply absolute left-0 top-0 bottom-0 w-1 rounded-l-md content-[''];
+  }
+  .complaint-item.status-open::before { @apply bg-blue-500; }
+  .complaint-item.status-resolved::before { @apply bg-green-500; }
+  .complaint-item.status-pending::before { @apply bg-amber-500; }
+  
+  .hamburger-menu {
+    @apply lg:hidden block p-2 -ml-2 text-foreground/80 hover:text-foreground transition-colors;
+  }

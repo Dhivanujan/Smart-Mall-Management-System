@@ -65,6 +65,12 @@ export const ParkingPage = () => {
 				<p className="hero-subtitle">View availability, reserve slots, and track your parking</p>
 			</div>
 
+    return (<div className="customer-page">
+			<div className="page-header">
+				<h1 className="hero-heading">Parking Management</h1>
+				<p className="hero-subtitle">View availability, reserve slots, and track your parking</p>
+			</div>
+
 			{message && (<div className="message-banner info">
 					<span>ℹ️</span>
 					<span>{message}</span>
@@ -72,46 +78,46 @@ export const ParkingPage = () => {
 
 			{summary && (<>
 					<div className="stat-grid">
-						<div className="stat-card animate-fade-in-up stagger-1">
+						<div className="stat-card animate-fade-in-up stagger-1 card-hover">
 							<span className="stat-card-icon purple">🅿️</span>
 							<span className="stat-card-text">
-								<span className="stat-card-label">Total Slots</span>
-								<span className="stat-card-value">{summary.total_slots}</span>
+								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Total Slots</span>
+								<span className="stat-card-value text-3xl font-black">{summary.total_slots}</span>
 							</span>
 						</div>
-						<div className="stat-card animate-fade-in-up stagger-2">
+						<div className="stat-card animate-fade-in-up stagger-2 card-hover">
 							<span className="stat-card-icon green">✅</span>
 							<span className="stat-card-text">
-								<span className="stat-card-label">Available</span>
-								<span className="stat-card-value" style={{ color: "var(--color-success)" }}>{summary.available}</span>
+								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Available</span>
+								<span className="stat-card-value text-3xl font-black" style={{ color: "var(--color-success)" }}>{summary.available}</span>
 							</span>
 						</div>
-						<div className="stat-card animate-fade-in-up stagger-3">
+						<div className="stat-card animate-fade-in-up stagger-3 card-hover">
 							<span className="stat-card-icon blue">🚗</span>
 							<span className="stat-card-text">
-								<span className="stat-card-label">Occupied</span>
-								<span className="stat-card-value">{summary.occupied}</span>
+								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Occupied</span>
+								<span className="stat-card-value text-3xl font-black">{summary.occupied}</span>
 							</span>
 						</div>
-						<div className="stat-card animate-fade-in-up stagger-4">
+						<div className="stat-card animate-fade-in-up stagger-4 card-hover">
 							<span className="stat-card-icon amber">📌</span>
 							<span className="stat-card-text">
-								<span className="stat-card-label">Reserved</span>
-								<span className="stat-card-value">{summary.reserved}</span>
+								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Reserved</span>
+								<span className="stat-card-value text-3xl font-black">{summary.reserved}</span>
 							</span>
 						</div>
-						<div className="stat-card animate-fade-in-up stagger-5">
+						<div className="stat-card animate-fade-in-up stagger-5 card-hover">
 							<span className="stat-card-icon cyan">📊</span>
 							<span className="stat-card-text">
-								<span className="stat-card-label">Utilization</span>
-								<span className="stat-card-value">{summary.utilization_percent}%</span>
+								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Utilization</span>
+								<span className="stat-card-value text-3xl font-black">{summary.utilization_percent}%</span>
 							</span>
 						</div>
-						{summary.is_peak && (<div className="stat-card animate-fade-in-up stagger-6" style={{ borderColor: "rgba(245, 158, 11, 0.3)" }}>
+						{summary.is_peak && (<div className="stat-card animate-fade-in-up stagger-6 card-hover" style={{ borderColor: "rgba(245, 158, 11, 0.3)" }}>
 								<span className="stat-card-icon amber">⚠️</span>
 								<span className="stat-card-text">
-									<span className="stat-card-label">Peak Hour</span>
-									<span className="stat-card-value" style={{ color: "var(--color-warning)" }}>Active</span>
+									<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Peak Hour</span>
+									<span className="stat-card-value text-xl font-bold uppercase tracking-widest mt-1" style={{ color: "var(--color-warning)" }}>Active</span>
 								</span>
 							</div>)}
 					</div>
@@ -139,24 +145,14 @@ export const ParkingPage = () => {
 											<td>{stats.reserved}</td>
 											<td>
 												<div className="zone-util-bar">
-													<div className="zone-util-track">
-														<div className="zone-util-fill" style={{
+													<div className="zone-util-track relative overflow-hidden bg-secondary/50">
+														<div className="zone-util-fill absolute inset-y-0 left-0 transition-all duration-1000 ease-out" style={{
                     width: `${stats.utilization_percent}%`,
                     background: stats.utilization_percent > 80
                         ? "linear-gradient(90deg, #ef4444, #f87171)"
                         : stats.utilization_percent > 50
                             ? "linear-gradient(90deg, #f59e0b, #fbbf24)"
                             : "linear-gradient(90deg, #22c55e, #4ade80)",
-                }}/>
-													</div>
-													<span className="zone-util-label">{stats.utilization_percent}%</span>
-												</div>
-											</td>
-										</tr>))}
-								</tbody>
-							</table>
-						</div>
-					</div>
 
 					{user && (<div className="panel">
 							<h2 className="panel-title">🎫 Reserve a Parking Slot</h2>

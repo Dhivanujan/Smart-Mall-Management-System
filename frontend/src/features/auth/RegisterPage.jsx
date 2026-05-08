@@ -46,103 +46,106 @@ export const RegisterPage = () => {
   };
 
   return (
-    <div className="auth-page auth-page-register min-h-screen flex items-center justify-center bg-muted px-4">
-      <div className="w-full max-w-md bg-card text-card-foreground shadow-xl rounded-2xl p-8 space-y-6 relative z-10">
-        
-        {/* Header */}
+    <div className="auth-page min-h-screen flex items-center justify-center bg-background px-4 py-8 relative overflow-hidden">
+      <div className="absolute top-1/4 right-1/4 w-[500px] h-[500px] rounded-full bg-primary/10 blur-[120px] pointer-events-none animate-pulse"></div>
+      <div className="absolute bottom-1/4 left-1/4 w-[400px] h-[400px] rounded-full bg-indigo-500/10 blur-[120px] pointer-events-none animate-[pulse_4s_ease-in-out_infinite]"></div>
+      
+      <div className="auth-card space-y-6 animate-scale-in relative z-10 backdrop-blur-xl border border-border/50 bg-card/80 shadow-2xl">
         <div className="space-y-2 text-center">
-          <h2 className="text-2xl font-bold">Create Account</h2>
-          <p className="text-sm text-muted-foreground">
+          <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            Customer account
+          </div>
+          <h2 className="text-3xl font-black tracking-tight text-foreground mt-4">Create Account</h2>
+          <p className="text-sm text-muted-foreground max-w-[280px] mx-auto">
             Join Smart Mall to manage queues, parking, and rewards
           </p>
         </div>
 
-        {/* Back link */}
         <Link
           to="/login"
-          className="text-sm text-primary hover:underline block"
+          className="auth-back-link justify-center w-full hover:-translate-x-1 transition-transform"
         >
           ← Back to login
         </Link>
 
-        {/* Form */}
-        <form onSubmit={handleSubmit} className="space-y-4">
-
-          {/* Full Name */}
-          <div>
-            <label className="text-sm font-medium">Full Name</label>
+        <form onSubmit={handleSubmit} className="app-form">
+          <label className="app-field-label">
+            <span className="font-medium text-foreground/90">Full Name</span>
             <input
               type="text"
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="Jane Doe"
-              className="w-full mt-1 px-3 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              className="app-input focus:ring-2 focus:ring-primary/20"
               required
             />
-          </div>
+          </label>
 
-          {/* Email */}
-          <div>
-            <label className="text-sm font-medium">Email</label>
+          <label className="app-field-label">
+            <span className="font-medium text-foreground/90">Email</span>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="you@example.com"
-              className="w-full mt-1 px-3 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              className="app-input focus:ring-2 focus:ring-primary/20"
               required
             />
-          </div>
+          </label>
 
-          {/* Password */}
-          <div>
-            <label className="text-sm font-medium">Password</label>
+          <label className="app-field-label">
+            <span className="font-medium text-foreground/90">Password</span>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="At least 6 characters"
-              className="w-full mt-1 px-3 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              className="app-input focus:ring-2 focus:ring-primary/20"
               required
               minLength={6}
             />
-          </div>
+          </label>
 
-          {/* Confirm Password */}
-          <div>
-            <label className="text-sm font-medium">Confirm Password</label>
+          <label className="app-field-label">
+            <span className="font-medium text-foreground/90">Confirm Password</span>
             <input
               type="password"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Repeat password"
-              className="w-full mt-1 px-3 py-2 rounded-lg border bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              className="app-input focus:ring-2 focus:ring-primary/20"
               required
               minLength={6}
             />
-          </div>
+          </label>
 
-          {/* Error */}
           {error && (
-            <div className="bg-red-100 text-red-600 text-sm p-3 rounded-lg">
-              {error}
+            <div className="error-banner animate-fade-in" role="alert">
+              <span className="error-icon">⚠</span>
+              <span>{error}</span>
             </div>
           )}
 
-          {/* Submit Button */}
           <button
             type="submit"
             disabled={isSubmitting}
-            className="w-full bg-primary text-primary-foreground py-2 rounded-lg font-medium hover:opacity-90 transition disabled:opacity-50"
+            className="btn btn-primary auth-submit-btn shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)]"
           >
-            {isSubmitting ? "Creating account..." : "Create Account"}
+            {isSubmitting ? (
+              <span className="auth-loading-content">
+                <span className="auth-spinner" />
+                Creating account...
+              </span>
+            ) : (
+              "Create Account"
+            )}
           </button>
         </form>
 
-        {/* Footer */}
-        <p className="text-sm text-center text-muted-foreground">
+        <p className="auth-footer-text pt-2 border-t border-border/50">
           Already have an account?{" "}
-          <Link to="/login" className="text-primary hover:underline">
+          <Link to="/login" className="auth-inline-link">
             Sign in
           </Link>
         </p>

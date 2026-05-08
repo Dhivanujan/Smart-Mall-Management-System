@@ -27,6 +27,14 @@ export const CustomerDashboardPage = () => {
     const [loading, setLoading] = useState(true);
 	const [favoriteStores, setFavoriteStores] = useState([]);
 	const [trendingStores, setTrendingStores] = useState([]);
+    const [greeting, setGreeting] = useState("Good morning");
+
+    useEffect(() => {
+        const hour = new Date().getHours();
+        if (hour >= 18) setGreeting("Good evening");
+        else if (hour >= 12) setGreeting("Good afternoon");
+        else setGreeting("Good morning");
+    }, []);
     useEffect(() => {
 		Promise.all([
 			apiClient.get("/api/v1/stores/"),
@@ -43,14 +51,14 @@ export const CustomerDashboardPage = () => {
     return (<div className="customer-page">
 			<div className="welcome-section">
 				<h1 className="welcome-greeting">
-					Welcome back, <span className="name">{user?.full_name ?? "Customer"}</span>
+					{greeting}, <span className="name">{user?.full_name ?? "Customer"}</span>
 				</h1>
 				<p className="welcome-subtitle">Your smart mall companion — explore stores, manage queues, and earn rewards.</p>
 			</div>
 
 			<div className="action-grid">
-				{ACTIONS.map((a, i) => (<Link key={a.to} to={a.to} className={`action-card ${a.color} animate-fade-in-up stagger-${i + 1}`}>
-						<span className={`action-card-icon`}>{a.icon}</span>
+				{ACTIONS.map((a, i) => (<Link key={a.to} to={a.to} className={`action-card ${a.color} animate-fade-in-up stagger-${i + 1} card-hover group`}>
+						<span className={`action-card-icon bg-gradient-to-br from-${a.color}-500/20 to-${a.color}-600/30 text-${a.color}-600 group-hover:scale-110 transition-transform`}>{a.icon}</span>
 						<span className="action-card-text">
 							<span className="action-card-label">{a.label}</span>
 							<span className="action-card-value">
@@ -63,10 +71,10 @@ export const CustomerDashboardPage = () => {
 			<div className="panel animate-fade-in-up stagger-5">
 				<h2 className="panel-title">⚡ Quick Access</h2>
 				<div className="action-grid" style={{ marginBottom: 0 }}>
-					{QUICK_LINKS.map((l) => (<Link key={l.to} to={l.to} className={`action-card ${l.color}`}>
-							<span className="action-card-icon">{l.icon}</span>
+					{QUICK_LINKS.map((l) => (<Link key={l.to} to={l.to} className={`action-card ${l.color} card-hover group`}>
+							<span className={`action-card-icon bg-gradient-to-br from-${l.color}-500/20 to-${l.color}-600/30 text-${l.color}-600 group-hover:scale-110 transition-transform`}>{l.icon}</span>
 							<span className="action-card-text">
-								<span className="action-card-value" style={{ fontSize: "0.95rem" }}>{l.label}</span>
+								<span className="action-card-value font-semibold text-foreground" style={{ fontSize: "0.95rem" }}>{l.label}</span>
 							</span>
 						</Link>))}
 				</div>
@@ -78,13 +86,13 @@ export const CustomerDashboardPage = () => {
 						<Link to="/ai-concierge" className="btn btn-ghost btn-sm">Open AI Concierge</Link>
 					</div>
 					<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 230px), 1fr))", gap: "0.8rem" }}>
-						<div className="store-card">
+						<div className="store-card card-hover shadow-[0_0_15px_rgba(var(--primary),0.05)]">
 							<div className="store-card-header"><h3 style={{ margin: 0, fontSize: "0.95rem" }}>Favorite Stores</h3></div>
 							<div style={{ marginTop: "0.4rem" }}>
 								{favoriteStores.length ? favoriteStores.slice(0, 3).map((store) => (<div key={store.id} style={{ fontSize: "0.85rem", marginBottom: "0.3rem", color: "var(--color-text-muted)" }}>♥ {store.name}</div>)) : (<div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>No favorites yet.</div>)}
 							</div>
 						</div>
-						<div className="store-card">
+						<div className="store-card card-hover shadow-[0_0_15px_rgba(var(--primary),0.05)]">
 							<div className="store-card-header"><h3 style={{ margin: 0, fontSize: "0.95rem" }}>Trending Stores</h3></div>
 							<div style={{ marginTop: "0.4rem" }}>
 								{trendingStores.length ? trendingStores.map((store) => (<div key={store.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "0.3rem" }}><span style={{ color: "var(--color-text-muted)" }}>{store.name}</span><span>👥 {store.current_footfall}</span></div>)) : (<div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>No trends right now.</div>)}
@@ -99,19 +107,23 @@ export const CustomerDashboardPage = () => {
 						<Link to="/mall" className="btn btn-ghost btn-sm">View all</Link>
 					</div>
 					<div className="store-grid">
-						{openStores.slice(0, 4).map((store) => (<Link key={store.id} to={`/mall/stores/${store.id}`} className="store-card" style={{ textDecoration: "none" }}>
-								<div className="store-card-header">
+						{openStores.slice(0, 4).map((store) => (<Link key={store.id} to={`/mall/stores/${store.id}`} className="store-card card-hover relative overflow-hidden group" style={{ textDecoration: "none" }}>
+                                <div className="absolute inset-0 bg-gradient-to-tr from-primary/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+								<div className="store-card-header relative z-10">
 									<h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>{store.name}</h3>
 									<span className={`status-badge ${store.status}`}>
 										<span className="dot"/>
 										{store.status}
 									</span>
 								</div>
-								<span style={{ color: "var(--color-text-dim)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+								<span className="relative z-10" style={{ color: "var(--color-text-dim)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
 									{store.category}
 								</span>
-								<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.75rem", fontSize: "0.85rem" }}>
-									<span style={{ color: "#fbbf24" }}>★ {store.average_rating.toFixed(1)}</span>
+								<div className="relative z-10" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.75rem", fontSize: "0.85rem" }}>
+									<span style={{ color: "#fbbf24", display: "flex", alignItems: "center", gap: "0.2rem" }}>
+                                        <span className="text-yellow-400">★</span>
+                                        <span className="font-bold text-foreground">{store.average_rating.toFixed(1)}</span>
+                                    </span>
 									<span style={{ color: "var(--color-text-muted)" }}>👥 {store.current_footfall}</span>
 								</div>
 							</Link>))}

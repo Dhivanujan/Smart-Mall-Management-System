@@ -68,6 +68,19 @@ export const QueuePage = () => {
 
 			{queueInfo && (<div className="queue-token-panel">
 					<div className="panel-header" style={{ marginBottom: "1.5rem" }}>
+    return (<div className="customer-page">
+			<div className="page-header">
+				<h1 className="hero-heading">Queue Management</h1>
+				<p className="hero-subtitle">Join digital queues and track your position in real-time</p>
+			</div>
+
+			{error && (<div className="message-banner error">
+					<span>⚠️</span>
+					<span>{error}</span>
+				</div>)}
+
+			{queueInfo && (<div className="queue-token-panel">
+					<div className="panel-header" style={{ marginBottom: "1.5rem" }}>
 						<h2 className="panel-title">🎫 Your Queue Token</h2>
 						<span className={`live-indicator ${isConnected ? "connected" : "disconnected"}`}>
 							<span className="pulse-dot"/>
@@ -75,32 +88,36 @@ export const QueuePage = () => {
 						</span>
 					</div>
 					<div className="stat-grid">
-						<div className="stat-card animate-fade-in-up stagger-1">
-							<span className="stat-card-icon purple">🎫</span>
-							<span className="stat-card-text">
-								<span className="stat-card-label">Your Token</span>
-								<span className="token-number">#{queueInfo.token_number}</span>
+						<div className="stat-card animate-fade-in-up stagger-1 border-primary/30 bg-primary/5 shadow-[0_0_15px_rgba(var(--primary),0.15)] relative overflow-hidden card-hover">
+                            <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
+							<span className="stat-card-icon text-primary bg-primary/20 p-3 rounded-xl animate-pulse">🎫</span>
+							<span className="stat-card-text relative z-10">
+								<span className="stat-card-label font-bold text-primary uppercase tracking-wider text-xs">Your Token</span>
+								<span className="token-number text-4xl font-black text-foreground drop-shadow-sm">#{queueInfo.token_number}</span>
 							</span>
 						</div>
-						<div className="stat-card animate-fade-in-up stagger-2">
-							<span className="stat-card-icon blue">📍</span>
+						<div className="stat-card animate-fade-in-up stagger-2 relative overflow-hidden card-hover">
+							<span className="stat-card-icon bg-blue-500/20 text-blue-600 p-3 rounded-xl">📍</span>
 							<span className="stat-card-text">
-								<span className="stat-card-label">Position</span>
-								<span className="stat-card-value">{queueInfo.position}</span>
+								<span className="stat-card-label font-bold uppercase tracking-wider text-xs text-muted-foreground">Position</span>
+								<span className="stat-card-value text-3xl font-black">{queueInfo.position}</span>
+							</span>
+                            <div className="absolute bottom-0 left-0 right-0 h-1 bg-secondary">
+                                <div className="h-full bg-blue-500 transition-all duration-1000 ease-out" style={{ width: queueInfo.position > 10 ? '10%' : `${100 - (queueInfo.position * 10)}%` }}></div>
+                            </div>
+						</div>
+						<div className="stat-card animate-fade-in-up stagger-3 card-hover">
+							<span className="stat-card-icon bg-amber-500/20 text-amber-600 p-3 rounded-xl">⏱️</span>
+							<span className="stat-card-text">
+								<span className="stat-card-label font-bold uppercase tracking-wider text-xs text-muted-foreground">Est. Wait</span>
+								<span className="stat-card-value text-3xl font-black">{queueInfo.estimated_wait_minutes} min</span>
 							</span>
 						</div>
-						<div className="stat-card animate-fade-in-up stagger-3">
-							<span className="stat-card-icon amber">⏱️</span>
+						<div className="stat-card animate-fade-in-up stagger-4 card-hover">
+							<span className="stat-card-icon bg-green-500/20 text-green-600 p-3 rounded-xl">🔄</span>
 							<span className="stat-card-text">
-								<span className="stat-card-label">Est. Wait</span>
-								<span className="stat-card-value">{queueInfo.estimated_wait_minutes} min</span>
-							</span>
-						</div>
-						<div className="stat-card animate-fade-in-up stagger-4">
-							<span className="stat-card-icon green">🔄</span>
-							<span className="stat-card-text">
-								<span className="stat-card-label">Now Serving</span>
-								<span className="stat-card-value">#{currentServing ?? "—"}</span>
+								<span className="stat-card-label font-bold uppercase tracking-wider text-xs text-muted-foreground">Now Serving</span>
+								<span className="stat-card-value text-3xl font-black">#{currentServing ?? "—"}</span>
 							</span>
 						</div>
 					</div>
@@ -116,21 +133,23 @@ export const QueuePage = () => {
 					</div>
 				</div>
 				<div className="store-grid">
-					{stores.map((store) => (<div key={store.id} className="store-card">
-							<div className="store-card-header">
-								<h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>{store.name}</h3>
-								<span className={`status-badge ${store.status}`}>
-									<span className="dot"/>
-									{store.status}
-								</span>
-							</div>
-							<span style={{ color: "var(--color-text-dim)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
-								{store.category}
-							</span>
-							<div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.75rem" }}>
-								<span style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>👥 {store.current_footfall} visitors</span>
-							</div>
-							<button className="btn btn-primary" style={{ marginTop: "1rem", width: "100%" }} onClick={() => handleJoinQueue(store.id)} disabled={loading || (queueInfo?.store_id === store.id)}>
+					{stores.map((store) => (<div key={store.id} className="store-card card-hover flex flex-col justify-between h-full">
+                            <div>
+                                <div className="store-card-header">
+                                    <h3 style={{ margin: 0, fontSize: "1rem", fontWeight: 600 }}>{store.name}</h3>
+                                    <span className={`status-badge ${store.status}`}>
+                                        <span className="dot"/>
+                                        {store.status}
+                                    </span>
+                                </div>
+                                <span style={{ color: "var(--color-text-dim)", fontSize: "0.78rem", textTransform: "uppercase", letterSpacing: "0.06em" }}>
+                                    {store.category}
+                                </span>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.75rem" }}>
+                                    <span style={{ fontSize: "0.85rem", color: "var(--color-text-muted)", fontWeight: 500 }}>👥 {store.current_footfall} visitors</span>
+                                </div>
+                            </div>
+							<button className="btn btn-primary" style={{ marginTop: "1.25rem", width: "100%", padding: "0.6rem 1rem" }} onClick={() => handleJoinQueue(store.id)} disabled={loading || (queueInfo?.store_id === store.id)}>
 								{queueInfo?.store_id === store.id ? "✓ Already in Queue" : "Join Queue →"}
 							</button>
 						</div>))}

@@ -1,3 +1,5 @@
+import defaultTheme from 'tailwindcss/defaultTheme';
+
 /** @type {import('tailwindcss').Config} */
 export default {
   content: [
@@ -58,6 +60,32 @@ export default {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      fontFamily: {
+        sans: ['Inter', ...defaultTheme.fontFamily.sans],
+      },
+      keyframes: {
+        "slide-up": {
+          "0%": { opacity: 0, transform: "translateY(10px)" },
+          "100%": { opacity: 1, transform: "translateY(0)" },
+        },
+        "scale-in": {
+          "0%": { opacity: 0, transform: "scale(0.95)" },
+          "100%": { opacity: 1, transform: "scale(1)" },
+        },
+        shimmer: {
+          "100%": { transform: "translateX(100%)" },
+        },
+      },
+      animation: {
+        "slide-up": "slide-up 0.4s ease-out forwards",
+        "scale-in": "scale-in 0.3s ease-out forwards",
+        shimmer: "shimmer 2s infinite linear",
+      },
+      boxShadow: {
+        glow: "0 0 20px rgba(0, 0, 0, 0.1)",
+        "card-hover": "0 10px 40px -10px rgba(0,0,0,0.12)",
+        metric: "0 4px 20px -2px rgba(0,0,0,0.05)",
       },
     },
   },
