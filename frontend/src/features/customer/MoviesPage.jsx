@@ -139,11 +139,12 @@ export const MoviesPage = () => {
         {MOVIES.map((movie, index) => (
           <div 
             key={movie.id} 
-            className={`animate-fade-in-up stagger-${(index % 4) + 1} bg-card text-card-foreground rounded-2xl shadow-md border border-border overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2`}
+            className={`animate-fade-in-up stagger-${(index % 4) + 1} bg-card text-card-foreground rounded-2xl shadow-md border border-border overflow-hidden card-hover group relative`}
           >
-            <div className="flex flex-col items-center justify-center text-8xl py-12 bg-secondary/50 border-b border-border">
-              {movie.poster}
-              <div className="text-sm font-bold px-4 py-1.5 mt-6 inline-block bg-background text-foreground rounded-full shadow-sm border border-border">
+            <div className="flex flex-col items-center justify-center text-8xl py-12 bg-gradient-to-br from-secondary via-secondary/50 to-primary/10 border-b border-border relative overflow-hidden">
+              <div className="absolute inset-0 bg-black/5 backdrop-blur-[1px] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <span className="relative z-10 drop-shadow-2xl group-hover:scale-110 transition-transform duration-500">{movie.poster}</span>
+              <div className="text-sm font-bold px-4 py-1.5 mt-6 inline-block bg-background/90 backdrop-blur-md text-foreground rounded-full shadow-sm border border-border/50 relative z-10">
                 {movie.rating}
               </div>
             </div>
@@ -199,11 +200,11 @@ export const MoviesPage = () => {
         ) : (
           <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
             {bookings.map((booking) => (
-              <div key={booking.id} className="p-5 bg-background border border-border rounded-xl flex justify-between items-center shadow-sm hover:shadow-md hover:border-primary/30 transition-all">
+              <div key={booking.id} className="p-5 bg-card border border-border rounded-xl flex justify-between items-center shadow-sm card-hover transition-all group">
                 <div>
-                  <div className="text-xl font-bold text-foreground">{booking.movie_title}</div>
-                  <div className="text-sm font-medium text-muted-foreground mt-1 flex items-center gap-2">
-                    <span className="bg-secondary px-2 py-0.5 rounded text-secondary-foreground">{booking.showtime}</span>
+                  <div className="text-xl font-bold text-foreground group-hover:text-primary transition-colors">{booking.movie_title}</div>
+                  <div className="text-sm font-medium text-muted-foreground mt-2 flex items-center gap-2">
+                    <span className="bg-secondary px-2.5 py-1 rounded-md text-secondary-foreground font-semibold shadow-sm border border-border/50">{booking.showtime}</span>
                   </div>
                 </div>
                 <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>

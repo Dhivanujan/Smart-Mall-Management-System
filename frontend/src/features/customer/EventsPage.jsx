@@ -126,12 +126,12 @@ export const EventsPage = () => {
         </div>
       </div>
 
-      <div className="events-filters">
+      <div className="events-filters flex flex-wrap gap-2 mb-8">
         {["All", "Entertainment", "Family", "Technology", "Dining"].map(cat => (
           <button 
             key={cat}
             onClick={() => setFilter(cat)}
-            className={`event-filter-chip ${filter === cat ? "active" : ""}`}
+            className={`px-4 py-2 rounded-full text-sm font-bold transition-all ${filter === cat ? "bg-primary text-primary-foreground shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background" : "bg-secondary/60 text-secondary-foreground hover:bg-primary/10 border border-transparent hover:border-primary/20"}`}
           >
             {cat}
           </button>
@@ -142,11 +142,12 @@ export const EventsPage = () => {
         {filteredEvents.map((event, index) => (
           <div 
             key={event.id} 
-            className={`event-card animate-fade-in-up stagger-${(index % 4) + 1}`}
+            className={`event-card animate-fade-in-up stagger-${(index % 4) + 1} card-hover group`}
           >
-            <div className="event-card-cover">
-              {event.image}
-              <div className="event-category-pill">
+            <div className="event-card-cover relative overflow-hidden bg-gradient-to-br from-primary/20 via-primary/5 to-secondary/50">
+              <div className="absolute inset-0 bg-black/5 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition-opacity"></div>
+              <span className="relative z-10 text-6xl drop-shadow-xl group-hover:scale-110 transition-transform duration-500">{event.image}</span>
+              <div className="event-category-pill relative z-10 shadow-sm backdrop-blur-md bg-background/90 font-semibold border border-border/50">
                 {event.category}
               </div>
             </div>
