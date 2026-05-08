@@ -7,28 +7,49 @@ const ROLE_OPTIONS = [
     role: "customer",
     label: "Customer",
     title: "Customer experience",
-    description: "Browse stores, join queues, reserve parking, and track offers.",
+    description: "Browse stores, join queues, reserve parking.",
     username: "customer@example.com",
     password: "customer123",
-    accent: "from-sky-500 to-cyan-400",
+    accent: "from-sky-500 to-cyan-500",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
+        <path d="M3 6h18" />
+        <path d="M16 10a4 4 0 0 1-8 0" />
+      </svg>
+    ),
   },
   {
     role: "admin",
-    label: "Store admin",
+    label: "Store Admin",
     title: "Store operations",
-    description: "Manage products, queues, bookings, and customer support.",
+    description: "Manage products, queues, and support.",
     username: "admin@example.com",
     password: "admin123",
-    accent: "from-amber-500 to-orange-400",
+    accent: "from-amber-500 to-orange-500",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M3 3v18h18" />
+        <path d="M18 17V9" />
+        <path d="M13 17V5" />
+        <path d="M8 17v-3" />
+      </svg>
+    ),
   },
   {
     role: "super_admin",
-    label: "Super admin",
+    label: "Super Admin",
     title: "Platform oversight",
-    description: "Monitor malls, admin accounts, analytics, and governance.",
+    description: "Monitor malls, accounts, and analytics.",
     username: "superadmin@example.com",
     password: "super123",
-    accent: "from-emerald-500 to-teal-400",
+    accent: "from-emerald-500 to-teal-500",
+    icon: (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10" />
+        <path d="m9 12 2 2 4-4" />
+      </svg>
+    ),
   },
 ];
 
@@ -47,11 +68,15 @@ export const LoginPage = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [selectedRole, setSelectedRole] = useState("customer");
-
+  
+  const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const activeRole = useMemo(() => ROLE_OPTIONS.find((option) => option.role === selectedRole) ?? ROLE_OPTIONS[0], [selectedRole]);
+  const activeRole = useMemo(
+    () => ROLE_OPTIONS.find((option) => option.role === selectedRole) ?? ROLE_OPTIONS[0],
+    [selectedRole]
+  );
 
   useEffect(() => {
     if (user) {
@@ -61,13 +86,13 @@ export const LoginPage = () => {
 
   useEffect(() => {
     const requestedRole = searchParams.get("role");
-    if (requestedRole && ROLE_OPTIONS.some((option) => option.role === requestedRole)) {
+    if (requestedRole && ROLE_OPTIONS.some((o) => o.role === requestedRole)) {
       setSelectedRole(requestedRole);
     }
   }, [searchParams]);
 
   const applyDemoCredentials = (role) => {
-    const preset = ROLE_OPTIONS.find((option) => option.role === role) ?? ROLE_OPTIONS[0];
+    const preset = ROLE_OPTIONS.find((o) => o.role === role) ?? ROLE_OPTIONS[0];
     setSelectedRole(preset.role);
     setUsername(preset.username);
     setPassword(preset.password);
@@ -85,48 +110,55 @@ export const LoginPage = () => {
       const fallbackPath = ROLE_ROUTES[authenticatedUser?.role] ?? "/";
       navigate(from ?? fallbackPath, { replace: true });
     } catch (err) {
-      setError(err?.response?.data?.detail || "Invalid credentials. Try again.");
+      setError(err?.response?.data?.detail || "Invalid credentials. Please try again.");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="auth-page min-h-screen grid md:grid-cols-[1.15fr_0.95fr] bg-background px-4 py-6 sm:px-6 lg:px-8">
-      <div className="hidden md:flex items-center justify-center relative">
-        <div className="absolute w-[400px] h-[400px] rounded-full bg-primary/20 blur-[100px] pointer-events-none -translate-x-1/4 -translate-y-1/4"></div>
-        <div className="max-w-xl space-y-8 p-10 rounded-[2rem] border border-border bg-card/80 shadow-[0_24px_70px_rgba(15,23,42,0.12)] backdrop-blur-xl relative z-10">
-          <div className="space-y-4">
-            <Link to="/" className="auth-back-link text-sm">
-              ← Back to home
-            </Link>
-            <div className="auth-badge inline-flex items-center gap-2 px-3 py-2 rounded-full bg-secondary text-secondary-foreground text-xs font-semibold tracking-wide">
-              <span className="w-2 h-2 rounded-full bg-emerald-500" />
-              Single login panel, role-aware access
-            </div>
-            <h1 className="text-4xl lg:text-5xl font-black leading-tight text-foreground">
-              Sign in once, then land in the right workspace.
+    <div className="min-h-screen grid lg:grid-cols-2 bg-background">
+      {/* Left Column: Context & Demo Accounts */}
+      <div className="hidden lg:flex flex-col justify-center px-12 xl:px-20 relative bg-secondary/20">
+        <div className="absolute w-96 h-96 rounded-full bg-primary/10 blur-[80px] pointer-events-none -top-10 -left-10" aria-hidden="true" />
+        
+        <div className="max-w-md space-y-6 relative z-10">
+          <Link to="/" className="inline-flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-primary transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-md">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+            Back to home
+          </Link>
+          
+          <div>
+            <h1 className="text-3xl xl:text-4xl font-bold tracking-tight text-foreground mb-3">
+              Sign in once, land in the right workspace.
             </h1>
-            <p className="text-base text-muted-foreground max-w-lg">
-              Customer, store admin, and super admin all use the same secure panel. Choose an access mode, load the demo credentials if needed, and the app will route you automatically.
+            <p className="text-sm text-muted-foreground leading-relaxed">
+              Customer, store admin, and super admin all use the same secure panel. Select a role below to load demo credentials.
             </p>
           </div>
 
-          <div className="grid gap-3">
+          <div className="grid gap-2.5 pt-4" role="group" aria-label="Demo accounts">
             {ROLE_OPTIONS.map((option) => (
               <button
                 key={option.role}
                 type="button"
                 onClick={() => applyDemoCredentials(option.role)}
-                className={`demo-account-btn ${selectedRole === option.role ? "active" : ""}`}
+                aria-pressed={selectedRole === option.role}
+                className={`group flex items-center gap-3.5 w-full p-3 rounded-lg border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                  selectedRole === option.role 
+                    ? "border-primary bg-background shadow-sm" 
+                    : "border-transparent bg-background/50 hover:bg-background hover:border-border"
+                }`}
               >
-                <div className={`auth-account-icon w-10 h-10 rounded-xl bg-gradient-to-br ${option.accent} text-white flex items-center justify-center shadow-sm`}>
-                  {option.role === "customer" ? "🛍️" : option.role === "admin" ? "📊" : "🏗️"}
+                <div className={`shrink-0 w-10 h-10 rounded-md bg-gradient-to-br ${option.accent} text-white flex items-center justify-center shadow-sm`}>
+                  {option.icon}
                 </div>
-                <div>
-                  <div className="auth-account-role">{option.label}</div>
-                  <div className="auth-account-desc">{option.title}</div>
-                  <div className="auth-account-email">Load demo credentials</div>
+                <div className="text-left flex-1">
+                  <div className="text-sm font-semibold text-foreground">{option.label}</div>
+                  <div className="text-xs text-muted-foreground">{option.title}</div>
+                </div>
+                <div className={`text-xs font-medium px-2 py-1 rounded bg-secondary transition-opacity ${selectedRole === option.role ? "opacity-100 text-primary" : "opacity-0 group-hover:opacity-100"}`}>
+                  Load demo
                 </div>
               </button>
             ))}
@@ -134,64 +166,91 @@ export const LoginPage = () => {
         </div>
       </div>
 
-      <div className="flex items-center justify-center">
-        <div className="auth-card space-y-6 animate-scale-in">
-          <div className="space-y-2 text-center">
-            <div className="inline-flex items-center gap-2 rounded-full border border-border bg-secondary/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">
-              <span className="w-2 h-2 rounded-full bg-primary" />
-              {activeRole.label} access
-            </div>
-            <h2 className="text-3xl font-black tracking-tight text-foreground">Sign in</h2>
+      {/* Right Column: Login Form */}
+      <div className="flex items-center justify-center p-6 sm:p-12">
+        <div className="w-full max-w-[400px] space-y-6">
+          <div className="text-center space-y-1.5 mb-8">
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">Welcome back</h2>
             <p className="text-sm text-muted-foreground">
-              Use the same form for every role. The panel routes you based on the account you use.
+              Sign in to your account to continue
             </p>
           </div>
 
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <div className="grid grid-cols-3 gap-2">
             {ROLE_OPTIONS.map((option) => (
               <button
-                key={option.role}
+                key={`selector-${option.role}`}
                 type="button"
                 onClick={() => setSelectedRole(option.role)}
-                className={`rounded-2xl border px-4 py-3 text-left transition-all relative overflow-hidden ${selectedRole === option.role ? "border-primary bg-primary/10 shadow-[0_0_0_3px_hsl(var(--primary)/0.12)]" : "border-border bg-background hover:border-ring hover:bg-secondary/50"}`}
+                aria-pressed={selectedRole === option.role}
+                className={`rounded-md border px-3 py-2 text-center text-xs font-semibold transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary ${
+                  selectedRole === option.role 
+                    ? "border-primary bg-primary/10 text-primary" 
+                    : "border-border bg-background text-muted-foreground hover:bg-secondary"
+                }`}
               >
-                {selectedRole === option.role && <div className="absolute top-3 right-3 w-2 h-2 rounded-full bg-primary animate-pulse"></div>}
-                <div className="text-sm font-semibold text-foreground">{option.label}</div>
-                <div className="mt-1 text-xs text-muted-foreground">{option.description}</div>
+                {option.label}
               </button>
             ))}
           </div>
 
-          <form onSubmit={handleSubmit} className="app-form">
-            <label className="app-field-label">
-              <span className="font-medium">Email or Username</span>
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div className="space-y-1.5">
+              <label htmlFor="username" className="block text-sm font-medium text-foreground">
+                Email or Username
+              </label>
               <input
+                id="username"
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder={activeRole.username}
-                className="app-input"
+                className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary placeholder:text-muted-foreground"
                 autoComplete="username"
+                autoCapitalize="none"
+                autoCorrect="off"
                 required
               />
-            </label>
+            </div>
 
-            <label className="app-field-label">
-              <span className="font-medium">Password</span>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="Enter your password"
-                className="app-input"
-                autoComplete="current-password"
-                required
-              />
-            </label>
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
+                <label htmlFor="password" className="block text-sm font-medium text-foreground">
+                  Password
+                </label>
+                <button type="button" className="text-xs font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded">
+                  Forgot password?
+                </button>
+              </div>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  className="w-full rounded-md border border-input bg-background px-3 py-2 pr-9 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary placeholder:text-muted-foreground"
+                  autoComplete="current-password"
+                  required
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded p-1"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" x2="22" y1="2" y2="22"/></svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>
+                  )}
+                </button>
+              </div>
+            </div>
 
             {error && (
-              <div className="error-banner" role="alert">
-                <span className="error-icon">⚠</span>
+              <div className="flex items-center gap-2 rounded-md bg-destructive/10 p-2.5 text-sm text-destructive" role="alert">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="shrink-0"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
                 <span>{error}</span>
               </div>
             )}
@@ -199,33 +258,23 @@ export const LoginPage = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="btn btn-primary auth-submit-btn"
+              className="mt-2 w-full flex items-center justify-center rounded-md bg-primary px-3 py-2 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50"
             >
               {isSubmitting ? (
-                <span className="auth-loading-content">
-                  <span className="auth-spinner" />
+                <span className="flex items-center gap-2">
+                  <svg className="h-4 w-4 animate-spin text-primary-foreground/70" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
                   Signing in...
                 </span>
               ) : (
-                `Continue as ${activeRole.label}`
+                `Sign in as ${activeRole.label}`
               )}
             </button>
           </form>
 
-          <div className="rounded-2xl border border-border bg-secondary/40 p-4 text-sm text-muted-foreground flex gap-3">
-            <div className="text-primary text-xl mt-0.5">💡</div>
-            <div>
-              <p className="font-semibold text-foreground">Demo access</p>
-              <p className="mt-1 leading-relaxed">
-                Tap a role on the left to auto-fill the seeded credentials, or keep your own username and password and the app will route you to the correct dashboard after login.
-              </p>
-            </div>
-          </div>
-
-          <p className="auth-footer-text">
+          <p className="text-center text-sm text-muted-foreground pt-4 border-t border-border">
             Don’t have an account?{" "}
-            <Link to="/register" className="auth-inline-link">
-              Create one
+            <Link to="/register" className="font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded">
+              Sign up
             </Link>
           </p>
         </div>
