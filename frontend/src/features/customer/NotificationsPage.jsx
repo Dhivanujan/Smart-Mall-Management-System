@@ -46,12 +46,12 @@ export const NotificationsPage = () => {
 				</p>
 			</div>
 
-			<div className="filter-tabs" style={{ marginBottom: "1.5rem" }}>
-				<button className={`filter-tab ${filter === "all" ? "active" : ""}`} onClick={() => setFilter("all")}>All</button>
-				<button className={`filter-tab ${filter === "unread" ? "active" : ""}`} onClick={() => setFilter("unread")}>
-					Unread {unreadCount > 0 && <span className="filter-tab-badge">{unreadCount}</span>}
+			<div className="filter-tabs flex flex-wrap gap-2 mb-6">
+				<button className={`filter-tab px-4 py-2 rounded-full font-bold text-sm transition-all ${filter === "all" ? "bg-primary text-primary-foreground shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background" : "bg-secondary/60 text-secondary-foreground hover:bg-primary/10 border border-transparent hover:border-primary/20"}`} onClick={() => setFilter("all")}>All</button>
+				<button className={`filter-tab px-4 py-2 rounded-full font-bold text-sm transition-all ${filter === "unread" ? "bg-primary text-primary-foreground shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background" : "bg-secondary/60 text-secondary-foreground hover:bg-primary/10 border border-transparent hover:border-primary/20"}`} onClick={() => setFilter("unread")}>
+					Unread {unreadCount > 0 && <span className="filter-tab-badge ml-2 bg-background/20 px-2 py-0.5 rounded-md text-xs">{unreadCount}</span>}
 				</button>
-				{unreadCount > 0 && (<button className="btn btn-ghost btn-sm" onClick={handleMarkAllRead} style={{ marginLeft: "auto" }}>
+				{unreadCount > 0 && (<button className="btn btn-ghost btn-sm font-semibold ml-auto" onClick={handleMarkAllRead}>
 						✓ Mark All Read
 					</button>)}
 			</div>
@@ -59,17 +59,17 @@ export const NotificationsPage = () => {
 			{notifications.length === 0 ? (<div className="empty-panel">
 					<span className="empty-panel-icon">🔔</span>
 					<p>{filter === "unread" ? "No unread notifications" : "No notifications yet"}</p>
-				</div>) : (<div className="notification-list">
-					{notifications.map((n) => (<div key={n.id} className={`notification-item ${!n.is_read ? "unread" : ""} animate-fade-in-up`}>
-							<span className="notif-icon">{typeIcons[n.notification_type] || "🔔"}</span>
-							<div className="notif-content">
-								<h3 className="notif-title">{n.title}</h3>
-								<p className="notif-message">{n.message}</p>
-								<span className="notif-time">
+				</div>) : (<div className="notification-list flex flex-col gap-4">
+					{notifications.map((n) => (<div key={n.id} className={`notification-item ${!n.is_read ? "bg-primary/5 border-primary/20" : "bg-card border-border"} border p-5 rounded-xl flex gap-4 items-start animate-fade-in-up card-hover transition-all group`}>
+							<span className="notif-icon text-3xl bg-background p-3 rounded-2xl shadow-sm border border-border/50 group-hover:scale-110 transition-transform">{typeIcons[n.notification_type] || "🔔"}</span>
+							<div className="notif-content flex-1">
+								<h3 className={`notif-title text-lg ${!n.is_read ? 'font-bold text-foreground' : 'font-semibold text-foreground/90'} mb-1`}>{n.title}</h3>
+								<p className="notif-message text-muted-foreground leading-relaxed">{n.message}</p>
+								<span className="notif-time text-xs font-medium text-muted-foreground/70 mt-2 block">
 									{new Date(n.created_at * 1000).toLocaleString()}
 								</span>
 							</div>
-							{!n.is_read && (<button className="btn btn-ghost btn-sm" onClick={() => handleMarkRead(n.id)}>
+							{!n.is_read && (<button className="btn btn-ghost btn-sm text-xs font-bold px-3 py-1.5" onClick={() => handleMarkRead(n.id)}>
 									Mark Read
 								</button>)}
 						</div>))}

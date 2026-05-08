@@ -100,21 +100,21 @@ export const ComplaintsPage = () => {
 			{complaints.length === 0 ? (<div className="empty-panel">
 					<span className="empty-panel-icon">📭</span>
 					<p>No complaints submitted yet</p>
-				</div>) : (<div className="complaint-list">
-					{complaints.map((c) => (<div key={c.id} className="complaint-item animate-fade-in-up">
-							<div className="complaint-item-header">
-								<h3 className="complaint-item-subject">{c.subject}</h3>
-								<span className={`complaint-status-badge ${c.status.replace("_", "-")}`}>
+				</div>) : (<div className="complaint-list flex flex-col gap-4">
+					{complaints.map((c) => (<div key={c.id} className="complaint-item animate-fade-in-up bg-card border border-border p-5 rounded-xl card-hover group">
+							<div className="complaint-item-header flex justify-between items-start mb-3">
+								<h3 className="complaint-item-subject text-lg font-bold text-foreground group-hover:text-primary transition-colors">{c.subject}</h3>
+								<span className={`complaint-status-badge px-3 py-1 text-xs font-bold uppercase tracking-wider rounded-full ${c.status.replace("_", "-")} bg-secondary text-secondary-foreground border border-border/50`}>
 									{c.status.replace("_", " ")}
 								</span>
 							</div>
-							<p className="complaint-item-desc">{c.description}</p>
-							<div className="complaint-meta">
-								<span>📁 {c.category}</span>
-								{c.store_id && <span>🏪 Store #{c.store_id}</span>}
-								{c.assigned_to && <span>👤 {c.assigned_to}</span>}
-								<span>📅 {new Date(c.created_at * 1000).toLocaleDateString()}</span>
-								{c.updated_at && <span>🔄 {new Date(c.updated_at * 1000).toLocaleDateString()}</span>}
+							<p className="complaint-item-desc text-muted-foreground mb-4 leading-relaxed">{c.description}</p>
+							<div className="complaint-meta flex flex-wrap gap-x-4 gap-y-2 text-sm font-medium text-muted-foreground/80 bg-secondary/30 p-3 rounded-lg border border-border/30">
+								<span className="flex items-center gap-1.5"><span className="text-primary">📁</span> {c.category}</span>
+								{c.store_id && <span className="flex items-center gap-1.5"><span className="text-amber-500">🏪</span> Store #{c.store_id}</span>}
+								{c.assigned_to && <span className="flex items-center gap-1.5"><span className="text-blue-500">👤</span> {c.assigned_to}</span>}
+								<span className="flex items-center gap-1.5"><span className="text-green-500">📅</span> {new Date(c.created_at * 1000).toLocaleDateString()}</span>
+								{c.updated_at && <span className="flex items-center gap-1.5"><span className="text-purple-500">🔄</span> {new Date(c.updated_at * 1000).toLocaleDateString()}</span>}
 							</div>
 							{c.logs && c.logs.length > 0 && (<div className="complaint-logs">
 									<h4 className="complaint-logs-title">Activity Log</h4>

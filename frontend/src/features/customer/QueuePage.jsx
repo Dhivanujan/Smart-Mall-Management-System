@@ -68,19 +68,6 @@ export const QueuePage = () => {
 
 			{queueInfo && (<div className="queue-token-panel">
 					<div className="panel-header" style={{ marginBottom: "1.5rem" }}>
-    return (<div className="customer-page">
-			<div className="page-header">
-				<h1 className="hero-heading">Queue Management</h1>
-				<p className="hero-subtitle">Join digital queues and track your position in real-time</p>
-			</div>
-
-			{error && (<div className="message-banner error">
-					<span>⚠️</span>
-					<span>{error}</span>
-				</div>)}
-
-			{queueInfo && (<div className="queue-token-panel">
-					<div className="panel-header" style={{ marginBottom: "1.5rem" }}>
 						<h2 className="panel-title">🎫 Your Queue Token</h2>
 						<span className={`live-indicator ${isConnected ? "connected" : "disconnected"}`}>
 							<span className="pulse-dot"/>

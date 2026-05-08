@@ -63,12 +63,6 @@ export const LoyaltyPage = () => {
 				<p className="hero-subtitle">Earn points, unlock rewards, and track your loyalty journey</p>
 			</div>
 
-    return (<div className="customer-page">
-			<div className="page-header">
-				<h1 className="hero-heading">Loyalty & Rewards</h1>
-				<p className="hero-subtitle">Earn points, unlock rewards, and track your loyalty journey</p>
-			</div>
-
 			{message && (<div className="message-banner info">
 					<span>ℹ️</span>
 					<span>{message}</span>

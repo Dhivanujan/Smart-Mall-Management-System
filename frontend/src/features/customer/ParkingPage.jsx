@@ -65,12 +65,6 @@ export const ParkingPage = () => {
 				<p className="hero-subtitle">View availability, reserve slots, and track your parking</p>
 			</div>
 
-    return (<div className="customer-page">
-			<div className="page-header">
-				<h1 className="hero-heading">Parking Management</h1>
-				<p className="hero-subtitle">View availability, reserve slots, and track your parking</p>
-			</div>
-
 			{message && (<div className="message-banner info">
 					<span>ℹ️</span>
 					<span>{message}</span>
@@ -152,7 +146,16 @@ export const ParkingPage = () => {
                         ? "linear-gradient(90deg, #ef4444, #f87171)"
                         : stats.utilization_percent > 50
                             ? "linear-gradient(90deg, #f59e0b, #fbbf24)"
-                            : "linear-gradient(90deg, #22c55e, #4ade80)",
+                            : "linear-gradient(90deg, #22c55e, #4ade80)"
+                }}/>
+													</div>
+												</div>
+											</td>
+										</tr>))}
+								</tbody>
+							</table>
+						</div>
+					</div>
 
 					{user && (<div className="panel">
 							<h2 className="panel-title">🎫 Reserve a Parking Slot</h2>

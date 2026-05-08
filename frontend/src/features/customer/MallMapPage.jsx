@@ -32,15 +32,15 @@ export const MallMapPage = () => {
 				<p className="hero-subtitle">Find stores by floor, zone, and category</p>
 			</div>
 
-			<div className="floor-tabs">
-				{floors.map((f) => (<button key={f} className={`floor-tab ${selectedFloor === f ? "active" : ""}`} onClick={() => { setSelectedFloor(f); setSelectedStore(null); }}>
+			<div className="floor-tabs flex gap-2 mb-6 overflow-x-auto pb-2">
+				{floors.map((f) => (<button key={f} className={`floor-tab px-6 py-2.5 rounded-full font-bold transition-all whitespace-nowrap ${selectedFloor === f ? "bg-primary text-primary-foreground shadow-md ring-2 ring-primary ring-offset-2 ring-offset-background" : "bg-secondary text-secondary-foreground hover:bg-primary/10 border border-transparent hover:border-primary/20"}`} onClick={() => { setSelectedFloor(f); setSelectedStore(null); }}>
 						Floor {f}
 					</button>))}
 			</div>
 
-			<div className="category-legend">
-				{Object.entries(categoryColors).map(([cat, color]) => (<span key={cat} className="legend-item">
-						<span className="legend-dot" style={{ background: color }}/>
+			<div className="category-legend flex flex-wrap gap-4 mb-8 bg-card/50 p-4 rounded-xl border border-border/50">
+				{Object.entries(categoryColors).map(([cat, color]) => (<span key={cat} className="legend-item flex items-center gap-2 text-sm font-semibold text-muted-foreground">
+						<span className="legend-dot w-3 h-3 rounded-full shadow-sm" style={{ background: color }}/>
 						{cat}
 					</span>))}
 			</div>
@@ -57,7 +57,7 @@ export const MallMapPage = () => {
 									{zone}
 								</div>);
         })}
-						{floorStores.map((store) => (<div key={store.id} title={store.name} className={`map-pin ${selectedStore?.id === store.id ? "selected" : ""}`} style={{
+						{floorStores.map((store) => (<div key={store.id} title={store.name} className={`map-pin absolute w-4 h-4 rounded-full cursor-pointer transition-all transform hover:scale-150 ${selectedStore?.id === store.id ? "scale-150 ring-4 ring-primary ring-offset-2 ring-offset-background z-10 shadow-lg" : "shadow-sm hover:z-10"}`} style={{
                 left: `${store.coordinates.x}%`,
                 top: `${store.coordinates.y}%`,
                 background: categoryColors[store.category] || "#95a5a6",
@@ -93,11 +93,13 @@ export const MallMapPage = () => {
 							{floorStores.length === 0 ? (<div className="empty-panel">
 									<span className="empty-panel-icon">🏬</span>
 									<p>No stores on this floor</p>
-								</div>) : (<div className="map-store-list">
-									{floorStores.map((store) => (<div key={store.id} className="map-store-item" onClick={() => setSelectedStore(store)}>
-											<span className="map-store-dot" style={{ background: categoryColors[store.category] || "#95a5a6" }}/>
-											<span className="map-store-name">{store.name}</span>
-											<span className="map-store-zone">{store.zone}</span>
+								</div>) : (<div className="map-store-list flex flex-col gap-2 mt-4">
+									{floorStores.map((store) => (<div key={store.id} className="map-store-item flex items-center justify-between p-3 rounded-lg border border-transparent hover:border-border hover:bg-secondary/50 cursor-pointer transition-all card-hover" onClick={() => setSelectedStore(store)}>
+                                            <div className="flex items-center gap-3">
+											    <span className="map-store-dot w-3 h-3 rounded-full shadow-sm" style={{ background: categoryColors[store.category] || "#95a5a6" }}/>
+											    <span className="map-store-name font-bold text-foreground">{store.name}</span>
+                                            </div>
+											<span className="map-store-zone text-xs font-semibold uppercase tracking-wider text-muted-foreground bg-background px-2 py-1 rounded border border-border/50">{store.zone}</span>
 										</div>))}
 								</div>)}
 						</>)}

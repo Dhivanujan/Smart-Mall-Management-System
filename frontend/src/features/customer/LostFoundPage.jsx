@@ -86,11 +86,12 @@ export const LostFoundPage = () => {
             {message && <div className="message-banner" style={{ marginBottom: "1rem" }}>{message}</div>}
 
             <div className="lostfound-grid">
-                <div className="lostfound-notice">
-                    <span className="lostfound-notice-icon">💡</span>
-                    <div>
-                        <h3 className="lostfound-notice-title">Important Notice</h3>
-                        <p className="lostfound-notice-copy">
+                <div className="lostfound-notice bg-blue-500/10 border border-blue-500/20 p-5 rounded-xl flex items-start gap-4 mb-6 relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 rounded-full blur-3xl"></div>
+                    <span className="lostfound-notice-icon text-3xl drop-shadow-sm relative z-10">💡</span>
+                    <div className="relative z-10">
+                        <h3 className="lostfound-notice-title text-blue-600 dark:text-blue-400 font-bold text-lg mb-1">Important Notice</h3>
+                        <p className="lostfound-notice-copy text-blue-600/80 dark:text-blue-400/80 font-medium">
                             Found items are kept securely at the Main Security Desk (Ground Floor) for 30 days.
                         </p>
                     </div>
@@ -179,14 +180,14 @@ export const LostFoundPage = () => {
 
                 <div className="recent-found-items">
                     <h2 className="lostfound-section-title">Recently Found Items</h2>
-                    <div className="found-list">
+                    <div className="found-list flex flex-col gap-3 mt-4">
                         {FOUND_ITEMS.map((found) => (
-                            <div key={found.id} className="found-item">
+                            <div key={found.id} className="found-item bg-card border border-border p-4 rounded-xl flex justify-between items-center card-hover group transition-all">
                                 <div>
-                                    <div className="found-item-name">{found.item}</div>
-                                    <div className="found-item-location">Found at: {found.location}</div>
+                                    <div className="found-item-name font-bold text-foreground group-hover:text-primary transition-colors">{found.item}</div>
+                                    <div className="found-item-location text-sm font-medium text-muted-foreground mt-1 flex items-center gap-1"><span className="text-primary/70">📍</span> Found at: {found.location}</div>
                                 </div>
-                                <span className="badge found-item-date">
+                                <span className="badge found-item-date bg-secondary px-3 py-1 rounded-md text-xs font-bold text-secondary-foreground uppercase tracking-wider border border-border/50">
                                     {found.date}
                                 </span>
                             </div>
@@ -204,14 +205,14 @@ export const LostFoundPage = () => {
                     ) : reports.length === 0 ? (
                         <p className="hero-subtitle" style={{ marginBottom: 0 }}>No reports submitted yet.</p>
                     ) : (
-                        <div className="booking-list">
+                        <div className="booking-list grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
                             {reports.map((report) => (
-                                <div key={report.id} className="booking-item">
+                                <div key={report.id} className="booking-item p-5 bg-card border border-border rounded-xl flex justify-between items-center shadow-sm card-hover transition-all group">
                                     <div>
-                                        <div className="booking-title">{report.item_description}</div>
-                                        <div className="booking-time">Last seen at {report.last_seen_location}</div>
+                                        <div className="booking-title text-lg font-bold text-foreground group-hover:text-primary transition-colors">{report.item_description}</div>
+                                        <div className="booking-time text-sm font-medium text-muted-foreground mt-2 bg-secondary/50 px-2 py-1 rounded inline-block border border-border/30">Last seen at {report.last_seen_location}</div>
                                     </div>
-                                    <span className="booking-status">{report.status}</span>
+                                    <span className={`booking-status text-xs font-bold uppercase tracking-wider px-3 py-1.5 rounded-full ${report.status === 'open' ? 'bg-amber-500/10 text-amber-600 border border-amber-500/20' : 'bg-secondary text-secondary-foreground border border-border/50'}`}>{report.status}</span>
                                 </div>
                             ))}
                         </div>
