@@ -1,5 +1,6 @@
 import React, { useCallback, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Building2, Home, ShoppingBag, Search as SearchIcon, LogOut, Menu } from "lucide-react";
 import { useAuth } from "@/app/providers/AuthProvider";
 export const DashboardLayout = ({ title, navItems, children }) => {
     const { user, logout } = useAuth();
@@ -23,7 +24,7 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 				<div className="h-16 flex items-center justify-between px-6 border-b border-border dashboard-brand relative overflow-hidden">
                     <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 					<Link to="/" className="flex items-center gap-3 text-primary hover:text-primary-foreground transition-colors" style={{ textDecoration: "none" }} onClick={() => setShowMobileSidebar(false)}>
-						<span className="text-2xl drop-shadow-md">🏬</span>
+						<Building2 className="w-8 h-8 drop-shadow-md" />
 						<span className="font-black text-xl tracking-tight dashboard-logo">Smart Mall</span>
 					</Link>
                     <button type="button" className="md:hidden text-muted-foreground p-1" onClick={() => setShowMobileSidebar(false)}>✕</button>
@@ -38,7 +39,7 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 										<NavLink to={item.to} end={item.to === "/admin" || item.to === "/super-admin" || item.to === "/dashboard"} className={({ isActive }) => isActive
 					? "flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold shadow-md transition-all hover:-translate-y-0.5 dashboard-nav-link dashboard-nav-link--active"
 					: "flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm group relative"} onClick={() => setShowMobileSidebar(false)}>
-											{item.icon && <span className="nav-icon text-lg group-hover:scale-110 transition-transform">{item.icon}</span>}
+											{item.icon && <item.icon className="nav-icon w-5 h-5 group-hover:scale-110 transition-transform" />}
 											{item.label}
 											{item.badge !== undefined && item.badge > 0 && (<span className="count-badge ml-auto bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">{item.badge}</span>)}
 										</NavLink>
@@ -53,13 +54,13 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 							<ul className="space-y-1 dashboard-nav">
 								<li>
 									<Link to="/" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm">
-										<span className="nav-icon text-lg">🏠</span>
+										<Home className="nav-icon w-5 h-5" />
 										Home
 									</Link>
 								</li>
 								<li>
 									<Link to="/mall" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm">
-										<span className="nav-icon text-lg">🛍️</span>
+										<ShoppingBag className="nav-icon w-5 h-5" />
 										Mall directory
 									</Link>
 								</li>
@@ -80,10 +81,10 @@ export const DashboardLayout = ({ title, navItems, children }) => {
                     <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
 					<div className="flex items-center gap-2 sm:gap-4">
 						<button type="button" className="md:hidden flex items-center justify-center p-2 mr-1 hamburger-menu" onClick={() => setShowMobileSidebar(true)}>
-							<span className="text-xl">☰</span>
+							<Menu className="w-6 h-6" />
 						</button>
 						<Link to="/" className="md:hidden hidden sm:flex items-center justify-center p-2 mr-1">
-							<span className="text-xl">🏬</span>
+							<Building2 className="w-6 h-6" />
 						</Link>
 						<span className="hidden sm:inline-flex items-center justify-center text-muted-foreground/40 text-xl font-light">›</span>
 						<h2 className="text-lg sm:text-xl font-extrabold text-foreground tracking-tight dashboard-section-title truncate max-w-[150px] sm:max-w-none">{title}</h2>
@@ -95,7 +96,7 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 					openCommandPalette();
 				}
 			}}>
-							<span className="text-sm">🔍</span>
+							<SearchIcon className="w-4 h-4" />
 							<span className="hidden sm:inline-block text-sm font-medium mr-2">Search…</span>
 							<kbd className="hidden lg:inline-block bg-background border border-border px-2 rounded text-xs font-bold shadow-sm">⌘K</kbd>
 						</div>
@@ -120,10 +121,10 @@ export const DashboardLayout = ({ title, navItems, children }) => {
 											</div>
 											<div className="p-2 space-y-1 bg-card">
 												<Link to="/" className="user-menu-item flex items-center gap-3 px-3 py-2 text-sm font-semibold text-foreground hover:bg-secondary rounded-lg transition-colors" onClick={() => setShowUserMenu(false)}>
-													<span className="text-lg">🏠</span> Home
+													<Home className="w-4 h-4" /> Home
 												</Link>
 												<button type="button" onClick={handleLogout} className="inline-flex items-center w-full gap-3 px-3 py-2 text-sm font-bold text-destructive hover:bg-destructive/10 hover:text-destructive rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 border border-transparent hover:border-destructive/20 text-left active:scale-[0.98]">
-													<span className="text-lg">🚪</span> Sign out
+													<LogOut className="w-4 h-4" /> Sign out
 												</button>
 											</div>
 										</div>

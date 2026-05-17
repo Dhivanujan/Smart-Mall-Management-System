@@ -1,7 +1,9 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
 from pydantic import BaseModel, Field
+import cloudinary
+import cloudinary.uploader
 
 from ....auth.schemas.users import User
 from ....auth.services.security import require_admin, require_super_admin
@@ -33,6 +35,7 @@ def _product_dict(doc: ProductDocument) -> dict:
         "name": doc.name,
         "price": doc.price,
         "category": doc.category,
+        "image_url": getattr(doc, "image_url", None),
     }
 
 
@@ -62,12 +65,14 @@ class CreateProductRequest(BaseModel):
     name: str = Field(min_length=2, max_length=100)
     price: float = Field(gt=0)
     category: str = Field(min_length=1, max_length=50)
+    image_url: str | None = None
 
 
 class UpdateProductRequest(BaseModel):
     name: str | None = None
     price: float | None = None
     category: str | None = None
+    image_url: str | None = None
 
 
 # ── Public endpoints ────────────────────────────────────────────────
@@ -167,7 +172,14 @@ async def add_product(
     last_product = await ProductDocument.find().sort("-product_id").first_or_none()
     next_id = (last_product.product_id + 1) if last_product else 1
 
-    product = ProductDocument(product_id=next_id, store_id=store_id, name=body.name, price=body.price, category=body.category)
+    product = ProductDocument(
+        product_id=next_id, 
+        store_id=store_id, 
+        name=body.name, 
+        price=body.price, 
+        category=body.category,
+        image_url=body.image_url
+    )
     await product.insert()
     return {"message": "Product added", "product": _product_dict(product)}
 
@@ -188,8 +200,32 @@ async def update_product(
         product.price = body.price
     if body.category is not None:
         product.category = body.category
+    if body.image_url is not None:
+        product.image_url = body.image_url
     await product.save()
     return {"message": "Product updated", "product": _product_dict(product)}
+
+@router.post("/{store_id}/products/{product_id}/upload-image", summary="Upload product image")
+async def upload_product_image(
+    store_id: int,
+    product_id: int,
+    file: UploadFile = File(...),
+    current_user: User = Depends(require_admin),
+) -> dict:
+    product = await ProductDocument.find_one({"store_id": store_id, "product_id": product_id})
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+        
+    try:
+        # Note: cloudinary requires configuration via CLOUDINARY_URL env var
+        # or explicit config call: cloudinary.config(...)
+        result = cloudinary.uploader.upload(file.file)
+        url = result.get("secure_url")
+        product.image_url = url
+        await product.save()
+        return {"message": "Image uploaded successfully", "image_url": url, "product": _product_dict(product)}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to upload image: {str(e)}")
 
 
 @router.delete("/{store_id}/products/{product_id}", summary="Delete product")

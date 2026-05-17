@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from app.auth.schemas.users import User
 from app.auth.services.security import get_current_active_user, require_admin
 from app.db.models.parking import ParkingSlotDocument
+from app.websocket.managers.parking import manager as parking_ws_manager
 
 router = APIRouter(prefix="/parking", tags=["parking"])
 
@@ -117,6 +118,9 @@ async def reserve_slot(
     slot.reserved_by = current_user.username
     slot.reserved_at = time()
     await slot.save()
+    
+    await parking_ws_manager.broadcast({"type": "parking.update", "action": "reserve", "slot": _slot_dict(slot)})
+    
     return {"message": "Slot reserved successfully", "slot": _slot_dict(slot)}
 
 
@@ -136,6 +140,9 @@ async def release_slot(
     slot.occupied_at = None
     slot.reserved_at = None
     await slot.save()
+    
+    await parking_ws_manager.broadcast({"type": "parking.update", "action": "release", "slot": _slot_dict(slot)})
+    
     return {"message": "Slot released", "slot": _slot_dict(slot)}
 
 
@@ -187,6 +194,9 @@ async def admin_occupy_slot(
     slot.vehicle_number = body.vehicle_number
     slot.occupied_at = time()
     await slot.save()
+    
+    await parking_ws_manager.broadcast({"type": "parking.update", "action": "occupy", "slot": _slot_dict(slot)})
+    
     return {"message": "Slot occupied", "slot": _slot_dict(slot)}
 
 
@@ -204,4 +214,7 @@ async def admin_release_slot(
     slot.occupied_at = None
     slot.reserved_at = None
     await slot.save()
+    
+    await parking_ws_manager.broadcast({"type": "parking.update", "action": "release", "slot": _slot_dict(slot)})
+    
     return {"message": "Slot released", "slot": _slot_dict(slot)}

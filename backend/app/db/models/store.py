@@ -35,6 +35,7 @@ class ProductDocument(Document):
     name: str
     price: float
     category: str
+    image_url: str | None = None
 
     class Settings:
         name = "products"

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { parkingApi } from "@/services/api/parking";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { useWebSocket } from "@/hooks/useWebSocket";
+
 export const ParkingPage = () => {
     const { user } = useAuth();
     const [summary, setSummary] = useState(null);
@@ -9,6 +11,7 @@ export const ParkingPage = () => {
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
     const [message, setMessage] = useState("");
+
     const fetchData = async () => {
         try {
             const [summaryRes, mySlotsRes] = await Promise.all([
@@ -25,6 +28,16 @@ export const ParkingPage = () => {
             setLoading(false);
         }
     };
+
+    useWebSocket({
+        url: "/ws/parking",
+        onMessage: (data) => {
+            if (data.type === "parking.update") {
+                fetchData();
+            }
+        }
+    });
+
     useEffect(() => {
         fetchData();
     }, []);

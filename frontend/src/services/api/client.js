@@ -9,7 +9,7 @@ export const apiClient = axios.create({
 });
 apiClient.interceptors.response.use((response) => response, (error) => {
     if (error.response?.status === 401) {
-        window.localStorage.removeItem("smartmall_auth");
+        window.localStorage.removeItem("smartmall-auth-storage");
         if (window.location.pathname !== "/login") {
             window.location.href = "/login";
         }

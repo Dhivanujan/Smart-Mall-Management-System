@@ -31,7 +31,8 @@ from .core.config import get_settings
 from .core.logging import setup_logging
 from .db import init_db, close_db
 from .db.seed import seed_database
-from .websocket.routes import queues_router
+from .websocket.routes.queues import router as queues_router
+from .websocket.routes.parking import router as parking_ws_router
 
 
 logger = logging.getLogger("smart_mall.app")
@@ -108,6 +109,7 @@ def create_app() -> FastAPI:
 
 	# WebSocket routes
 	app.include_router(queues_router)
+	app.include_router(parking_ws_router)
 
 	# Global error handlers
 	@app.exception_handler(RequestValidationError)
