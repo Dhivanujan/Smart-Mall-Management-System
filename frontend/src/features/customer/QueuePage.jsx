@@ -2,6 +2,10 @@ import React, { useEffect, useState, useCallback } from "react";
 import { queuesApi } from "@/services/api/stores";
 import { useWebSocket } from "@/hooks/useWebSocket";
 import { apiClient } from "@/services/api/client";
+import { 
+    Ticket, MapPin, Clock, RefreshCcw, 
+    Store, Users, Check, ArrowRight, AlertTriangle 
+} from "lucide-react";
 export const QueuePage = () => {
     const [stores, setStores] = useState([]);
     const [selectedStore, setSelectedStore] = useState(null);
@@ -62,13 +66,13 @@ export const QueuePage = () => {
 			</div>
 
 			{error && (<div className="message-banner error">
-					<span>⚠️</span>
+					<AlertTriangle className="w-5 h-5" />
 					<span>{error}</span>
 				</div>)}
 
 			{queueInfo && (<div className="queue-token-panel">
 					<div className="panel-header" style={{ marginBottom: "1.5rem" }}>
-						<h2 className="panel-title">🎫 Your Queue Token</h2>
+						<h2 className="panel-title flex items-center gap-2"><Ticket className="w-5 h-5 text-primary" /> Your Queue Token</h2>
 						<span className={`live-indicator ${isConnected ? "connected" : "disconnected"}`}>
 							<span className="pulse-dot"/>
 							{isConnected ? "Live" : "Connecting..."}
@@ -77,14 +81,14 @@ export const QueuePage = () => {
 					<div className="stat-grid">
 						<div className="stat-card animate-fade-in-up stagger-1 border-primary/30 bg-primary/5 shadow-[0_0_15px_rgba(var(--primary),0.15)] relative overflow-hidden card-hover">
                             <div className="absolute inset-0 bg-gradient-to-br from-primary/10 to-transparent pointer-events-none"></div>
-							<span className="stat-card-icon text-primary bg-primary/20 p-3 rounded-xl animate-pulse">🎫</span>
+							<span className="stat-card-icon text-primary bg-primary/20 p-2.5 rounded-xl animate-pulse"><Ticket className="w-6 h-6" /></span>
 							<span className="stat-card-text relative z-10">
 								<span className="stat-card-label font-bold text-primary uppercase tracking-wider text-xs">Your Token</span>
 								<span className="token-number text-4xl font-black text-foreground drop-shadow-sm">#{queueInfo.token_number}</span>
 							</span>
 						</div>
 						<div className="stat-card animate-fade-in-up stagger-2 relative overflow-hidden card-hover">
-							<span className="stat-card-icon bg-blue-500/20 text-blue-600 p-3 rounded-xl">📍</span>
+							<span className="stat-card-icon bg-blue-500/20 text-blue-600 p-2.5 rounded-xl"><MapPin className="w-6 h-6" /></span>
 							<span className="stat-card-text">
 								<span className="stat-card-label font-bold uppercase tracking-wider text-xs text-muted-foreground">Position</span>
 								<span className="stat-card-value text-3xl font-black">{queueInfo.position}</span>
@@ -94,14 +98,14 @@ export const QueuePage = () => {
                             </div>
 						</div>
 						<div className="stat-card animate-fade-in-up stagger-3 card-hover">
-							<span className="stat-card-icon bg-amber-500/20 text-amber-600 p-3 rounded-xl">⏱️</span>
+							<span className="stat-card-icon bg-amber-500/20 text-amber-600 p-2.5 rounded-xl"><Clock className="w-6 h-6" /></span>
 							<span className="stat-card-text">
 								<span className="stat-card-label font-bold uppercase tracking-wider text-xs text-muted-foreground">Est. Wait</span>
 								<span className="stat-card-value text-3xl font-black">{queueInfo.estimated_wait_minutes} min</span>
 							</span>
 						</div>
 						<div className="stat-card animate-fade-in-up stagger-4 card-hover">
-							<span className="stat-card-icon bg-green-500/20 text-green-600 p-3 rounded-xl">🔄</span>
+							<span className="stat-card-icon bg-green-500/20 text-green-600 p-2.5 rounded-xl"><RefreshCcw className="w-6 h-6" /></span>
 							<span className="stat-card-text">
 								<span className="stat-card-label font-bold uppercase tracking-wider text-xs text-muted-foreground">Now Serving</span>
 								<span className="stat-card-value text-3xl font-black">#{currentServing ?? "—"}</span>
@@ -113,7 +117,7 @@ export const QueuePage = () => {
 			<div className="panel">
 				<div className="panel-header">
 					<div>
-						<h2 className="panel-title">🏪 Available Stores</h2>
+						<h2 className="panel-title flex items-center gap-2"><Store className="w-5 h-5 text-purple-500" /> Available Stores</h2>
 						<p className="panel-subtitle">
 							{waitingCount > 0 ? `${waitingCount} people waiting across queues` : "Select a store to join its queue"}
 						</p>
@@ -133,11 +137,13 @@ export const QueuePage = () => {
                                     {store.category}
                                 </span>
                                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.75rem" }}>
-                                    <span style={{ fontSize: "0.85rem", color: "var(--color-text-muted)", fontWeight: 500 }}>👥 {store.current_footfall} visitors</span>
+                                    <span style={{ fontSize: "0.85rem", color: "var(--color-text-muted)", fontWeight: 500, display: "flex", alignItems: "center", gap: "0.3rem" }}>
+                                        <Users className="w-3.5 h-3.5" /> {store.current_footfall} visitors
+                                    </span>
                                 </div>
                             </div>
-							<button className="btn btn-primary" style={{ marginTop: "1.25rem", width: "100%", padding: "0.6rem 1rem" }} onClick={() => handleJoinQueue(store.id)} disabled={loading || (queueInfo?.store_id === store.id)}>
-								{queueInfo?.store_id === store.id ? "✓ Already in Queue" : "Join Queue →"}
+							<button className="btn btn-primary" style={{ marginTop: "1.25rem", width: "100%", padding: "0.6rem 1rem", display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }} onClick={() => handleJoinQueue(store.id)} disabled={loading || (queueInfo?.store_id === store.id)}>
+								{queueInfo?.store_id === store.id ? <><Check className="w-4 h-4" /> Already in Queue</> : <>Join Queue <ArrowRight className="w-4 h-4" /></>}
 							</button>
 						</div>))}
 				</div>

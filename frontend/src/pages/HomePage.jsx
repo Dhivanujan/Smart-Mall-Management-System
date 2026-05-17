@@ -1,30 +1,31 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/app/providers/AuthProvider";
+import { BarChart3, Building2, Zap, ShoppingBag, LayoutDashboard, Store, User, Compass } from "lucide-react";
 const FEATURES = [
     {
-        icon: "📊",
+        icon: <BarChart3 className="w-8 h-8 text-primary" />,
         label: "Mall admins",
         title: "Store performance at a glance",
         desc: "Track revenue, footfall, and support tickets in real time.",
         tags: ["Live metrics", "Tickets", "Revenue"],
     },
     {
-        icon: "🏗️",
+        icon: <Building2 className="w-8 h-8 text-indigo-500" />,
         label: "Super admins",
         title: "Multi-mall command center",
         desc: "Manage malls, admins, and tenants from a single pane of glass.",
         tags: ["Malls", "Occupancy", "Billing"],
     },
     {
-        icon: "⚡",
+        icon: <Zap className="w-8 h-8 text-amber-500" />,
         label: "Operations",
         title: "Operational health in real time",
         desc: "Monitor alerts, SLA compliance, and system health at scale.",
         tags: ["Alerts", "SLAs", "Uptime"],
     },
     {
-        icon: "🛍️",
+        icon: <ShoppingBag className="w-8 h-8 text-rose-500" />,
         label: "Customers",
         title: "Mall directory & discovery",
         desc: "Browse stores, check live occupancy, and explore products.",
@@ -76,36 +77,38 @@ export const HomePage = () => {
                         ))}
 					</div>
 
-					<div className="flex flex-wrap justify-center lg:justify-start gap-4">
+					<div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center lg:justify-start">
 						{user ? (<>
-								{user.role === "customer" && (<Link to="/dashboard" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
-										🛍️ My Dashboard
+								{user.role === "customer" && (<Link to="/dashboard" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
+										<LayoutDashboard className="w-5 h-5" /> My Dashboard
 									</Link>)}
-								{["admin", "super_admin"].includes(user.role) && (<Link to="/admin" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
-										📊 Open admin console
+								{["admin", "super_admin"].includes(user.role) && (<Link to="/admin" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
+										<BarChart3 className="w-5 h-5" /> Open admin console
 									</Link>)}
-								{user.role === "super_admin" && (<Link to="/super-admin" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
-										🏗️ Super admin overview
+								{user.role === "super_admin" && (<Link to="/super-admin" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
+										<Building2 className="w-5 h-5" /> Super admin overview
 									</Link>)}
-								<button type="button" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 border border-border text-foreground font-bold rounded-lg hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]" onClick={() => { logout(); navigate("/"); }}>
+								<button type="button" className="inline-flex items-center justify-center px-6 py-3 border border-border text-foreground font-bold rounded-xl hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]" onClick={() => { logout(); navigate("/"); }}>
 									Sign out
 								</button>
 							</>) : (<>
-								<Link to="/login?role=customer" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
-									Sign in to dashboard
-								</Link>
-								<Link to="/login?role=admin" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
-									Store admin login
-								</Link>
-								<Link to="/login?role=super_admin" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
-									Super admin login
-								</Link>
-								<Link to="/register" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 border border-border text-foreground font-bold rounded-xl hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]">
-									Create account
-								</Link>
-								<Link to="/mall" className="inline-flex items-center justify-center whitespace-nowrap px-6 py-3 border border-border text-foreground font-bold rounded-xl hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]">
-									🛍️ Browse mall directory
-								</Link>
+								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full">
+                                    <Link to="/login?role=customer" className="inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-md hover:shadow-lg hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
+                                        <User className="w-4 h-4" /> Sign in to dashboard
+                                    </Link>
+                                    <Link to="/login?role=admin" className="inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
+                                        <Store className="w-4 h-4" /> Store admin login
+                                    </Link>
+                                    <Link to="/login?role=super_admin" className="inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
+                                        <Building2 className="w-4 h-4" /> Super admin login
+                                    </Link>
+                                    <Link to="/register" className="inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 border border-border text-foreground font-bold rounded-xl hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]">
+                                        <User className="w-4 h-4" /> Create account
+                                    </Link>
+                                    <Link to="/mall" className="sm:col-span-2 lg:col-span-2 inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 border border-border bg-card text-foreground font-bold rounded-xl hover:bg-secondary transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]">
+                                        <Compass className="w-4 h-4 text-primary" /> Browse mall directory
+                                    </Link>
+                                </div>
 							</>)}
 					</div>
 				</section>

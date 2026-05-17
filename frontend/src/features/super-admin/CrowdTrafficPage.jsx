@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { analyticsApi } from "@/services/api/analytics";
+import { Users, MapPin, AlertTriangle } from "lucide-react";
 export const CrowdTrafficPage = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -43,17 +44,17 @@ export const CrowdTrafficPage = () => {
 
 			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))", marginBottom: "2rem" }}>
 				<div className="metric-card">
-					<span className="metric-icon">👥</span>
+					<span className="metric-icon"><Users className="w-5 h-5" /></span>
 					<span className="metric-label">Current Visitors</span>
 					<span className="metric-value" style={{ color: "var(--color-accent-strong)" }}>{data.mall_total_visitors.toLocaleString()}</span>
 				</div>
 				<div className="metric-card">
-					<span className="metric-icon">📍</span>
+					<span className="metric-icon"><MapPin className="w-5 h-5" /></span>
 					<span className="metric-label">Zones Monitored</span>
 					<span className="metric-value">{data.heatmap.length}</span>
 				</div>
 				<div className="metric-card">
-					<span className="metric-icon">⚠️</span>
+					<span className="metric-icon"><AlertTriangle className="w-5 h-5" /></span>
 					<span className="metric-label">Congestion Alerts</span>
 					<span className="metric-value" style={{ color: data.congestion_alerts.length > 0 ? "var(--color-danger)" : "var(--color-success)" }}>
 						{data.congestion_alerts.length}

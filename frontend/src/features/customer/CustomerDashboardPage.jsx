@@ -4,22 +4,27 @@ import { apiClient } from "@/services/api/client";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { favoritesApi } from "@/services/api/favorites";
 import { discoveryApi } from "@/services/api/discovery";
+import { 
+    Store, Ticket, ParkingCircle, Star, 
+    Tag, Calendar, Clapperboard, Bot, Map, Info, Search, Bell, ClipboardList,
+    Users, Heart, Zap, Sparkles, Flame, ArrowRight
+} from "lucide-react";
 const ACTIONS = [
-    { to: "/mall", icon: "🏪", label: "Browse Stores", color: "purple" },
-    { to: "/queue", icon: "🎫", label: "Join Queue", color: "blue" },
-    { to: "/parking", icon: "🅿️", label: "Parking", color: "green" },
-    { to: "/loyalty", icon: "⭐", label: "Loyalty", color: "amber" },
+    { to: "/mall", icon: <Store className="w-7 h-7" />, label: "Browse Stores", color: "purple" },
+    { to: "/queue", icon: <Ticket className="w-7 h-7" />, label: "Join Queue", color: "blue" },
+    { to: "/parking", icon: <ParkingCircle className="w-7 h-7" />, label: "Parking", color: "green" },
+    { to: "/loyalty", icon: <Star className="w-7 h-7" />, label: "Loyalty", color: "amber" },
 ];
 const QUICK_LINKS = [
-    { to: "/offers", icon: "🏷️", label: "Active Offers", color: "pink" },
-    { to: "/events", icon: "📅", label: "Events", color: "emerald" },
-    { to: "/movies", icon: "🍿", label: "Cinema", color: "purple" },
-	{ to: "/ai-concierge", icon: "🤖", label: "AI Concierge", color: "indigo" },
-    { to: "/map", icon: "🗺️", label: "Mall Map", color: "cyan" },
-    { to: "/services", icon: "ℹ️", label: "Services", color: "blue" },
-    { to: "/lost-found", icon: "🔍", label: "Lost & Found", color: "orange" },
-    { to: "/notifications", icon: "🔔", label: "Notifications", color: "indigo" },
-    { to: "/complaints", icon: "📋", label: "Complaints", color: "red" },
+    { to: "/offers", icon: <Tag className="w-5 h-5" />, label: "Active Offers", color: "pink" },
+    { to: "/events", icon: <Calendar className="w-5 h-5" />, label: "Events", color: "emerald" },
+    { to: "/movies", icon: <Clapperboard className="w-5 h-5" />, label: "Cinema", color: "purple" },
+    { to: "/ai-concierge", icon: <Bot className="w-5 h-5" />, label: "AI Concierge", color: "indigo" },
+    { to: "/map", icon: <Map className="w-5 h-5" />, label: "Mall Map", color: "cyan" },
+    { to: "/services", icon: <Info className="w-5 h-5" />, label: "Services", color: "blue" },
+    { to: "/lost-found", icon: <Search className="w-5 h-5" />, label: "Lost & Found", color: "orange" },
+    { to: "/notifications", icon: <Bell className="w-5 h-5" />, label: "Notifications", color: "indigo" },
+    { to: "/complaints", icon: <ClipboardList className="w-5 h-5" />, label: "Complaints", color: "red" },
 ];
 export const CustomerDashboardPage = () => {
     const { user } = useAuth();
@@ -61,15 +66,15 @@ export const CustomerDashboardPage = () => {
 						<span className={`action-card-icon bg-gradient-to-br from-${a.color}-500/20 to-${a.color}-600/30 text-${a.color}-600 group-hover:scale-110 transition-transform`}>{a.icon}</span>
 						<span className="action-card-text">
 							<span className="action-card-label">{a.label}</span>
-							<span className="action-card-value">
-								{a.to === "/mall" ? `${openStores.length} Open` : "Open →"}
+							<span className="action-card-value flex items-center gap-1">
+								{a.to === "/mall" ? `${openStores.length} Open` : <>Open <ArrowRight className="w-3 h-3" /></>}
 							</span>
 						</span>
 					</Link>))}
 			</div>
 
 			<div className="panel animate-fade-in-up stagger-5">
-				<h2 className="panel-title">⚡ Quick Access</h2>
+				<h2 className="panel-title flex items-center gap-2"><Zap className="w-5 h-5 text-amber-500" /> Quick Access</h2>
 				<div className="action-grid" style={{ marginBottom: 0 }}>
 					{QUICK_LINKS.map((l) => (<Link key={l.to} to={l.to} className={`action-card ${l.color} card-hover group`}>
 							<span className={`action-card-icon bg-gradient-to-br from-${l.color}-500/20 to-${l.color}-600/30 text-${l.color}-600 group-hover:scale-110 transition-transform`}>{l.icon}</span>
@@ -82,20 +87,20 @@ export const CustomerDashboardPage = () => {
 
 			{!loading && (<div className="panel animate-fade-in-up stagger-6" style={{ marginTop: "0.25rem" }}>
 					<div className="panel-header">
-						<h2 className="panel-title">🧠 For You</h2>
+						<h2 className="panel-title flex items-center gap-2"><Sparkles className="w-5 h-5 text-indigo-500" /> For You</h2>
 						<Link to="/ai-concierge" className="btn btn-ghost btn-sm">Open AI Concierge</Link>
 					</div>
 					<div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 230px), 1fr))", gap: "0.8rem" }}>
 						<div className="store-card card-hover shadow-[0_0_15px_rgba(var(--primary),0.05)]">
 							<div className="store-card-header"><h3 style={{ margin: 0, fontSize: "0.95rem" }}>Favorite Stores</h3></div>
 							<div style={{ marginTop: "0.4rem" }}>
-								{favoriteStores.length ? favoriteStores.slice(0, 3).map((store) => (<div key={store.id} style={{ fontSize: "0.85rem", marginBottom: "0.3rem", color: "var(--color-text-muted)" }}>♥ {store.name}</div>)) : (<div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>No favorites yet.</div>)}
+								{favoriteStores.length ? favoriteStores.slice(0, 3).map((store) => (<div key={store.id} style={{ display: "flex", alignItems: "center", gap: "0.4rem", fontSize: "0.85rem", marginBottom: "0.4rem", color: "var(--color-text-muted)" }}><Heart className="w-3.5 h-3.5 text-rose-500" /> {store.name}</div>)) : (<div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>No favorites yet.</div>)}
 							</div>
 						</div>
 						<div className="store-card card-hover shadow-[0_0_15px_rgba(var(--primary),0.05)]">
 							<div className="store-card-header"><h3 style={{ margin: 0, fontSize: "0.95rem" }}>Trending Stores</h3></div>
 							<div style={{ marginTop: "0.4rem" }}>
-								{trendingStores.length ? trendingStores.map((store) => (<div key={store.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "0.3rem" }}><span style={{ color: "var(--color-text-muted)" }}>{store.name}</span><span>👥 {store.current_footfall}</span></div>)) : (<div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>No trends right now.</div>)}
+								{trendingStores.length ? trendingStores.map((store) => (<div key={store.id} style={{ display: "flex", justifyContent: "space-between", fontSize: "0.85rem", marginBottom: "0.4rem" }}><span style={{ color: "var(--color-text-muted)" }}>{store.name}</span><span className="flex items-center gap-1"><Users className="w-3.5 h-3.5 text-blue-500" /> {store.current_footfall}</span></div>)) : (<div style={{ fontSize: "0.85rem", color: "var(--color-text-muted)" }}>No trends right now.</div>)}
 							</div>
 						</div>
 					</div>
@@ -103,7 +108,7 @@ export const CustomerDashboardPage = () => {
 
 			{!loading && openStores.length > 0 && (<div className="panel animate-fade-in-up stagger-6" style={{ marginTop: "0.25rem" }}>
 					<div className="panel-header">
-						<h2 className="panel-title">🔥 Popular Stores</h2>
+						<h2 className="panel-title flex items-center gap-2"><Flame className="w-5 h-5 text-rose-500" /> Popular Stores</h2>
 						<Link to="/mall" className="btn btn-ghost btn-sm">View all</Link>
 					</div>
 					<div className="store-grid">
@@ -120,11 +125,11 @@ export const CustomerDashboardPage = () => {
 									{store.category}
 								</span>
 								<div className="relative z-10" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: "0.75rem", fontSize: "0.85rem" }}>
-									<span style={{ color: "#fbbf24", display: "flex", alignItems: "center", gap: "0.2rem" }}>
-                                        <span className="text-yellow-400">★</span>
+									<span style={{ color: "#fbbf24", display: "flex", alignItems: "center", gap: "0.25rem" }}>
+                                        <Star className="w-3.5 h-3.5 fill-yellow-400 text-yellow-400" />
                                         <span className="font-bold text-foreground">{store.average_rating.toFixed(1)}</span>
                                     </span>
-									<span style={{ color: "var(--color-text-muted)" }}>👥 {store.current_footfall}</span>
+									<span className="flex items-center gap-1" style={{ color: "var(--color-text-muted)" }}><Users className="w-3.5 h-3.5" /> {store.current_footfall}</span>
 								</div>
 							</Link>))}
 					</div>

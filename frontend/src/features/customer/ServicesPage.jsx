@@ -1,43 +1,47 @@
 import React from "react";
+import { 
+    ArrowUpSquare, Droplet, Accessibility, ParkingCircle, 
+    Wifi, Landmark, Baby, Stethoscope, ShieldAlert, Phone, Plus
+} from "lucide-react";
 
 const SERVICES = [
   {
-    icon: "🛗",
+    icon: <ArrowUpSquare className="w-10 h-10 text-blue-500" />,
     title: "Elevators & Escalators",
     description: "Located near all main entrances and at the center atrium for easy access to all floors.",
   },
   {
-    icon: "🚻",
+    icon: <Droplet className="w-10 h-10 text-cyan-500" />,
     title: "Restrooms",
     description: "Clean and accessible restrooms available on every floor near the elevators.",
   },
   {
-    icon: "♿",
+    icon: <Accessibility className="w-10 h-10 text-indigo-500" />,
     title: "Wheelchair Assistance",
     description: "Complimentary wheelchairs available at the Information Desk on the Ground Floor.",
   },
   {
-    icon: "🅿️",
+    icon: <ParkingCircle className="w-10 h-10 text-emerald-500" />,
     title: "Smart Parking",
     description: "Ample parking space with real-time availability tracking and dedicated zones for families.",
   },
   {
-    icon: "📶",
+    icon: <Wifi className="w-10 h-10 text-blue-600" />,
     title: "Free Wi-Fi",
     description: "Stay connected with high-speed internet throughout the mall. Network: SmartMall_Guest",
   },
   {
-    icon: "🏧",
+    icon: <Landmark className="w-10 h-10 text-amber-500" />,
     title: "ATMs & Banking",
     description: "Multiple bank ATMs located on the Ground Floor and Level 2 near the food court.",
   },
   {
-    icon: "🧸",
+    icon: <Baby className="w-10 h-10 text-rose-500" />,
     title: "Kids Play Area",
     description: "Safe and fun play zone for children located on Level 3 near the cinema.",
   },
   {
-    icon: "🚑",
+    icon: <Stethoscope className="w-10 h-10 text-red-500" />,
     title: "First Aid",
     description: "Medical assistance available 24/7. Contact security or visit the infirmary on Level 1.",
   },
@@ -58,7 +62,7 @@ export const ServicesPage = () => {
             className={`service-card animate-fade-in-up stagger-${(index % 6) + 1} card-hover group bg-card border border-border rounded-xl p-6 relative overflow-hidden`}
           >
             <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
-            <div className="service-icon text-4xl mb-4 group-hover:scale-110 transition-transform origin-bottom-left drop-shadow-sm">{service.icon}</div>
+            <div className="service-icon mb-4 group-hover:scale-110 transition-transform origin-bottom-left drop-shadow-sm">{service.icon}</div>
             <h3 className="service-title text-xl font-bold text-foreground mb-2 relative z-10">{service.title}</h3>
             <p className="service-desc text-muted-foreground leading-relaxed relative z-10">{service.description}</p>
           </div>
@@ -67,7 +71,7 @@ export const ServicesPage = () => {
 
       <div className="emergency-contact-box animate-fade-in-up stagger-6 mt-12 bg-destructive/5 border border-destructive/20 rounded-2xl p-8 flex flex-col md:flex-row items-center gap-8 relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-destructive/10 rounded-full blur-3xl pointer-events-none"></div>
-        <div className="emergency-icon text-6xl drop-shadow-md animate-pulse">🚨</div>
+        <div className="emergency-icon drop-shadow-md animate-pulse p-4 bg-destructive/20 rounded-full"><ShieldAlert className="w-12 h-12 text-destructive" /></div>
         <div className="emergency-content flex-1 text-center md:text-left relative z-10">
           <h3 className="emergency-title text-2xl font-black text-destructive mb-2">Emergency Contacts</h3>
           <p className="emergency-text text-foreground/80 font-medium text-lg">
@@ -75,11 +79,11 @@ export const ServicesPage = () => {
           </p>
         </div>
         <div className="emergency-actions flex flex-col sm:flex-row gap-4 relative z-10 w-full md:w-auto">
-          <a href="tel:555-0123" className="btn-emergency btn-emergency-primary flex-1 bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold px-6 py-3 rounded-xl shadow-md transition-transform hover:-translate-y-0.5 whitespace-nowrap text-center">
-            📞 Security: 555-0123
+          <a href="tel:555-0123" className="btn-emergency btn-emergency-primary flex-1 flex items-center justify-center gap-2 bg-destructive hover:bg-destructive/90 text-destructive-foreground font-bold px-6 py-3 rounded-xl shadow-md transition-transform hover:-translate-y-0.5 whitespace-nowrap text-center">
+            <Phone className="w-5 h-5" /> Security: 555-0123
           </a>
-          <a href="tel:555-0911" className="btn-emergency btn-emergency-secondary flex-1 bg-background hover:bg-muted text-foreground border border-border font-bold px-6 py-3 rounded-xl shadow-sm transition-transform hover:-translate-y-0.5 whitespace-nowrap text-center">
-            🏥 Medical: 555-0911
+          <a href="tel:555-0911" className="btn-emergency btn-emergency-secondary flex-1 flex items-center justify-center gap-2 bg-background hover:bg-muted text-foreground border border-border font-bold px-6 py-3 rounded-xl shadow-sm transition-transform hover:-translate-y-0.5 whitespace-nowrap text-center">
+            <Plus className="w-5 h-5 text-destructive" /> Medical: 555-0911
           </a>
         </div>
       </div>

@@ -2,6 +2,10 @@ import React, { useEffect, useState } from "react";
 import { parkingApi } from "@/services/api/parking";
 import { useAuth } from "@/app/providers/AuthProvider";
 import { useWebSocket } from "@/hooks/useWebSocket";
+import { 
+    ParkingSquare, CheckCircle, Car, MapPin, 
+    BarChart2, AlertTriangle, Info, Ticket, ArrowRight 
+} from "lucide-react";
 
 export const ParkingPage = () => {
     const { user } = useAuth();
@@ -79,49 +83,49 @@ export const ParkingPage = () => {
 			</div>
 
 			{message && (<div className="message-banner info">
-					<span>ℹ️</span>
+					<Info className="w-5 h-5" />
 					<span>{message}</span>
 				</div>)}
 
 			{summary && (<>
 					<div className="stat-grid">
 						<div className="stat-card animate-fade-in-up stagger-1 card-hover">
-							<span className="stat-card-icon purple">🅿️</span>
+							<span className="stat-card-icon bg-purple-500/20 text-purple-600 p-2.5 rounded-xl"><ParkingSquare className="w-6 h-6" /></span>
 							<span className="stat-card-text">
 								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Total Slots</span>
 								<span className="stat-card-value text-3xl font-black">{summary.total_slots}</span>
 							</span>
 						</div>
 						<div className="stat-card animate-fade-in-up stagger-2 card-hover">
-							<span className="stat-card-icon green">✅</span>
+							<span className="stat-card-icon bg-green-500/20 text-green-600 p-2.5 rounded-xl"><CheckCircle className="w-6 h-6" /></span>
 							<span className="stat-card-text">
 								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Available</span>
 								<span className="stat-card-value text-3xl font-black" style={{ color: "var(--color-success)" }}>{summary.available}</span>
 							</span>
 						</div>
 						<div className="stat-card animate-fade-in-up stagger-3 card-hover">
-							<span className="stat-card-icon blue">🚗</span>
+							<span className="stat-card-icon bg-blue-500/20 text-blue-600 p-2.5 rounded-xl"><Car className="w-6 h-6" /></span>
 							<span className="stat-card-text">
 								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Occupied</span>
 								<span className="stat-card-value text-3xl font-black">{summary.occupied}</span>
 							</span>
 						</div>
 						<div className="stat-card animate-fade-in-up stagger-4 card-hover">
-							<span className="stat-card-icon amber">📌</span>
+							<span className="stat-card-icon bg-amber-500/20 text-amber-600 p-2.5 rounded-xl"><MapPin className="w-6 h-6" /></span>
 							<span className="stat-card-text">
 								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Reserved</span>
 								<span className="stat-card-value text-3xl font-black">{summary.reserved}</span>
 							</span>
 						</div>
 						<div className="stat-card animate-fade-in-up stagger-5 card-hover">
-							<span className="stat-card-icon cyan">📊</span>
+							<span className="stat-card-icon bg-cyan-500/20 text-cyan-600 p-2.5 rounded-xl"><BarChart2 className="w-6 h-6" /></span>
 							<span className="stat-card-text">
 								<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Utilization</span>
 								<span className="stat-card-value text-3xl font-black">{summary.utilization_percent}%</span>
 							</span>
 						</div>
 						{summary.is_peak && (<div className="stat-card animate-fade-in-up stagger-6 card-hover" style={{ borderColor: "rgba(245, 158, 11, 0.3)" }}>
-								<span className="stat-card-icon amber">⚠️</span>
+								<span className="stat-card-icon bg-amber-500/20 text-amber-600 p-2.5 rounded-xl"><AlertTriangle className="w-6 h-6" /></span>
 								<span className="stat-card-text">
 									<span className="stat-card-label font-semibold text-muted-foreground uppercase tracking-wider text-xs">Peak Hour</span>
 									<span className="stat-card-value text-xl font-bold uppercase tracking-widest mt-1" style={{ color: "var(--color-warning)" }}>Active</span>
@@ -130,7 +134,7 @@ export const ParkingPage = () => {
 					</div>
 
 					<div className="panel">
-						<h2 className="panel-title">📍 Zone Availability</h2>
+						<h2 className="panel-title flex items-center gap-2"><MapPin className="w-5 h-5 text-indigo-500" /> Zone Availability</h2>
 						<div className="data-table-wrapper">
 							<table className="data-table">
 								<thead>
@@ -171,7 +175,7 @@ export const ParkingPage = () => {
 					</div>
 
 					{user && (<div className="panel">
-							<h2 className="panel-title">🎫 Reserve a Parking Slot</h2>
+							<h2 className="panel-title flex items-center gap-2"><Ticket className="w-5 h-5 text-primary" /> Reserve a Parking Slot</h2>
 							<div className="reserve-form">
 								<div className="form-group">
 									<label className="form-label">Preferred Zone</label>
@@ -180,14 +184,14 @@ export const ParkingPage = () => {
 										{Object.keys(summary.zone_stats).map((z) => (<option key={z} value={z}>Zone {z} ({summary.zone_stats[z].available} available)</option>))}
 									</select>
 								</div>
-								<button className="btn btn-primary" onClick={handleReserve} disabled={actionLoading}>
-									{actionLoading ? "Reserving..." : "Reserve Slot →"}
+								<button className="btn btn-primary" style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "0.4rem" }} onClick={handleReserve} disabled={actionLoading}>
+									{actionLoading ? "Reserving..." : <>Reserve Slot <ArrowRight className="w-4 h-4" /></>}
 								</button>
 							</div>
 						</div>)}
 
 					{mySlots.length > 0 && (<div className="panel">
-							<h2 className="panel-title">🚗 My Parking</h2>
+							<h2 className="panel-title flex items-center gap-2"><Car className="w-5 h-5 text-blue-500" /> My Parking</h2>
 							<div className="data-table-wrapper">
 								<table className="data-table">
 									<thead>

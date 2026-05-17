@@ -1,127 +1,139 @@
 import React, { useCallback, useState } from "react";
 import { Link, NavLink, useNavigate } from "react-router-dom";
-import { Building2, Home, ShoppingBag, Search as SearchIcon, LogOut, Menu } from "lucide-react";
+import { 
+    Building2, 
+    Home, 
+    ShoppingBag, 
+    Search, 
+    LogOut, 
+    Menu, 
+    X, 
+    ChevronDown, 
+    ChevronRight, 
+    Command 
+} from "lucide-react";
 import { useAuth } from "@/app/providers/AuthProvider";
+
 export const DashboardLayout = ({ title, navItems, children }) => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
     const [showUserMenu, setShowUserMenu] = useState(false);
     const [showMobileSidebar, setShowMobileSidebar] = useState(false);
-	const openCommandPalette = useCallback(() => {
-		window.dispatchEvent(new Event("smartmall:open-command-palette"));
-	}, []);
+
+    const openCommandPalette = useCallback(() => {
+        window.dispatchEvent(new Event("smartmall:open-command-palette"));
+    }, []);
+
     const handleLogout = useCallback(() => {
         logout();
         navigate("/");
     }, [logout, navigate]);
+
     const roleBadge = user?.role === "super_admin" ? "Super Admin" : user?.role === "admin" ? "Admin" : user?.role ?? "";
-	return (<div className="flex h-screen bg-background text-foreground overflow-hidden w-full dashboard-root">
+
+    return (<div className="flex h-screen bg-background text-foreground overflow-hidden w-full dashboard-root">
             {/* Mobile Sidebar Overlay */}
             {showMobileSidebar && (
                 <div className="fixed inset-0 bg-background/80 backdrop-blur-sm z-40 md:hidden animate-fade-in" onClick={() => setShowMobileSidebar(false)} />
             )}
-			<aside className={`${showMobileSidebar ? "flex fixed inset-y-0 left-0 z-50 shadow-2xl" : "hidden"} md:flex relative w-64 border-r border-border bg-card flex-col flex-shrink-0 md:z-20 dashboard-sidebar transition-transform duration-300`}>
-				<div className="h-16 flex items-center justify-between px-6 border-b border-border dashboard-brand relative overflow-hidden">
+            <aside className={`${showMobileSidebar ? "flex fixed inset-y-0 left-0 z-50 shadow-2xl" : "hidden"} md:flex relative w-64 border-r border-border bg-card flex-col flex-shrink-0 md:z-20 dashboard-sidebar transition-transform duration-300`}>
+                <div className="h-16 flex items-center justify-between px-6 border-b border-border dashboard-brand relative overflow-hidden">
                     <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-					<Link to="/" className="flex items-center gap-3 text-primary hover:text-primary-foreground transition-colors" style={{ textDecoration: "none" }} onClick={() => setShowMobileSidebar(false)}>
-						<Building2 className="w-8 h-8 drop-shadow-md" />
-						<span className="font-black text-xl tracking-tight dashboard-logo">Smart Mall</span>
-					</Link>
-                    <button type="button" className="md:hidden text-muted-foreground p-1" onClick={() => setShowMobileSidebar(false)}>✕</button>
-				</div>
-				
-				<div className="flex-1 overflow-y-auto py-6 px-4 space-y-8 no-scrollbar">
-					<div className="sidebar-section">
-						<div className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-3 mb-3 sidebar-section-label">Navigation</div>
-						<nav>
-							<ul className="space-y-1 dashboard-nav">
-								{navItems.map((item) => (<li key={item.to}>
-										<NavLink to={item.to} end={item.to === "/admin" || item.to === "/super-admin" || item.to === "/dashboard"} className={({ isActive }) => isActive
-					? "flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold shadow-md transition-all hover:-translate-y-0.5 dashboard-nav-link dashboard-nav-link--active"
-					: "flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm group relative"} onClick={() => setShowMobileSidebar(false)}>
-											{item.icon && <item.icon className="nav-icon w-5 h-5 group-hover:scale-110 transition-transform" />}
-											{item.label}
-											{item.badge !== undefined && item.badge > 0 && (<span className="count-badge ml-auto bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">{item.badge}</span>)}
-										</NavLink>
-									</li>))}
-							</ul>
-						</nav>
-					</div>
-					
-					<div className="sidebar-section border-t border-border pt-6">
-						<div className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-3 mb-3 sidebar-section-label">Quick links</div>
-						<nav>
-							<ul className="space-y-1 dashboard-nav">
-								<li>
-									<Link to="/" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm">
-										<Home className="nav-icon w-5 h-5" />
-										Home
-									</Link>
-								</li>
-								<li>
-									<Link to="/mall" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm">
-										<ShoppingBag className="nav-icon w-5 h-5" />
-										Mall directory
-									</Link>
-								</li>
-							</ul>
-						</nav>
-					</div>
-				</div>
-				<div className="p-4 border-t border-border mt-auto">
-					<div className="text-xs font-bold text-muted-foreground text-center bg-secondary/50 py-2 rounded-lg border border-border/50 shadow-inner flex items-center justify-center gap-2">
-						<span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                    <Link to="/" className="flex items-center gap-3 text-primary hover:text-primary-foreground transition-colors" style={{ textDecoration: "none" }} onClick={() => setShowMobileSidebar(false)}>
+                        <Building2 className="w-8 h-8 drop-shadow-md" />
+                        <span className="font-black text-xl tracking-tight dashboard-logo">Smart Mall</span>
+                    </Link>
+                    <button type="button" className="md:hidden text-muted-foreground p-1" onClick={() => setShowMobileSidebar(false)}><X className="w-5 h-5" /></button>
+                </div>
+                
+                <div className="flex-1 overflow-y-auto py-6 px-4 space-y-8 no-scrollbar">
+                    <div className="sidebar-section">
+                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-3 mb-3 sidebar-section-label">Navigation</div>
+                        <nav>
+                            <ul className="space-y-1 dashboard-nav">
+                                {navItems.map((item) => (<li key={item.to}>
+                                        <NavLink to={item.to} end={item.to === "/admin" || item.to === "/super-admin" || item.to === "/dashboard"} className={({ isActive }) => isActive
+                    ? "flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary text-primary-foreground font-semibold shadow-md transition-all hover:-translate-y-0.5 dashboard-nav-link dashboard-nav-link--active"
+                    : "flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm group relative"} onClick={() => setShowMobileSidebar(false)}>
+                                            {item.icon && <item.icon className="nav-icon w-5 h-5 group-hover:scale-110 transition-transform" />}
+                                            {item.label}
+                                            {item.badge !== undefined && item.badge > 0 && (<span className="count-badge ml-auto bg-destructive text-destructive-foreground text-xs font-bold px-2 py-0.5 rounded-full shadow-sm">{item.badge}</span>)}
+                                        </NavLink>
+                                    </li>))}
+                            </ul>
+                        </nav>
+                    </div>
+                    
+                    <div className="sidebar-section border-t border-border pt-6">
+                        <div className="text-xs font-bold text-muted-foreground uppercase tracking-widest px-3 mb-3 sidebar-section-label">Quick links</div>
+                        <nav>
+                            <ul className="space-y-1 dashboard-nav">
+                                <li>
+                                    <Link to="/" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm">
+                                        <Home className="nav-icon w-5 h-5" />
+                                        Home
+                                    </Link>
+                                </li>
+                                <li>
+                                    <Link to="/mall" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-muted-foreground hover:bg-secondary hover:text-secondary-foreground font-medium transition-all dashboard-nav-link text-sm">
+                                        <ShoppingBag className="nav-icon w-5 h-5" />
+                                        Mall directory
+                                    </Link>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
+                </div>
+                <div className="p-4 border-t border-border mt-auto">
+                    <div className="text-xs font-bold text-muted-foreground text-center bg-secondary/50 py-2 rounded-lg border border-border/50 shadow-inner flex items-center justify-center gap-2">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                         Smart Mall v0.1.0
-					</div>
-				</div>
-			</aside>
-			
-			<div className="flex-1 flex flex-col min-w-0">
-				<header className="h-16 border-b border-border bg-background/80 backdrop-blur-lg flex items-center justify-between px-4 sm:px-8 z-10 dashboard-topbar relative">
+                    </div>
+                </div>
+            </aside>
+            
+            <div className="flex-1 flex flex-col min-w-0">
+                <header className="h-16 border-b border-border bg-background/80 backdrop-blur-lg flex items-center justify-between px-4 sm:px-8 z-10 dashboard-topbar relative">
                     <div className="absolute bottom-0 left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/20 to-transparent"></div>
-					<div className="flex items-center gap-2 sm:gap-4">
-						<button type="button" className="md:hidden flex items-center justify-center p-2 mr-1 hamburger-menu" onClick={() => setShowMobileSidebar(true)}>
-							<Menu className="w-6 h-6" />
-						</button>
-						<Link to="/" className="md:hidden hidden sm:flex items-center justify-center p-2 mr-1">
-							<Building2 className="w-6 h-6" />
-						</Link>
-						<span className="hidden sm:inline-flex items-center justify-center text-muted-foreground/40 text-xl font-light">›</span>
-						<h2 className="text-lg sm:text-xl font-extrabold text-foreground tracking-tight dashboard-section-title truncate max-w-[150px] sm:max-w-none">{title}</h2>
-					</div>
-					<div className="flex items-center gap-2 sm:gap-6">
-						<div className="topbar-search flex items-center gap-3 bg-secondary/50 hover:bg-secondary border border-border px-3 sm:px-4 py-2 rounded-xl cursor-pointer text-muted-foreground hover:text-foreground transition-all shadow-sm" role="button" tabIndex={0} onClick={openCommandPalette} onKeyDown={(event) => {
-				if (event.key === "Enter" || event.key === " ") {
-					event.preventDefault();
-					openCommandPalette();
-				}
-			}}>
-							<SearchIcon className="w-4 h-4" />
-							<span className="hidden sm:inline-block text-sm font-medium mr-2">Search…</span>
-							<kbd className="hidden lg:inline-block bg-background border border-border px-2 rounded text-xs font-bold shadow-sm">⌘K</kbd>
-						</div>
-						{user && (<div className="relative">
-								<button type="button" onClick={() => setShowUserMenu((v) => !v)} className="inline-flex items-center gap-2 sm:gap-3 bg-transparent hover:bg-secondary p-1.5 sm:p-2 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border border-transparent hover:border-border active:scale-[0.98]">
-									<div className="dashboard-avatar h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-gradient-to-br from-primary to-blue-600 text-primary-foreground flex items-center justify-center font-bold shadow-md ring-2 ring-background ring-offset-2 ring-offset-primary/20">
-										{(user.full_name ?? user.username)?.[0]?.toUpperCase()}
-									</div>
-									<div className="hidden sm:block text-left">
-										<div className="text-sm font-bold text-foreground leading-tight">{user.full_name ?? user.username}</div>
-										<div className="text-xs font-semibold text-muted-foreground">{roleBadge}</div>
-									</div>
-									<span className="hidden sm:inline-block text-xs text-muted-foreground ml-1 transition-transform duration-200" style={{ transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0deg)' }}>▼</span>
-								</button>
-								{showUserMenu && (<>
-										<div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)}/>
-										<div className="animate-scale-in user-menu-dropdown absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-xl shadow-2xl z-50 overflow-hidden transform origin-top-right">
-											<div className="p-4 border-b border-border bg-secondary/30 relative overflow-hidden">
+                    <div className="flex items-center gap-2 sm:gap-4">
+                        <button type="button" className="md:hidden flex items-center justify-center p-2 mr-1 hamburger-menu" onClick={() => setShowMobileSidebar(true)}>
+                            <Menu className="w-6 h-6" />
+                        </button>
+                        <Link to="/" className="md:hidden hidden sm:flex items-center justify-center p-2 mr-1">
+                            <Building2 className="w-6 h-6" />
+                        </Link>
+                        <ChevronRight className="hidden sm:block w-4 h-4 text-muted-foreground/60" />
+                        <h2 className="text-lg sm:text-xl font-extrabold text-foreground tracking-tight dashboard-section-title truncate max-w-[150px] sm:max-w-none">{title}</h2>
+                    </div>
+                    <div className="flex items-center gap-2 sm:gap-6">
+                        <div className="topbar-search flex items-center gap-3 bg-secondary/50 hover:bg-secondary border border-border px-3 sm:px-4 py-2 rounded-xl cursor-pointer text-muted-foreground hover:text-foreground transition-all shadow-sm" role="button" tabIndex={0} onClick={openCommandPalette} onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    openCommandPalette();
+                }
+            }}>
+                            <Search className="w-4 h-4" />
+                            <span className="hidden sm:inline-block text-sm font-medium mr-2">Search…</span>
+                            <kbd className="hidden lg:flex items-center bg-background border border-border px-1.5 py-0.5 rounded text-[10px] font-bold shadow-sm">
+                                <Command className="w-3 h-3 mr-1" /> K
+                            </kbd>
+                        </div>
+                        {user && (<div className="relative">
+                                <button type="button" onClick={() => setShowUserMenu((v) => !v)} className="inline-flex items-center gap-2 sm:gap-3 bg-transparent hover:bg-secondary p-1.5 sm:p-2 rounded-xl transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 border border-transparent hover:border-border active:scale-[0.98]">
+                                    <div className="dashboard-avatar h-8 w-8 sm:h-9 sm:w-9 rounded-full bg-gradient-to-br from-primary to-blue-600 text-primary-foreground flex items-center justify-center font-bold shadow-md ring-2 ring-background ring-offset-2 ring-offset-primary/20">
+                                        {(user.full_name ?? user.username)?.[0]?.toUpperCase()}
+                                    </div>
+                                    <div className="hidden sm:block text-left">
+                                        <div className="text-sm font-bold text-foreground leading-tight">{user.full_name ?? user.username}</div>
+                                        <div className="text-xs font-semibold text-muted-foreground">{roleBadge}</div>
+                                    </div>
+                                    <ChevronDown className="hidden sm:block w-4 h-4 text-muted-foreground transition-transform duration-200" style={{ transform: showUserMenu ? 'rotate(180deg)' : 'rotate(0deg)' }} />
+                                </button>
+                                {showUserMenu && (<>
+                                        <div className="fixed inset-0 z-40" onClick={() => setShowUserMenu(false)}/>
+                                        <div className="animate-scale-in user-menu-dropdown absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-xl shadow-2xl z-50 overflow-hidden transform origin-top-right">
+                                            <div className="p-4 border-b border-border bg-secondary/30 relative overflow-hidden">
                                                 <div className="absolute top-0 right-0 -mr-4 -mt-4 w-16 h-16 rounded-full bg-primary/10 blur-xl"></div>
-												<div className="font-bold text-sm text-foreground relative z-10">{user.full_name ?? user.username}</div>
-												<div className="text-xs font-medium text-muted-foreground mt-0.5 truncate relative z-10">{user.email ?? user.username}</div>
-											</div>
-											<div className="p-2 space-y-1 bg-card">
-												<Link to="/" className="user-menu-item flex items-center gap-3 px-3 py-2 text-sm font-semibold text-foreground hover:bg-secondary rounded-lg transition-colors" onClick={() => setShowUserMenu(false)}>
-													<Home className="w-4 h-4" /> Home
 												</Link>
 												<button type="button" onClick={handleLogout} className="inline-flex items-center w-full gap-3 px-3 py-2 text-sm font-bold text-destructive hover:bg-destructive/10 hover:text-destructive rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 border border-transparent hover:border-destructive/20 text-left active:scale-[0.98]">
 													<LogOut className="w-4 h-4" /> Sign out

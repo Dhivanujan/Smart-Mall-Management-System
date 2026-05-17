@@ -6,7 +6,7 @@ export function useWebSocket({ url, onMessage, autoConnect = true }) {
     const connect = useCallback(() => {
         if (wsRef.current?.readyState === WebSocket.OPEN)
             return;
-        const baseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8000";
+        const baseUrl = import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8001";
         const wsUrl = baseUrl.replace(/^http/, "ws") + url;
         const ws = new WebSocket(wsUrl);
         ws.onopen = () => setIsConnected(true);

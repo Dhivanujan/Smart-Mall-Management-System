@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { analyticsApi } from "@/services/api/analytics";
+import { DollarSign, Users, Store, ListOrdered, Percent } from "lucide-react";
 export const AnalyticsPage = () => {
     const [data, setData] = useState(null);
     const [loading, setLoading] = useState(true);
@@ -22,27 +23,27 @@ export const AnalyticsPage = () => {
 
 			<div className="metric-grid" style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 180px), 1fr))" }}>
 				<div className="metric-card">
-					<span className="metric-icon">💰</span>
+					<span className="metric-icon"><DollarSign className="w-5 h-5" /></span>
 					<span className="metric-label">Total Revenue</span>
 					<span className="metric-value" style={{ color: "var(--color-accent-strong)" }}>${data.total_revenue.toLocaleString()}</span>
 				</div>
 				<div className="metric-card">
-					<span className="metric-icon">👥</span>
+					<span className="metric-icon"><Users className="w-5 h-5" /></span>
 					<span className="metric-label">Total Visitors</span>
 					<span className="metric-value">{data.daily_visitors.toLocaleString()}</span>
 				</div>
 				<div className="metric-card">
-					<span className="metric-icon">🏪</span>
+					<span className="metric-icon"><Store className="w-5 h-5" /></span>
 					<span className="metric-label">Active Stores</span>
 					<span className="metric-value">{data.active_stores}</span>
 				</div>
 				<div className="metric-card">
-					<span className="metric-icon">🔢</span>
+					<span className="metric-icon"><ListOrdered className="w-5 h-5" /></span>
 					<span className="metric-label">Active Queues</span>
 					<span className="metric-value">{data.active_queues}</span>
 				</div>
 				<div className="metric-card">
-					<span className="metric-icon">📈</span>
+					<span className="metric-icon"><Percent className="w-5 h-5" /></span>
 					<span className="metric-label">Parking Utilization</span>
 					<span className="metric-value">{data.parking_utilization}%</span>
 				</div>
