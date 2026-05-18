@@ -1,6 +1,7 @@
 import bcrypt
 
 from ..schemas.users import User, UserInDB, UserRegister
+from ..repositories.user_repository import user_repo
 from ...db.models.user import UserDocument
 
 
@@ -24,15 +25,15 @@ def _doc_to_user_in_db(doc: UserDocument) -> UserInDB:
 
 
 async def get_user(username: str) -> UserInDB | None:
-	doc = await UserDocument.find_one({"username": username})
+	doc = await user_repo.get_by_username(username)
 	if doc is None:
 		return None
 	return _doc_to_user_in_db(doc)
 
 
 async def get_all_users(role: str | None = None) -> list[UserInDB]:
-	query = {} if role is None else {"role": role}
-	docs = await UserDocument.find(query).to_list()
+	kwargs = {"role": role} if role else {}
+	docs = await user_repo.get_multi(**kwargs)
 	return [_doc_to_user_in_db(d) for d in docs]
 
 
@@ -47,56 +48,51 @@ async def authenticate_user(username: str, password: str) -> User | None:
 
 async def register_user(data: UserRegister) -> User:
 	"""Register a new customer user. Returns the created User."""
-	existing = await UserDocument.find_one({"username": data.email})
+	existing = await user_repo.get_by_email(data.email)
 	if existing:
 		raise ValueError("Email already registered")
-	doc = UserDocument(
-		username=data.email,
-		full_name=data.full_name,
-		email=data.email,
-		role="customer",
-		hashed_password=_hash_password(data.password),
-	)
-	await doc.insert()
+	
+	doc = await user_repo.create({
+		"username": data.email,
+		"full_name": data.full_name,
+		"email": data.email,
+		"role": "customer",
+		"hashed_password": _hash_password(data.password),
+	})
 	return User(**_doc_to_user_in_db(doc).model_dump())
 
 
 async def create_user(username: str, full_name: str, email: str | None, role: str, password: str) -> UserInDB:
-	doc = UserDocument(
-		username=username,
-		full_name=full_name,
-		email=email,
-		role=role,
-		hashed_password=_hash_password(password),
-	)
-	await doc.insert()
+	doc = await user_repo.create({
+		"username": username,
+		"full_name": full_name,
+		"email": email,
+		"role": role,
+		"hashed_password": _hash_password(password),
+	})
 	return _doc_to_user_in_db(doc)
 
 
 async def update_user_fields(username: str, **fields: object) -> UserInDB | None:
-	doc = await UserDocument.find_one({"username": username})
+	doc = await user_repo.get_by_username(username)
 	if doc is None:
 		return None
-	for key, val in fields.items():
-		if val is not None and hasattr(doc, key):
-			setattr(doc, key, val)
-	await doc.save()
+		
+	doc = await user_repo.update(doc, fields)
 	return _doc_to_user_in_db(doc)
 
 
 async def set_user_password(username: str, new_password: str) -> bool:
-	doc = await UserDocument.find_one({"username": username})
+	doc = await user_repo.get_by_username(username)
 	if doc is None:
 		return False
-	doc.hashed_password = _hash_password(new_password)
-	await doc.save()
+	await user_repo.update(doc, {"hashed_password": _hash_password(new_password)})
 	return True
 
 
 async def disable_user(username: str) -> bool:
-	doc = await UserDocument.find_one({"username": username})
+	doc = await user_repo.get_by_username(username)
 	if doc is None:
 		return False
-	doc.is_active = False
-	await doc.save()
+	await user_repo.update(doc, {"is_active": False})
 	return True

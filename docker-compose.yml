@@ -7,6 +7,14 @@ services:
     volumes:
       - mongo_data:/data/db
 
+  redis:
+    image: redis:7-alpine
+    container_name: smartmall-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
   backend:
     build:
       context: .
@@ -24,11 +32,33 @@ services:
       - ./backend/app:/app/app:ro
     depends_on:
       - mongodb
+      - redis
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
       interval: 10s
       timeout: 5s
       retries: 3
+
+  celery_worker:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    container_name: smartmall-celery
+    env_file:
+      - backend/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - MONGODB_URL=mongodb://mongodb:27017
+      - MONGODB_DB_NAME=smart_mall
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/1
+    command: celery -A app.core.celery_app worker --loglevel=info
+    volumes:
+      - ./backend/app:/app/app:ro
+    depends_on:
+      - mongodb
+      - redis
+      - backend
 
   frontend:
     image: node:22-alpine
@@ -45,4 +75,5 @@ services:
 
 volumes:
   mongo_data:
+  redis_data:
 
