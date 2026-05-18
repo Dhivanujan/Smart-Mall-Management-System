@@ -1,7 +1,8 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/app/providers/AuthProvider";
-import { BarChart3, Building2, Zap, ShoppingBag, LayoutDashboard, Store, User, Compass } from "lucide-react";
+import { BarChart3, Building2, Zap, ShoppingBag, LayoutDashboard, Store, User, Compass, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
 const FEATURES = [
     {
         icon: <BarChart3 className="w-8 h-8 text-primary" />,
@@ -41,102 +42,182 @@ const STATS = [
 export const HomePage = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
+
+    const containerVariants = {
+        hidden: { opacity: 0 },
+        visible: {
+            opacity: 1,
+            transition: { staggerChildren: 0.1, delayChildren: 0.2 }
+        }
+    };
+
+    const itemVariants = {
+        hidden: { opacity: 0, y: 20 },
+        visible: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 100 } }
+    };
+
     return (
-        <div className="min-h-screen bg-background text-foreground flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden" style={{ gap: "0" }}>
-            {/* Animated Background Mesh */}
-            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none">
-                <div className="absolute -top-[10%] -right-[10%] w-[50%] h-[50%] rounded-full bg-primary/5 blur-[120px] animate-pulse"></div>
-                <div className="absolute top-[40%] -left-[10%] w-[40%] h-[40%] rounded-full bg-indigo-500/5 blur-[100px] animate-pulse" style={{ animationDelay: "1s" }}></div>
-                <div className="absolute -bottom-[10%] right-[20%] w-[60%] h-[60%] rounded-full bg-blue-500/5 blur-[150px] animate-pulse" style={{ animationDelay: "2s" }}></div>
+        <div className="min-h-screen bg-background text-foreground flex flex-col items-center p-4 sm:p-8 relative overflow-hidden font-sans">
+            {/* Enhanced Animated Background */}
+            <div className="absolute inset-0 z-0 overflow-hidden pointer-events-none bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-primary/5 via-background to-background">
+                <div className="absolute top-0 right-0 w-[80vw] h-[80vh] bg-primary/5 rounded-full blur-[150px] mix-blend-normal animate-pulse duration-10000"></div>
+                <div className="absolute bottom-0 left-0 w-[60vw] h-[60vh] bg-indigo-500/5 rounded-full blur-[120px] mix-blend-normal animate-pulse duration-7000" style={{ animationDelay: "2s" }}></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none"></div>
             </div>
-			<div className="w-full max-w-7xl animate-fade-in-up flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-24 mb-16 mt-8 relative z-10">
-				<section className="flex-1 text-center lg:text-left">
-					<div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-semibold mb-8 shadow-sm">
-						<span className="text-green-500 animate-pulse">●</span>
-						Top-rated smart mall operations platform
-					</div>
-					<h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-tight tracking-tight mb-6">
-						<span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-blue-600 to-indigo-600">Orchestrate your malls</span><br /><span className="text-foreground">with confidence.</span>
-					</h1>
-					<p className="text-xl sm:text-2xl text-muted-foreground mb-10 max-w-2xl mx-auto lg:mx-0">
-						Smart Mall gives super admins and mall operators a live command center for stores, revenue,
-						footfall, and support — all in one modern dashboard.
-					</p>
 
-					{/* Stats row */}
-					<div className="flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-6 mb-10 pb-8 border-b border-border/50">
-						{STATS.map((stat) => (
-                            <div key={stat.label} className="text-center lg:text-left bg-card/40 backdrop-blur-md border border-border/50 rounded-2xl p-6 shadow-sm flex-1 min-w-[140px] transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:bg-card/60">
-								<div className="text-4xl font-black bg-clip-text text-transparent bg-gradient-to-br from-primary to-primary/70 tracking-tighter mb-1">
-									{stat.value}
-								</div>
-								<div className="text-xs font-bold text-muted-foreground uppercase tracking-widest mt-1">
-									{stat.label}
-								</div>
-							</div>
+            {/* Navbar / Header */}
+            <motion.header 
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="w-full max-w-7xl flex justify-between items-center py-6 relative z-10"
+            >
+                <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary to-indigo-600 flex items-center justify-center shadow-lg shadow-primary/20">
+                        <Building2 className="w-6 h-6 text-white" />
+                    </div>
+                    <span className="text-xl font-bold tracking-tight">SmartMall</span>
+                </div>
+                <div className="flex items-center gap-4">
+                    {user ? (
+                        <button onClick={() => { logout(); navigate("/"); }} className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                            Sign out
+                        </button>
+                    ) : (
+                        <Link to="/login?role=customer" className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                            Sign In
+                        </Link>
+                    )}
+                </div>
+            </motion.header>
+
+            <motion.div 
+                variants={containerVariants}
+                initial="hidden"
+                animate="visible"
+                className="w-full max-w-7xl flex flex-col lg:flex-row items-center justify-between gap-12 lg:gap-24 mt-8 lg:mt-12 mb-20 relative z-10 flex-1"
+            >
+                <div className="flex-1 text-center lg:text-left flex flex-col items-center lg:items-start">
+                    <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/10 text-primary border border-primary/20 text-sm font-semibold mb-8 shadow-sm backdrop-blur-md">
+                        <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        Enterprise-Grade Mall Operations
+                    </motion.div>
+                    
+                    <motion.h1 variants={itemVariants} className="text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[1.1] tracking-tight mb-6">
+                        <span className="text-foreground">Orchestrate your malls</span><br />
+                        <span className="bg-clip-text text-transparent bg-gradient-to-r from-primary via-indigo-500 to-purple-600">with absolute precision.</span>
+                    </motion.h1>
+                    
+                    <motion.p variants={itemVariants} className="text-xl sm:text-2xl text-muted-foreground mb-10 max-w-2xl leading-relaxed">
+                        The intelligent command center for super admins, operators, and customers. Unify footfall, revenue, and store management in one beautiful platform.
+                    </motion.p>
+
+                    {/* Stats row */}
+                    <motion.div variants={itemVariants} className="flex flex-wrap justify-center lg:justify-start gap-4 sm:gap-8 mb-12 w-full">
+                        {STATS.map((stat) => (
+                            <div key={stat.label} className="flex flex-col items-center lg:items-start relative group">
+                                <div className="text-4xl font-black text-foreground tracking-tighter mb-1 relative z-10">
+                                    {stat.value}
+                                </div>
+                                <div className="text-sm font-semibold text-muted-foreground uppercase tracking-wider relative z-10">
+                                    {stat.label}
+                                </div>
+                            </div>
                         ))}
-					</div>
+                    </motion.div>
 
-					<div className="flex flex-col sm:flex-row flex-wrap gap-4 justify-center lg:justify-start">
-						{user ? (<>
-								{user.role === "customer" && (<Link to="/dashboard" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
-										<LayoutDashboard className="w-5 h-5" /> My Dashboard
-									</Link>)}
-								{["admin", "super_admin"].includes(user.role) && (<Link to="/admin" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-[0_4px_14px_0_rgba(var(--primary),0.39)] hover:shadow-[0_6px_20px_rgba(var(--primary),0.23)] hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
-										<BarChart3 className="w-5 h-5" /> Open admin console
-									</Link>)}
-								{user.role === "super_admin" && (<Link to="/super-admin" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
-										<Building2 className="w-5 h-5" /> Super admin overview
-									</Link>)}
-								<button type="button" className="inline-flex items-center justify-center px-6 py-3 border border-border text-foreground font-bold rounded-xl hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]" onClick={() => { logout(); navigate("/"); }}>
-									Sign out
-								</button>
-							</>) : (<>
-								<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 w-full">
-                                    <Link to="/login?role=customer" className="inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 bg-primary text-primary-foreground font-bold rounded-xl shadow-md hover:shadow-lg hover:bg-primary/95 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98]">
-                                        <User className="w-4 h-4" /> Sign in to dashboard
+                    <motion.div variants={itemVariants} className="flex flex-col sm:flex-row flex-wrap gap-4 w-full justify-center lg:justify-start">
+                        {user ? (
+                            <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                                {user.role === "customer" && (
+                                    <Link to="/dashboard" className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all hover:-translate-y-1">
+                                        <LayoutDashboard className="w-5 h-5" /> 
+                                        Go to Dashboard
+                                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                     </Link>
-                                    <Link to="/login?role=admin" className="inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
-                                        <Store className="w-4 h-4" /> Store admin login
+                                )}
+                                {["admin", "super_admin"].includes(user.role) && (
+                                    <Link to="/admin" className="group inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all hover:-translate-y-1">
+                                        <BarChart3 className="w-5 h-5" /> 
+                                        Admin Console
+                                        <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                                     </Link>
-                                    <Link to="/login?role=super_admin" className="inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 bg-secondary text-secondary-foreground font-bold rounded-xl hover:bg-secondary/80 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 border border-transparent shadow-sm active:scale-[0.98]">
-                                        <Building2 className="w-4 h-4" /> Super admin login
+                                )}
+                                {user.role === "super_admin" && (
+                                    <Link to="/super-admin" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-card text-card-foreground border border-border/50 font-bold rounded-2xl hover:bg-secondary/50 transition-all hover:-translate-y-1 shadow-lg shadow-black/5">
+                                        <Building2 className="w-5 h-5" /> Super Admin
                                     </Link>
-                                    <Link to="/register" className="inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 border border-border text-foreground font-bold rounded-xl hover:bg-secondary/50 transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]">
-                                        <User className="w-4 h-4" /> Create account
+                                )}
+                            </div>
+                        ) : (
+                            <div className="flex flex-col w-full max-w-md gap-4">
+                                <Link to="/mall" className="group w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-primary text-primary-foreground font-bold rounded-2xl shadow-xl shadow-primary/20 hover:shadow-2xl hover:shadow-primary/30 transition-all hover:-translate-y-1 text-lg">
+                                    <Compass className="w-6 h-6" /> Explore Mall Directory
+                                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                                </Link>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <Link to="/login?role=admin" className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-card border border-border/50 text-foreground font-semibold rounded-xl hover:bg-secondary/50 transition-all hover:-translate-y-0.5 shadow-sm">
+                                        <Store className="w-4 h-4 text-primary" /> For Stores
                                     </Link>
-                                    <Link to="/mall" className="sm:col-span-2 lg:col-span-2 inline-flex items-center justify-center gap-2 whitespace-nowrap px-5 py-3 border border-border bg-card text-foreground font-bold rounded-xl hover:bg-secondary transition-all shadow-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 active:scale-[0.98]">
-                                        <Compass className="w-4 h-4 text-primary" /> Browse mall directory
+                                    <Link to="/login?role=super_admin" className="inline-flex items-center justify-center gap-2 px-4 py-3 bg-card border border-border/50 text-foreground font-semibold rounded-xl hover:bg-secondary/50 transition-all hover:-translate-y-0.5 shadow-sm">
+                                        <Building2 className="w-4 h-4 text-primary" /> For Ops
                                     </Link>
                                 </div>
-							</>)}
-					</div>
-				</section>
-				
-				<aside className="flex-1 w-full max-w-2xl">
-					<div className="grid grid-cols-1 sm:grid-cols-2 gap-6" aria-label="Role based entry cards">
-						{FEATURES.map((f, i) => (<div key={f.label} className={`bg-card/80 backdrop-blur-sm text-card-foreground border border-border/50 p-6 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 animate-fade-in-up stagger-${i + 1}`}>
-								<div className="text-4xl mb-4 bg-gradient-to-br from-secondary to-secondary/40 h-16 w-16 rounded-2xl flex items-center justify-center border border-border/50 shadow-sm">{f.icon}</div>
-								<div className="text-xs font-bold text-primary uppercase tracking-wider mb-2">{f.label}</div>
-								<div className="text-xl font-bold mb-2 leading-tight">{f.title}</div>
-								<div className="text-sm text-muted-foreground mb-6 h-10">
-									{f.desc}
-								</div>
-								<div className="flex flex-wrap gap-2">
-									{f.tags.map((tag) => (<span key={tag} className="px-2.5 py-1 bg-secondary/80 text-secondary-foreground text-xs font-semibold rounded-md shrink-0">{tag}</span>))}
-								</div>
-							</div>))}
-					</div>
-				</aside>
-			</div>
-			
-			<footer className="w-full max-w-7xl py-8 mt-auto border-t border-border/50 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm font-medium text-muted-foreground/80 relative z-10">
-				<div>&copy; {new Date().getFullYear()} Smart Mall Management System</div>
-				<div className="flex gap-8">
-					<Link to="#" className="hover:text-primary transition-colors">Privacy</Link>
-					<Link to="#" className="hover:text-primary transition-colors">Terms</Link>
-					<Link to="#" className="hover:text-primary transition-colors">Help</Link>
-				</div>
-			</footer>
-		</div>);
+                            </div>
+                        )}
+                    </motion.div>
+                </div>
+                
+                <motion.div variants={itemVariants} className="flex-1 w-full max-w-2xl lg:mt-0 mt-12 relative">
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-gradient-to-br from-primary/20 to-indigo-500/20 rounded-full blur-[100px] pointer-events-none"></div>
+                    
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 relative z-10">
+                        {FEATURES.map((f, i) => (
+                            <motion.div 
+                                key={f.label} 
+                                whileHover={{ y: -5, scale: 1.02 }}
+                                transition={{ type: "spring", stiffness: 300, damping: 20 }}
+                                className="bg-card/40 backdrop-blur-xl text-card-foreground border border-border/50 p-6 sm:p-8 rounded-3xl shadow-xl hover:shadow-2xl hover:shadow-primary/10 transition-all duration-300 relative overflow-hidden group"
+                            >
+                                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-primary/10 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                                
+                                <div className="mb-6 inline-flex p-3 rounded-2xl bg-gradient-to-br from-background to-secondary/50 border border-border/50 shadow-inner">
+                                    {f.icon}
+                                </div>
+                                <div className="text-xs font-bold text-primary uppercase tracking-widest mb-3">{f.label}</div>
+                                <div className="text-xl font-bold mb-3 leading-tight group-hover:text-primary transition-colors">{f.title}</div>
+                                <div className="text-sm text-muted-foreground mb-6 leading-relaxed">
+                                    {f.desc}
+                                </div>
+                                <div className="flex flex-wrap gap-2">
+                                    {f.tags.map((tag) => (
+                                        <span key={tag} className="px-3 py-1 bg-background/50 backdrop-blur-sm border border-border/30 text-foreground text-xs font-medium rounded-lg">
+                                            {tag}
+                                        </span>
+                                    ))}
+                                </div>
+                            </motion.div>
+                        ))}
+                    </div>
+                </motion.div>
+            </motion.div>
+            
+            <motion.footer 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.8, duration: 0.6 }}
+                className="w-full max-w-7xl py-8 mt-auto border-t border-border/30 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm font-medium text-muted-foreground relative z-10"
+            >
+                <div className="flex items-center gap-2">
+                    <Building2 className="w-4 h-4" />
+                    <span>&copy; {new Date().getFullYear()} Smart Mall Management System</span>
+                </div>
+                <div className="flex gap-6 sm:gap-8">
+                    <Link to="#" className="hover:text-primary transition-colors">Privacy</Link>
+                    <Link to="#" className="hover:text-primary transition-colors">Terms</Link>
+                    <Link to="#" className="hover:text-primary transition-colors">Help</Link>
+                </div>
+            </motion.footer>
+        </div>
+    );
 };

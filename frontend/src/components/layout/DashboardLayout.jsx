@@ -134,12 +134,17 @@ export const DashboardLayout = ({ title, navItems, children }) => {
                                         <div className="animate-scale-in user-menu-dropdown absolute right-0 top-full mt-2 w-56 bg-card border border-border rounded-xl shadow-2xl z-50 overflow-hidden transform origin-top-right">
                                             <div className="p-4 border-b border-border bg-secondary/30 relative overflow-hidden">
                                                 <div className="absolute top-0 right-0 -mr-4 -mt-4 w-16 h-16 rounded-full bg-primary/10 blur-xl"></div>
-												</Link>
-												<button type="button" onClick={handleLogout} className="inline-flex items-center w-full gap-3 px-3 py-2 text-sm font-bold text-destructive hover:bg-destructive/10 hover:text-destructive rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 border border-transparent hover:border-destructive/20 text-left active:scale-[0.98]">
-													<LogOut className="w-4 h-4" /> Sign out
-												</button>
-											</div>
-										</div>
+                                                <div className="relative z-10">
+                                                    <p className="text-sm font-bold text-foreground leading-tight truncate">{user.full_name ?? user.username}</p>
+                                                    <p className="text-xs font-semibold text-muted-foreground truncate mt-0.5">{roleBadge}</p>
+                                                </div>
+                                            </div>
+                                            <div className="p-2">
+                                                <button type="button" onClick={handleLogout} className="inline-flex items-center w-full gap-3 px-3 py-2 text-sm font-bold text-destructive hover:bg-destructive/10 hover:text-destructive rounded-lg transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 border border-transparent hover:border-destructive/20 text-left active:scale-[0.98]">
+                                                    <LogOut className="w-4 h-4" /> Sign out
+                                                </button>
+                                            </div>
+                                        </div>
 									</>)}
 							</div>)}
 					</div>
