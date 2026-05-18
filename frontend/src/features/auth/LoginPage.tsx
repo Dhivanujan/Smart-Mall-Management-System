@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+﻿import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/app/providers/AuthProvider";
 
@@ -108,7 +108,7 @@ export const LoginPage = () => {
                   type={showPassword ? "text" : "password"}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
+                  placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
                   className="w-full rounded-md border border-input bg-background px-3 py-2 pr-9 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary placeholder:text-muted-foreground"
                   autoComplete="current-password"
                   required
@@ -152,9 +152,9 @@ export const LoginPage = () => {
           </form>
 
           <p className="text-center text-sm text-muted-foreground pt-4 border-t border-border">
-            Don’t have an account?{" "}
+            New customer?{" "}
             <Link to="/register" className="font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded">
-              Sign up
+              Create a free account
             </Link>
           </p>
         </div>

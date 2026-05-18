@@ -33,7 +33,8 @@ class CreateUserRequest(BaseModel):
     password: str = Field(min_length=6, max_length=128)
     full_name: str = Field(min_length=1, max_length=200)
     email: str | None = None
-    role: str = Field(default="customer", pattern=r"^(customer|admin|super_admin)$")
+    # Super admin accounts can only be created via the seed script, not the API.
+    role: str = Field(default="admin", pattern=r"^(customer|admin)$")
 
 
 class UpdateUserRequest(BaseModel):
@@ -133,6 +134,9 @@ async def admin_create_user(
     body: CreateUserRequest,
     current_user: User = Depends(require_super_admin),
 ) -> dict:
+    """Create a new store admin or customer account. Only super admins can call this.
+    Super admin accounts cannot be created via the API — use the seed script.
+    """
     existing = await get_user(body.username)
     if existing:
         raise HTTPException(status_code=409, detail="Username already exists")

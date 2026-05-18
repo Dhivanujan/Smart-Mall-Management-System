@@ -1,162 +1,151 @@
 import React, { useEffect, useState } from "react";
 import { usersApi } from "@/services/api/users";
+import { UserPlus, X, CheckCircle, XCircle, Trash2 } from "lucide-react";
+
+const ROLE_BADGE: Record<string, { label: string; cls: string }> = {
+    customer:    { label: "Customer",    cls: "status-badge active" },
+    admin:       { label: "Store Admin", cls: "status-badge pending" },
+    super_admin: { label: "Super Admin", cls: "status-badge" },
+};
+
 export const UserManagementPage = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [showForm, setShowForm] = useState(false);
     const [message, setMessage] = useState("");
+    const [isError, setIsError] = useState(false);
     const [form, setForm] = useState({ username: "", email: "", full_name: "", password: "", role: "customer" });
+
     const fetchUsers = async () => {
         try {
             const res = await usersApi.adminList();
             setUsers(res.data.users);
-        }
-        catch {
-            // ignore
-        }
-        finally {
-            setLoading(false);
-        }
+        } catch { /* ignore */ } finally { setLoading(false); }
     };
+
     useEffect(() => { fetchUsers(); }, []);
-    const handleCreate = async (e) => {
+
+    const notify = (msg: string, err = false) => { setMessage(msg); setIsError(err); setTimeout(() => setMessage(""), 4000); };
+
+    const handleCreate = async (e: React.FormEvent) => {
         e.preventDefault();
         try {
             await usersApi.adminCreate(form);
-            setMessage("User created successfully");
+            notify("User created successfully");
             setShowForm(false);
             setForm({ username: "", email: "", full_name: "", password: "", role: "customer" });
             await fetchUsers();
-        }
-        catch (err) {
-            setMessage(err.response?.data?.detail ?? "Failed to create user");
-        }
+        } catch (err: any) { notify(err.response?.data?.detail ?? "Failed to create user", true); }
     };
-    const handleToggleActive = async (user) => {
+
+    const handleToggleActive = async (user: any) => {
         try {
             await usersApi.adminUpdate(user.username, { is_active: !user.is_active });
-            setMessage(`User ${user.is_active ? "deactivated" : "activated"}`);
+            notify(`User ${user.is_active ? "deactivated" : "activated"}`);
             await fetchUsers();
-        }
-        catch (err) {
-            setMessage(err.response?.data?.detail ?? "Operation failed");
-        }
+        } catch (err: any) { notify(err.response?.data?.detail ?? "Operation failed", true); }
     };
-    const handleDelete = async (username) => {
+
+    const handleDelete = async (username: string) => {
+        if (!confirm(`Delete user "${username}"? This cannot be undone.`)) return;
         try {
             await usersApi.adminDelete(username);
-            setMessage("User deleted");
+            notify("User deleted");
             await fetchUsers();
-        }
-        catch (err) {
-            setMessage(err.response?.data?.detail ?? "Delete failed");
-        }
+        } catch (err: any) { notify(err.response?.data?.detail ?? "Delete failed", true); }
     };
-    const roleColors = {
-        customer: "#3498db",
-        admin: "#f39c12",
-        super_admin: "#e74c3c",
-    };
-    if (loading)
-        return <div className="loading-spinner"/>;
-    return (<div className="panel-page">
-			<div className="page-header">
-				<h1 className="hero-heading">User Management</h1>
-				<p className="hero-subtitle">Manage user accounts, roles, and access control</p>
-			</div>
 
-			{message && <div className="alert-item alert-info" style={{ marginBottom: "1rem" }}>{message}</div>}
+    if (loading) return <div className="flex justify-center py-16"><div className="loading-spinner" /></div>;
 
-			<div style={{ display: "flex", gap: "1rem", marginBottom: "1.5rem" }}>
-				<button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
-					{showForm ? "Cancel" : "+ Add User"}
-				</button>
-				<div style={{ marginLeft: "auto", display: "flex", alignItems: "center", gap: "0.5rem", fontSize: "0.85rem", color: "var(--color-text-muted)" }}>
-					Total: {users.length} users
-				</div>
-			</div>
+    return (
+        <div>
+            <div className="page-header">
+                <div>
+                    <h1 className="hero-heading">User Management</h1>
+                    <p className="hero-subtitle">Manage accounts, roles, and access control · {users.length} total users</p>
+                </div>
+                <button className="btn btn-primary" onClick={() => setShowForm(!showForm)}>
+                    {showForm ? <><X className="w-4 h-4" /> Cancel</> : <><UserPlus className="w-4 h-4" /> Add User</>}
+                </button>
+            </div>
 
-			{showForm && (<div className="section-card" style={{ marginBottom: "2rem" }}>
-					<h2 className="section-title">Create User</h2>
-					<form onSubmit={handleCreate} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
-						<div>
-							<label style={{ display: "block", marginBottom: "0.5rem", color: "var(--color-text-muted)", fontSize: "0.85rem" }}>Username</label>
-							<input className="form-input" value={form.username} onChange={(e) => setForm({ ...form, username: e.target.value })} required/>
-						</div>
-						<div>
-							<label style={{ display: "block", marginBottom: "0.5rem", color: "var(--color-text-muted)", fontSize: "0.85rem" }}>Email</label>
-							<input className="form-input" type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required/>
-						</div>
-						<div>
-							<label style={{ display: "block", marginBottom: "0.5rem", color: "var(--color-text-muted)", fontSize: "0.85rem" }}>Full Name</label>
-							<input className="form-input" value={form.full_name} onChange={(e) => setForm({ ...form, full_name: e.target.value })} required/>
-						</div>
-						<div>
-							<label style={{ display: "block", marginBottom: "0.5rem", color: "var(--color-text-muted)", fontSize: "0.85rem" }}>Password</label>
-							<input className="form-input" type="password" value={form.password} onChange={(e) => setForm({ ...form, password: e.target.value })} required minLength={6}/>
-						</div>
-						<div>
-							<label style={{ display: "block", marginBottom: "0.5rem", color: "var(--color-text-muted)", fontSize: "0.85rem" }}>Role</label>
-							<select className="form-input" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
-								<option value="customer">Customer</option>
-								<option value="admin">Store Admin</option>
-								<option value="super_admin">Super Admin</option>
-							</select>
-						</div>
-						<div style={{ display: "flex", alignItems: "flex-end" }}>
-							<button type="submit" className="btn btn-primary">Create User</button>
-						</div>
-					</form>
-				</div>)}
+            {message && (
+                <div className={isError ? "error-banner" : "message-banner"} style={{ marginBottom: "1rem" }}>
+                    {message}
+                </div>
+            )}
 
-			<div className="data-table-wrapper">
-				<table className="data-table">
-					<thead>
-						<tr>
-							<th>Username</th>
-							<th>Email</th>
-							<th>Full Name</th>
-							<th>Role</th>
-							<th>Status</th>
-							<th>Actions</th>
-						</tr>
-					</thead>
-					<tbody>
-						{users.map((u) => (<tr key={u.username}>
-								<td style={{ fontWeight: 600 }}>{u.username}</td>
-								<td>{u.email}</td>
-								<td>{u.full_name}</td>
-								<td>
-									<span style={{
-                background: roleColors[u.role] ?? "#95a5a6",
-                color: "#fff",
-                padding: "0.15rem 0.5rem",
-                borderRadius: "4px",
-                fontSize: "0.75rem",
-                fontWeight: 600,
-                textTransform: "uppercase",
-            }}>
-										{u.role.replace("_", " ")}
-									</span>
-								</td>
-								<td>
-									<span style={{ color: u.is_active ? "var(--color-success)" : "var(--color-danger)", fontWeight: 600, fontSize: "0.85rem" }}>
-										{u.is_active ? "Active" : "Inactive"}
-									</span>
-								</td>
-								<td>
-									<div style={{ display: "flex", gap: "0.5rem" }}>
-										<button className="btn" style={{ fontSize: "0.8rem" }} onClick={() => handleToggleActive(u)}>
-											{u.is_active ? "Deactivate" : "Activate"}
-										</button>
-										<button className="btn" style={{ fontSize: "0.8rem", color: "var(--color-danger)" }} onClick={() => handleDelete(u.username)}>
-											Delete
-										</button>
-									</div>
-								</td>
-							</tr>))}
-					</tbody>
-				</table>
-			</div>
-		</div>);
+            {showForm && (
+                <div className="section-card" style={{ marginBottom: "1.5rem" }}>
+                    <h2 className="panel-title" style={{ marginBottom: "1rem" }}>Create New User</h2>
+                    <form onSubmit={handleCreate} style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+                        {[
+                            { label: "Username", field: "username", type: "text" },
+                            { label: "Email", field: "email", type: "email" },
+                            { label: "Full Name", field: "full_name", type: "text" },
+                            { label: "Password", field: "password", type: "password" },
+                        ].map(({ label, field, type }) => (
+                            <div key={field}>
+                                <label className="form-label">{label}</label>
+                                <input
+                                    className="form-input" type={type} required minLength={field === "password" ? 6 : undefined}
+                                    value={(form as any)[field]}
+                                    onChange={(e) => setForm({ ...form, [field]: e.target.value })}
+                                />
+                            </div>
+                        ))}
+                        <div>
+                            <label className="form-label">Role</label>
+                            <select className="form-input" value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+                                <option value="customer">Customer</option>
+                                <option value="admin">Store Admin</option>
+                            </select>
+                        </div>
+                        <div style={{ display: "flex", alignItems: "flex-end" }}>
+                            <button type="submit" className="btn btn-primary" style={{ width: "100%" }}>Create User</button>
+                        </div>
+                    </form>
+                </div>
+            )}
+
+            <div className="data-table-wrapper">
+                <table className="data-table">
+                    <thead>
+                        <tr><th>Username</th><th>Email</th><th>Full Name</th><th>Role</th><th>Status</th><th>Actions</th></tr>
+                    </thead>
+                    <tbody>
+                        {users.map((u: any) => {
+                            const badge = ROLE_BADGE[u.role] ?? { label: u.role, cls: "status-badge" };
+                            return (
+                                <tr key={u.username}>
+                                    <td style={{ fontWeight: 600 }}>{u.username}</td>
+                                    <td style={{ color: "var(--color-text-muted)" }}>{u.email}</td>
+                                    <td>{u.full_name}</td>
+                                    <td><span className={badge.cls}>{badge.label}</span></td>
+                                    <td>
+                                        <span className={`status-badge ${u.is_active ? "active" : "closed"}`}>
+                                            {u.is_active ? <CheckCircle className="w-3 h-3" /> : <XCircle className="w-3 h-3" />}
+                                            {u.is_active ? "Active" : "Inactive"}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        <div style={{ display: "flex", gap: "0.5rem" }}>
+                                            <button className="btn btn-ghost btn-sm" onClick={() => handleToggleActive(u)}>
+                                                {u.is_active ? "Deactivate" : "Activate"}
+                                            </button>
+                                            {u.role !== "super_admin" && (
+                                                <button className="btn btn-sm" style={{ color: "var(--color-danger)", borderColor: "hsl(0 84% 60% / 0.3)" }} onClick={() => handleDelete(u.username)}>
+                                                    <Trash2 className="w-3.5 h-3.5" />
+                                                </button>
+                                            )}
+                                        </div>
+                                    </td>
+                                </tr>
+                            );
+                        })}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    );
 };

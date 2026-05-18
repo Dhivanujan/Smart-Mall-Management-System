@@ -230,7 +230,7 @@ export const GlobalCommandPalette = () => {
     if (!user) {
       base.push(
         { id: "login", label: "Sign In", path: "/login", icon: "🔐", section: "Pages" },
-        { id: "register", label: "Register", path: "/register", icon: "📝", section: "Pages" }
+        { id: "register", label: "Customer Sign Up", path: "/register", icon: "📝", section: "Pages" }
       );
       return dedupeByPath(base);
     }

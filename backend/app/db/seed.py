@@ -23,16 +23,35 @@ def _hash_password(password: str) -> str:
 
 
 async def seed_database() -> None:
-    """Insert demo data into MongoDB if the users collection is empty."""
+    """Seed MongoDB with demo data on first startup.
+
+    Super admin account is always guaranteed to exist — it cannot be created
+    through any public API or signup flow.  Store admins are created only by
+    the super admin via the management UI.  Customers can self-register.
+    """
+
+    # ── Super admin: always ensure exactly one exists ────────────
+    super_admin_exists = await UserDocument.find(UserDocument.role == "super_admin").count()
+    if not super_admin_exists:
+        logger.info("Creating super admin account …")
+        await UserDocument(
+            username="superadmin@example.com",
+            full_name="Platform Super Admin",
+            email="superadmin@example.com",
+            role="super_admin",
+            hashed_password=_hash_password("super123"),
+        ).insert()
 
     existing_users = await UserDocument.count()
-    if existing_users > 0:
-        logger.info("Database already seeded — skipping")
+    # Only seed demo data when the DB is otherwise empty (super admin just created counts as 1)
+    if existing_users > 1:
+        logger.info("Database already seeded — skipping demo data")
         return
 
     logger.info("Seeding database with demo data …")
 
-    # ── Users ───────────────────────────────────────────────────
+    # ── Demo store admin & customer ──────────────────────────────
+    # Store admins are created by the super admin; this is demo data only.
     await UserDocument.insert_many([
         UserDocument(
             username="admin@example.com",
@@ -40,13 +59,6 @@ async def seed_database() -> None:
             email="admin@example.com",
             role="admin",
             hashed_password=_hash_password("admin123"),
-        ),
-        UserDocument(
-            username="superadmin@example.com",
-            full_name="Platform Super Admin",
-            email="superadmin@example.com",
-            role="super_admin",
-            hashed_password=_hash_password("super123"),
         ),
         UserDocument(
             username="customer@example.com",

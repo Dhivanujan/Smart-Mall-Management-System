@@ -32,8 +32,8 @@ export const NotFoundPage = () => (<div className="not-found-page min-h-screen f
             <div className="border-t border-border/50 pt-6">
                 <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest mb-4">Popular Destinations</p>
                 <div className="flex flex-wrap gap-2 justify-center">
-                    <Link to="/login" className="px-3 py-1.5 bg-secondary/80 hover:bg-secondary text-secondary-foreground text-sm font-medium rounded-lg transition-colors border border-border/50">Login to Dashboard</Link>
-                    <Link to="/register" className="px-3 py-1.5 bg-secondary/80 hover:bg-secondary text-secondary-foreground text-sm font-medium rounded-lg transition-colors border border-border/50">Create Account</Link>
+                    <Link to="/login" className="px-3 py-1.5 bg-secondary/80 hover:bg-secondary text-secondary-foreground text-sm font-medium rounded-lg transition-colors border border-border/50">Login</Link>
+                    <Link to="/register" className="px-3 py-1.5 bg-secondary/80 hover:bg-secondary text-secondary-foreground text-sm font-medium rounded-lg transition-colors border border-border/50">Customer Sign Up</Link>
                 </div>
             </div>
         </div>
