@@ -25,6 +25,7 @@ dependencies = [
 	"email-validator>=2.0.0,<3.0.0",
 	"motor>=3.6.0,<4.0.0",
 	"beanie>=1.26.0,<2.0.0",
+	"cloudinary>=1.41.0,<2.0.0",
 ]
 
 [project.optional-dependencies]

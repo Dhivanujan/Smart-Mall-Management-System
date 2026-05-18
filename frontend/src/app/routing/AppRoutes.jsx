@@ -2,6 +2,8 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { ProtectedRoute } from "./ProtectedRoute";
 import { LoginPage } from "@/features/auth/LoginPage";
+import { StoreLoginPage } from "@/features/auth/StoreLoginPage";
+import { OpsLoginPage } from "@/features/auth/OpsLoginPage";
 import { RegisterPage } from "@/features/auth/RegisterPage";
 import { AdminDashboardPage } from "@/features/store-admin/AdminDashboardPage";
 import { SuperAdminDashboardPage } from "@/features/super-admin/SuperAdminDashboardPage";
@@ -50,6 +52,8 @@ export const AppRoutes = () => {
     return (<Routes>
 			<Route path="/" element={<HomePage />}/>
 			<Route path="/login" element={<LoginPage />}/>
+			<Route path="/login/stores" element={<StoreLoginPage />}/>
+			<Route path="/login/ops" element={<OpsLoginPage />}/>
 			<Route path="/register" element={<RegisterPage />}/>
 			<Route path="/mall" element={<MallOverviewPage />}/>
             <Route path="/mall/stores/:storeId" element={<StoreDetailsPage />}/>

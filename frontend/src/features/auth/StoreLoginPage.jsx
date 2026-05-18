@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "@/app/providers/AuthProvider";
 
-export const LoginPage = () => {
+export const StoreLoginPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const { login, user } = useAuth();
@@ -16,13 +16,15 @@ export const LoginPage = () => {
 
   useEffect(() => {
     if (user) {
-      navigate("/dashboard", { replace: true });
+      if (user.role === "admin") {
+        navigate("/admin", { replace: true });
+      }
     }
   }, [navigate, user]);
 
   const applyDemoCredentials = () => {
-    setUsername("customer@example.com");
-    setPassword("customer123");
+    setUsername("admin@example.com");
+    setPassword("admin123");
     setError(null);
   };
 
@@ -34,12 +36,12 @@ export const LoginPage = () => {
     try {
       const authenticatedUser = await login({ username, password });
       
-      if (authenticatedUser.role !== "customer") {
-        throw new Error("This login portal is only for customers.");
+      if (authenticatedUser.role !== "admin") {
+        throw new Error("This login portal is only for store admins.");
       }
 
       const from = location.state?.from?.pathname;
-      navigate(from ?? "/dashboard", { replace: true });
+      navigate(from ?? "/admin", { replace: true });
     } catch (err) {
       setError(err?.message || err?.response?.data?.detail || "Invalid credentials. Please try again.");
     } finally {
@@ -61,10 +63,10 @@ export const LoginPage = () => {
           
           <div>
             <h1 className="text-3xl xl:text-4xl font-bold tracking-tight text-foreground mb-3">
-              Welcome back to Smart Mall.
+              Store Operations Portal
             </h1>
             <p className="text-sm text-muted-foreground leading-relaxed">
-              Customer workspace for browsing stores, joining queues, and reserving parking.
+              Store admin workspace for managing products, queues, and customer support.
             </p>
           </div>
 
@@ -74,16 +76,17 @@ export const LoginPage = () => {
                 onClick={applyDemoCredentials}
                 className="group flex items-center gap-3.5 w-full p-3 rounded-lg border border-transparent bg-background/50 hover:bg-background hover:border-border transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
               >
-                <div className="shrink-0 w-10 h-10 rounded-md bg-gradient-to-br from-sky-500 to-cyan-500 text-white flex items-center justify-center shadow-sm">
+                <div className="shrink-0 w-10 h-10 rounded-md bg-gradient-to-br from-amber-500 to-orange-500 text-white flex items-center justify-center shadow-sm">
                   <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                    <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z" />
-                    <path d="M3 6h18" />
-                    <path d="M16 10a4 4 0 0 1-8 0" />
+                    <path d="M3 3v18h18" />
+                    <path d="M18 17V9" />
+                    <path d="M13 17V5" />
+                    <path d="M8 17v-3" />
                   </svg>
                 </div>
                 <div className="text-left flex-1">
-                  <div className="text-sm font-semibold text-foreground">Customer</div>
-                  <div className="text-xs text-muted-foreground">Load demo customer credentials</div>
+                  <div className="text-sm font-semibold text-foreground">Store Admin</div>
+                  <div className="text-xs text-muted-foreground">Load demo admin credentials</div>
                 </div>
                 <div className="text-xs font-medium px-2 py-1 rounded bg-secondary transition-opacity opacity-0 group-hover:opacity-100">
                   Load demo
@@ -97,9 +100,9 @@ export const LoginPage = () => {
       <div className="flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-[400px] space-y-6">
           <div className="text-center space-y-1.5 mb-8">
-            <h2 className="text-2xl font-bold tracking-tight text-foreground">Sign In</h2>
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">Admin Sign In</h2>
             <p className="text-sm text-muted-foreground">
-              Sign in to your customer account
+              Sign in to manage your store
             </p>
           </div>
 
@@ -113,7 +116,7 @@ export const LoginPage = () => {
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                placeholder="customer@example.com"
+                placeholder="admin@example.com"
                 className="w-full rounded-md border border-input bg-background px-3 py-2 text-sm shadow-sm transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary placeholder:text-muted-foreground"
                 autoComplete="username"
                 autoCapitalize="none"
@@ -180,12 +183,7 @@ export const LoginPage = () => {
             </button>
           </form>
 
-          <p className="text-center text-sm text-muted-foreground pt-4 border-t border-border">
-            Don’t have an account?{" "}
-            <Link to="/register" className="font-medium text-primary hover:underline focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-primary rounded">
-              Sign up
-            </Link>
-          </p>
+          {/* Note: No signup link for Store Admins, as they must be created by Ops */}
         </div>
       </div>
     </div>

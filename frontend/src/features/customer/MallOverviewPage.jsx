@@ -5,6 +5,7 @@ import React, {
 	useState,
 } from "react";
 import { Link } from "react-router-dom";
+import { useAuth } from "@/app/providers/AuthProvider";
 
 import { apiClient } from "@/services/api/client";
 import { favoritesApi } from "@/services/api/favorites";
@@ -344,6 +345,7 @@ const StoreCard = ({
 /* ---------------------------------- */
 
 export const MallOverviewPage = () => {
+	const { user } = useAuth();
 	const [stores, setStores] = useState([]);
 	const [loading, setLoading] =
 		useState(true);
@@ -415,17 +417,25 @@ export const MallOverviewPage = () => {
 
 				const [
 					storesRes,
-					favoritesRes,
 					trendingRes,
 				] = await Promise.all([
 					apiClient.get(
 						"/api/v1/stores/"
 					),
-					favoritesApi.list(),
 					discoveryApi.trendingStores(
 						4
 					),
 				]);
+
+				let favoritesData = [];
+				if (user) {
+					try {
+						const favoritesRes = await favoritesApi.list();
+						favoritesData = favoritesRes.data?.store_ids ?? [];
+					} catch (e) {
+						console.error("Failed to load favorites", e);
+					}
+				}
 
 				if (cancelled) return;
 
@@ -433,10 +443,7 @@ export const MallOverviewPage = () => {
 					storesRes.data?.stores ?? []
 				);
 
-				setFavoriteStoreIds(
-					favoritesRes.data
-						?.store_ids ?? []
-				);
+				setFavoriteStoreIds(favoritesData);
 
 				setTrendingStores(
 					trendingRes.data?.stores ??
