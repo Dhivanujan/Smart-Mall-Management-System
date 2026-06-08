@@ -118,9 +118,9 @@ async def reserve_slot(
     slot.reserved_by = current_user.username
     slot.reserved_at = time()
     await slot.save()
-    
+
     await parking_ws_manager.broadcast({"type": "parking.update", "action": "reserve", "slot": _slot_dict(slot)})
-    
+
     return {"message": "Slot reserved successfully", "slot": _slot_dict(slot)}
 
 
@@ -140,9 +140,9 @@ async def release_slot(
     slot.occupied_at = None
     slot.reserved_at = None
     await slot.save()
-    
+
     await parking_ws_manager.broadcast({"type": "parking.update", "action": "release", "slot": _slot_dict(slot)})
-    
+
     return {"message": "Slot released", "slot": _slot_dict(slot)}
 
 
@@ -163,8 +163,9 @@ async def my_slots(current_user: User = Depends(get_current_active_user)) -> dic
 async def admin_parking_overview(
     current_user: User = Depends(require_admin),
 ) -> dict:
-    from app.ai import parking_demand_predictor
     from datetime import datetime
+
+    from app.ai import parking_demand_predictor
 
     now = datetime.now()
     smry = await _summary()
@@ -194,9 +195,9 @@ async def admin_occupy_slot(
     slot.vehicle_number = body.vehicle_number
     slot.occupied_at = time()
     await slot.save()
-    
+
     await parking_ws_manager.broadcast({"type": "parking.update", "action": "occupy", "slot": _slot_dict(slot)})
-    
+
     return {"message": "Slot occupied", "slot": _slot_dict(slot)}
 
 
@@ -214,7 +215,7 @@ async def admin_release_slot(
     slot.occupied_at = None
     slot.reserved_at = None
     await slot.save()
-    
+
     await parking_ws_manager.broadcast({"type": "parking.update", "action": "release", "slot": _slot_dict(slot)})
-    
+
     return {"message": "Slot released", "slot": _slot_dict(slot)}

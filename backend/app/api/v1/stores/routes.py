@@ -1,14 +1,12 @@
-from typing import List
 
-from fastapi import APIRouter, Depends, HTTPException, Query, UploadFile, File
-from pydantic import BaseModel, Field
 import cloudinary
 import cloudinary.uploader
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
+from pydantic import BaseModel, Field
 
 from ....auth.schemas.users import User
 from ....auth.services.security import require_admin, require_super_admin
-from ....db.models.store import StoreDocument, ProductDocument
-
+from ....db.models.store import ProductDocument, StoreDocument
 
 router = APIRouter()
 
@@ -173,10 +171,10 @@ async def add_product(
     next_id = (last_product.product_id + 1) if last_product else 1
 
     product = ProductDocument(
-        product_id=next_id, 
-        store_id=store_id, 
-        name=body.name, 
-        price=body.price, 
+        product_id=next_id,
+        store_id=store_id,
+        name=body.name,
+        price=body.price,
         category=body.category,
         image_url=body.image_url
     )
@@ -215,7 +213,7 @@ async def upload_product_image(
     product = await ProductDocument.find_one({"store_id": store_id, "product_id": product_id})
     if not product:
         raise HTTPException(status_code=404, detail="Product not found")
-        
+
     try:
         # Note: cloudinary requires configuration via CLOUDINARY_URL env var
         # or explicit config call: cloudinary.config(...)

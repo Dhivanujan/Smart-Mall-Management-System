@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
 
-from ..managers.queues import manager
 from ...api.v1.queues.routes import get_queue_state
-
+from ..managers.queues import manager
 
 router = APIRouter()
 

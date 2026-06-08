@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Dict, Set
-
 from fastapi import WebSocket
 
 
@@ -9,7 +7,7 @@ class QueueConnectionManager:
 	"""Manage WebSocket connections for queue updates per store."""
 
 	def __init__(self) -> None:
-		self._connections: Dict[int, Set[WebSocket]] = {}
+		self._connections: dict[int, set[WebSocket]] = {}
 
 	async def connect(self, store_id: int, websocket: WebSocket) -> None:
 		await websocket.accept()

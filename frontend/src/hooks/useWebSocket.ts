@@ -1,5 +1,11 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-export function useWebSocket({ url, onMessage, autoConnect = true }) {
+interface WebSocketOptions {
+    url: string;
+    onMessage?: (data: any) => void;
+    autoConnect?: boolean;
+}
+
+export function useWebSocket({ url, onMessage, autoConnect = true }: WebSocketOptions) {
     const [isConnected, setIsConnected] = useState(false);
     const [lastMessage, setLastMessage] = useState(null);
     const wsRef = useRef(null);

@@ -15,7 +15,7 @@ export const AIAssistantPage = () => {
   const [message, setMessage] = useState("");
   const [result, setResult] = useState(null);
 
-  const askConcierge = async (nextQuery) => {
+  const askConcierge = async (nextQuery?: string) => {
     const finalQuery = (nextQuery ?? query).trim();
     if (!finalQuery) {
       setMessage("Please enter a request.");

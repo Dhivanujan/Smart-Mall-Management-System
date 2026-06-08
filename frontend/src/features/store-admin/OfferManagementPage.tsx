@@ -31,7 +31,7 @@ export const OfferManagementPage = () => {
     };
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const payload = {
+        const payload: any = {
             title: form.title,
             description: form.description,
             store_id: form.store_id,

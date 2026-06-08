@@ -1,5 +1,6 @@
 from fastapi import WebSocket
 
+
 class ParkingWebSocketManager:
     def __init__(self):
         self.active_connections: list[WebSocket] = []

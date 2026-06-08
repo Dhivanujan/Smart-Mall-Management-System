@@ -5,7 +5,6 @@ from __future__ import annotations
 import logging
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from typing import Any, Dict
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -14,26 +13,25 @@ from fastapi.responses import JSONResponse
 from fastapi.routing import APIRoute
 from starlette import status
 
-from .api.v1 import admin, auth, stores, queues
-from .api.v1.parking import router as parking_router
-from .api.v1.loyalty import router as loyalty_router
+from .api.v1 import admin, auth, queues, stores
+from .api.v1.analytics import router as analytics_router
 from .api.v1.complaints import router as complaints_router
+from .api.v1.discovery import router as discovery_router
+from .api.v1.events import router as events_router
+from .api.v1.favorites import router as favorites_router
+from .api.v1.lost_found import router as lost_found_router
+from .api.v1.loyalty import router as loyalty_router
+from .api.v1.movies import router as movies_router
 from .api.v1.notifications import router as notifications_router
 from .api.v1.offers import router as offers_router
-from .api.v1.analytics import router as analytics_router
+from .api.v1.parking import router as parking_router
 from .api.v1.users import router as users_router
-from .api.v1.events import router as events_router
-from .api.v1.movies import router as movies_router
-from .api.v1.lost_found import router as lost_found_router
-from .api.v1.favorites import router as favorites_router
-from .api.v1.discovery import router as discovery_router
 from .core.config import get_settings
 from .core.logging import setup_logging
-from .db import init_db, close_db
+from .db import close_db, init_db
 from .db.seed import seed_database
-from .websocket.routes.queues import router as queues_router
 from .websocket.routes.parking import router as parking_ws_router
-
+from .websocket.routes.queues import router as queues_router
 
 logger = logging.getLogger("smart_mall.app")
 
@@ -78,15 +76,15 @@ def create_app() -> FastAPI:
 
 	# Health endpoints
 	@app.get("/health", tags=["health"])
-	async def health() -> Dict[str, str]:
+	async def health() -> dict[str, str]:
 		return {"status": "ok"}
 
 	@app.get("/health/ready", tags=["health"])
-	async def readiness() -> Dict[str, str]:
+	async def readiness() -> dict[str, str]:
 		return {"status": "ready"}
 
 	@app.get("/", tags=["root"])
-	async def root() -> Dict[str, str]:
+	async def root() -> dict[str, str]:
 		return {"message": settings.project_name}
 
 	# API v1 routers

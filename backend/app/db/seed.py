@@ -7,13 +7,12 @@ from time import time
 
 import bcrypt
 
-from .models.user import UserDocument
-from .models.store import StoreDocument, ProductDocument
 from .models.complaint import ComplaintDocument
-from .models.loyalty import LoyaltyAccountDocument
 from .models.notification import NotificationDocument
 from .models.offer import OfferDocument
 from .models.parking import ParkingSlotDocument
+from .models.store import ProductDocument, StoreDocument
+from .models.user import UserDocument
 
 logger = logging.getLogger("smart_mall.db.seed")
 

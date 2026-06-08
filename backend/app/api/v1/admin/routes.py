@@ -11,7 +11,6 @@ from ..queues.routes import (
 	admin_set_queue_paused,
 )
 
-
 router = APIRouter()
 
 

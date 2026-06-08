@@ -7,8 +7,8 @@ from fastapi import APIRouter, Depends
 from app.auth.schemas.users import User
 from app.auth.services.security import get_current_active_user
 from app.db.models.favorite import FavoriteDocument
-from app.db.models.store import StoreDocument
 from app.db.models.offer import OfferDocument
+from app.db.models.store import StoreDocument
 
 router = APIRouter(prefix="/favorites", tags=["favorites"])
 

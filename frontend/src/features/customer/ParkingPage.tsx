@@ -9,8 +9,8 @@ import {
 
 export const ParkingPage = () => {
     const { user } = useAuth();
-    const [summary, setSummary] = useState(null);
-    const [mySlots, setMySlots] = useState([]);
+    const [summary, setSummary] = useState<any>(null);
+    const [mySlots, setMySlots] = useState<any[]>([]);
     const [selectedZone, setSelectedZone] = useState("");
     const [loading, setLoading] = useState(true);
     const [actionLoading, setActionLoading] = useState(false);
@@ -148,7 +148,7 @@ export const ParkingPage = () => {
 									</tr>
 								</thead>
 								<tbody>
-									{Object.entries(summary.zone_stats).map(([zone, stats]) => (<tr key={zone}>
+									{Object.entries(summary.zone_stats).map(([zone, stats]: [string, any]) => (<tr key={zone}>
 											<td><strong>Zone {zone}</strong></td>
 											<td>{stats.total}</td>
 											<td style={{ color: "var(--color-success)", fontWeight: 600 }}>{stats.available}</td>

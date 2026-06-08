@@ -1,5 +1,7 @@
 from enum import Enum
+
 from pydantic import BaseModel, EmailStr
+
 
 class UserRole(str, Enum):
     SUPER_ADMIN = "super_admin"
@@ -35,3 +37,11 @@ class UserRegister(BaseModel):
 	email: EmailStr
 	full_name: str
 	password: str
+
+
+class UpdateUserRequest(BaseModel):
+	full_name: str | None = None
+	email: str | None = None
+	is_active: bool | None = None
+	role: str | None = None
+

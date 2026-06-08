@@ -50,7 +50,7 @@ export const useAuthStore = create(
     }),
     {
       name: 'smartmall-auth-storage',
-      onRehydrateStorage: () => (state) => {
+      onRehydrateStorage: () => (state: any) => {
         if (state && state.token) {
           apiClient.defaults.headers.common.Authorization = `Bearer ${state.token}`;
         }

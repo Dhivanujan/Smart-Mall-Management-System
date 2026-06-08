@@ -13,12 +13,11 @@ from ....auth.services.security import (
 )
 from ....core.config import get_settings
 
-
 router = APIRouter()
 
 
 def _create_refresh_token(data: dict) -> str:
-	settings = get_settings()
+	get_settings()
 	return create_access_token(
 		data={**data, "type": "refresh"},
 		expires_delta=timedelta(days=7),

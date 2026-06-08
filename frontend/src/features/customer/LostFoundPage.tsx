@@ -118,7 +118,7 @@ export const LostFoundPage = () => {
                                 <label className="form-label">Item Description</label>
                                 <textarea 
                                     className="form-input" 
-                                    rows="3" 
+                                    rows={3} 
                                     placeholder="e.g. Blue leather wallet, brands..." 
                                     required 
                                     value={form.itemDescription}
@@ -156,7 +156,7 @@ export const LostFoundPage = () => {
                                 <label className="form-label">Additional Details (optional)</label>
                                 <textarea
                                     className="form-input"
-                                    rows="2"
+                                    rows={2}
                                     value={form.details}
                                     onChange={(e) => updateField("details", e.target.value)}
                                     placeholder="Color, brand, serial numbers, or other useful details"

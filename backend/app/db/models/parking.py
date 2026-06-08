@@ -2,10 +2,7 @@
 
 from __future__ import annotations
 
-from time import time
-
 from beanie import Document
-from pydantic import Field
 
 
 class ParkingSlotDocument(Document):

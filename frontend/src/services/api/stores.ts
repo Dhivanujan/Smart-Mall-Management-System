@@ -1,25 +1,25 @@
 import { apiClient } from "./client";
 export const storesApi = {
-    list: (params) => apiClient.get("/api/v1/stores/", { params }),
+    list: (params?: any) => apiClient.get("/api/v1/stores/", { params }),
     getMap: () => apiClient.get("/api/v1/stores/map"),
-    getDetails: (storeId) => apiClient.get(`/api/v1/stores/${storeId}`),
-    getProducts: (storeId, search) => apiClient.get(`/api/v1/stores/${storeId}/products`, { params: { search } }),
+    getDetails: (storeId: number) => apiClient.get(`/api/v1/stores/${storeId}`),
+    getProducts: (storeId: number, search?: string) => apiClient.get(`/api/v1/stores/${storeId}/products`, { params: { search } }),
     // Admin product management
-    addProduct: (storeId, data) => apiClient.post(`/api/v1/stores/${storeId}/products`, data),
-    updateProduct: (storeId, productId, data) => apiClient.put(`/api/v1/stores/${storeId}/products/${productId}`, data),
-    deleteProduct: (storeId, productId) => apiClient.delete(`/api/v1/stores/${storeId}/products/${productId}`),
+    addProduct: (storeId: number, data: any) => apiClient.post(`/api/v1/stores/${storeId}/products`, data),
+    updateProduct: (storeId: number, productId: number, data: any) => apiClient.put(`/api/v1/stores/${storeId}/products/${productId}`, data),
+    deleteProduct: (storeId: number, productId: number) => apiClient.delete(`/api/v1/stores/${storeId}/products/${productId}`),
     // Super admin store management
-    adminCreate: (data) => apiClient.post("/api/v1/stores/admin/create", data),
-    adminUpdate: (storeId, data) => apiClient.put(`/api/v1/stores/admin/${storeId}`, data),
-    adminRemove: (storeId) => apiClient.delete(`/api/v1/stores/admin/${storeId}`),
+    adminCreate: (data: any) => apiClient.post("/api/v1/stores/admin/create", data),
+    adminUpdate: (storeId: number, data: any) => apiClient.put(`/api/v1/stores/admin/${storeId}`, data),
+    adminRemove: (storeId: number) => apiClient.delete(`/api/v1/stores/admin/${storeId}`),
 };
 export const queuesApi = {
-    getQueue: (storeId) => apiClient.get(`/api/v1/queues/${storeId}`),
-    joinQueue: (storeId) => apiClient.post(`/api/v1/queues/${storeId}/join`),
-    getStatus: (storeId, token) => apiClient.get(`/api/v1/queues/${storeId}/status`, { params: { token } }),
+    getQueue: (storeId: number) => apiClient.get(`/api/v1/queues/${storeId}`),
+    joinQueue: (storeId: number) => apiClient.post(`/api/v1/queues/${storeId}/join`),
+    getStatus: (storeId: number, token: number) => apiClient.get(`/api/v1/queues/${storeId}/status`, { params: { token } }),
     adminList: () => apiClient.get("/api/v1/admin/queues"),
-    adminNext: (storeId) => apiClient.post(`/api/v1/admin/queues/${storeId}/next`),
-    adminSkip: (storeId) => apiClient.post(`/api/v1/admin/queues/${storeId}/skip`),
-    adminPause: (storeId) => apiClient.post(`/api/v1/admin/queues/${storeId}/pause`),
-    adminResume: (storeId) => apiClient.post(`/api/v1/admin/queues/${storeId}/resume`),
+    adminNext: (storeId: number) => apiClient.post(`/api/v1/admin/queues/${storeId}/next`),
+    adminSkip: (storeId: number) => apiClient.post(`/api/v1/admin/queues/${storeId}/skip`),
+    adminPause: (storeId: number) => apiClient.post(`/api/v1/admin/queues/${storeId}/pause`),
+    adminResume: (storeId: number) => apiClient.post(`/api/v1/admin/queues/${storeId}/resume`),
 };

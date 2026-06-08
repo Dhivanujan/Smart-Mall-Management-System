@@ -2,8 +2,7 @@ from __future__ import annotations
 
 from dataclasses import asdict, dataclass, field
 from time import time
-from typing import Dict, List, Literal
-
+from typing import Literal
 
 QueueTokenStatus = Literal["waiting", "serving", "served", "skipped"]
 
@@ -23,7 +22,7 @@ class QueueState:
 	is_paused: bool = False
 	next_token: int = 1
 	current_token: int | None = None
-	tokens: List[QueueToken] = field(default_factory=list)
+	tokens: list[QueueToken] = field(default_factory=list)
 
 	AVG_SERVICE_MINUTES: float = 5.0
 
@@ -34,7 +33,7 @@ class QueueState:
 		self.tokens.append(token)
 		return token
 
-	def _waiting_tokens(self) -> List[QueueToken]:
+	def _waiting_tokens(self) -> list[QueueToken]:
 		return [t for t in self.tokens if t.status == "waiting"]
 
 	def _current_token_obj(self) -> QueueToken | None:

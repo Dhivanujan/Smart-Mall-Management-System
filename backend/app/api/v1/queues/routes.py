@@ -1,12 +1,9 @@
 from __future__ import annotations
 
-from typing import List
-
 from fastapi import APIRouter, HTTPException
 
 from ....db.models.queue import QueueDocument
 from ....websocket.managers.queues import manager as ws_manager
-
 
 router = APIRouter()
 
@@ -134,7 +131,7 @@ async def queue_status(store_id: int, token: int | None = None) -> dict:
 	return result
 
 
-async def admin_queue_summaries() -> List[dict]:
+async def admin_queue_summaries() -> list[dict]:
 	docs = await QueueDocument.find().to_list()
 	return [_summary(d) for d in docs]
 

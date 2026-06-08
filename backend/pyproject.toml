@@ -59,6 +59,14 @@ select = [
 ]
 ignore = [
 	"S105", # hardcoded-password-string (covered by env-based config)
+	"W191", # tab indentation
+	"S101", # asserts (especially in tests)
+	"E501", # line too long
+	"S110", # try-except-pass
+	"B008", # function call in argument defaults (standard for FastAPI Depends/Field)
+	"B904", # raise from
+	"S311", # pseudo-random generator (used for mock analytics)
+	"S106", # hardcoded password (matches 'token_type' parameter)
 ]
 
 [tool.ruff.lint.isort]

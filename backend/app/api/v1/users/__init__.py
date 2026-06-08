@@ -8,7 +8,6 @@ from pydantic import BaseModel, Field
 from app.auth.schemas.users import User
 from app.auth.services.security import get_current_active_user, require_super_admin
 from app.auth.services.users import (
-    _hash_password,
     create_user,
     disable_user,
     get_all_users,

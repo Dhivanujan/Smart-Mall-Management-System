@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { analyticsApi } from "@/services/api/analytics";
 export const ParkingManagementPage = () => {
-    const [data, setData] = useState(null);
+    const [data, setData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
     useEffect(() => {
         analyticsApi.mallParking().then((res) => {
@@ -14,7 +14,7 @@ export const ParkingManagementPage = () => {
     if (!data)
         return <p>No parking data available</p>;
     const maxDemand = Math.max(...(data.hourly_predictions ?? []).map((d) => d.predicted_occupancy), 1);
-    const zoneRows = Object.entries(data.zone_utilization).map(([zone, utilization]) => ({
+    const zoneRows = Object.entries(data.zone_utilization).map(([zone, utilization]: [string, any]) => ({
         zone,
         utilization,
     }));

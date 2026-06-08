@@ -1,17 +1,17 @@
 """Beanie document models for MongoDB collections."""
 
-from .user import UserDocument
-from .store import StoreDocument, ProductDocument
 from .complaint import ComplaintDocument
+from .event_reminder import EventReminderDocument
+from .favorite import FavoriteDocument
+from .lost_report import LostReportDocument
 from .loyalty import LoyaltyAccountDocument
+from .movie_booking import MovieBookingDocument
 from .notification import NotificationDocument
 from .offer import OfferDocument
 from .parking import ParkingSlotDocument
 from .queue import QueueDocument
-from .event_reminder import EventReminderDocument
-from .movie_booking import MovieBookingDocument
-from .lost_report import LostReportDocument
-from .favorite import FavoriteDocument
+from .store import ProductDocument, StoreDocument
+from .user import UserDocument
 
 ALL_DOCUMENT_MODELS = [
     UserDocument,

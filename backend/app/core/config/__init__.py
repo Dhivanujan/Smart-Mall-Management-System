@@ -14,11 +14,9 @@ from __future__ import annotations
 
 from functools import lru_cache
 from pathlib import Path
-from typing import List
 
 from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
-
 
 _ENV_FILE = Path(__file__).resolve().parents[3] / ".env"
 
@@ -50,11 +48,11 @@ class Settings(BaseSettings):
 	mongodb_db_name: str = "smart_mall"
 
 	# CORS
-	backend_cors_origins: List[str] = []
+	backend_cors_origins: list[str] = []
 
 	@field_validator("backend_cors_origins", mode="before")
 	@classmethod
-	def assemble_cors_origins(cls, value: object) -> List[str]:
+	def assemble_cors_origins(cls, value: object) -> list[str]:
 		if isinstance(value, str):
 			return [o.strip() for o in value.split(",") if o.strip()]
 		if isinstance(value, list):

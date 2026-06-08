@@ -5,11 +5,10 @@ from fastapi import Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordBearer
 from jose import JWTError, jwt
 
+from ...core.config import get_settings
 from ..schemas.tokens import TokenData
 from ..schemas.users import User
 from .users import get_user
-from ...core.config import get_settings
-
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login")
 

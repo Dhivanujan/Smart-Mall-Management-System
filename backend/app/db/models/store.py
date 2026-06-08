@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from beanie import Document
-from pydantic import Field
 
 
 class StoreDocument(Document):

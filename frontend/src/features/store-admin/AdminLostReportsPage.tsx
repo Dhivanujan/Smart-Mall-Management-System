@@ -87,7 +87,7 @@ export const AdminLostReportsPage = () => {
   const fetchReports = async () => {
     setLoading(true);
     try {
-      const params = {};
+      const params: any = {};
       if (statusFilter !== "all") {
         params.status = statusFilter;
       }

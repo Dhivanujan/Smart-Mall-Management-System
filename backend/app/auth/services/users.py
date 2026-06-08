@@ -1,8 +1,8 @@
 import bcrypt
 
-from ..schemas.users import User, UserInDB, UserRegister
-from ..repositories.user_repository import user_repo
 from ...db.models.user import UserDocument
+from ..repositories.user_repository import user_repo
+from ..schemas.users import User, UserInDB, UserRegister
 
 
 def _hash_password(password: str) -> str:
@@ -51,7 +51,7 @@ async def register_user(data: UserRegister) -> User:
 	existing = await user_repo.get_by_email(data.email)
 	if existing:
 		raise ValueError("Email already registered")
-	
+
 	doc = await user_repo.create({
 		"username": data.email,
 		"full_name": data.full_name,
@@ -77,7 +77,7 @@ async def update_user_fields(username: str, **fields: object) -> UserInDB | None
 	doc = await user_repo.get_by_username(username)
 	if doc is None:
 		return None
-		
+
 	doc = await user_repo.update(doc, fields)
 	return _doc_to_user_in_db(doc)
 
